@@ -1,0 +1,32 @@
+.slider-name {
+  color: red;
+}
+.slider-container {
+  position: relative;
+  width: 100px;
+  height: 50px;
+  background-color: aquamarine;
+}
+.slider {
+  width: 100%;
+  height: 2px;
+  background-color: blue;
+  border-radius: 20px;
+  position: absolute;
+  &__handle-lower,
+  &__handle-upper {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background-color: black;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &__handle-lower {
+    left: 0;
+  }
+  &__handle-upper {
+    right: 0;
+  }
+}
