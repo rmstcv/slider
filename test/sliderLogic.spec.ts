@@ -1,7 +1,15 @@
 import SliderLogic from '../src/sliderLogic';
 
+const sliderLogic = new SliderLogic();
+
+describe('slider values', () => {
+  const valueReal = 30;
+  it('custom coords', () => {
+    expect(sliderLogic.toCustomValue(valueReal)).toEqual(38);
+  });
+});
+
 describe('check extremum values', () => {
-  const sliderLogic = new SliderLogic();
   const coordMin: number = 50;
   const coordMax: number = 200;
   it('check < min', () => {

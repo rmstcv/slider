@@ -6,10 +6,22 @@ class SliderLogic {
 
   max: number;
 
+  customMin: number;
+
+  customMax: number;
+
+  minShift: number;
+
+  maxShift: number;
+
   constructor() {
     this.coord = 0;
+    this.minShift = 0;
+    this.maxShift = 80;
     this.min = 0;
     this.max = 80;
+    this.customMin = 0;
+    this.customMax = 100;
   }
 
   set setActualCoord(coord: number) {
@@ -18,6 +30,14 @@ class SliderLogic {
 
   get getActualCoord() {
     return this.coord;
+  }
+
+  toCustomValue(coord: number) {
+    const total = this.max - this.min;
+    const totalCustom = this.customMax - this.customMin;
+    const multiplier = totalCustom / total;
+    const value = Math.round(coord * multiplier);
+    return value;
   }
   
   checkExtremumCoords(coordMin: number, coordMax: number) {
@@ -29,8 +49,8 @@ class SliderLogic {
       coordChecked = coordMax;
     }
     this.setActualCoord = coordChecked;
-    this.max = coordMax;
-    this.min = coordMin;
+    this.maxShift = coordMax;
+    this.minShift = coordMin;
     return coordChecked;
   }
 }
