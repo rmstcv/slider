@@ -4,33 +4,43 @@ window.addEventListener('DOMContentLoaded', () => {
   const upper: HTMLElement = document.querySelector('.slider__handle-upper');
   const lower: HTMLElement = document.querySelector('.slider__handle-lower');
   const slider: HTMLElement = document.querySelector('.slider');
-  const sliderLogic = new SliderLogic();
 
-  let currentLowValue = 0;
-  let currentUpperValue = 80;
+  const init = {
+    minCoord: 0,
+    maxCoord: 400,
+    minCoordCustom: 0,
+    maxCoordCustom: 100,
+  };
+
+  const sliderLogic = new SliderLogic(init);
+
+  let currentLowValue = init.minCoord;
+  let currentUpperValue = init.maxCoord;
 
   function getValues() {
     document.querySelector('.slider__values-lower').innerHTML = sliderLogic.toCustomValue(currentLowValue).toString();
     document.querySelector('.slider__values-upper').innerHTML = sliderLogic.toCustomValue(currentUpperValue).toString();
   }
-  function shift(elem: HTMLElement, e: MouseEvent) {
-    let minCoord = lower.getBoundingClientRect().right - slider.getBoundingClientRect().left;
-    let maxCoord = upper.getBoundingClientRect().left - slider.getBoundingClientRect().left - lower.offsetWidth;
 
-    if (elem.getBoundingClientRect().right <= upper.getBoundingClientRect().left) {
-      minCoord = 0;
-      maxCoord = upper.getBoundingClientRect().left - slider.getBoundingClientRect().left - lower.offsetWidth;
-      currentLowValue = sliderLogic.checkExtremumCoords(minCoord, maxCoord);
+  function shift(elem: HTMLElement, e: MouseEvent) {
+    
+    let minCoordShift = lower.getBoundingClientRect().right - lower.offsetWidth / 2 - slider.getBoundingClientRect().left;
+    let maxCoordShift = upper.getBoundingClientRect().left - slider.getBoundingClientRect().left - lower.offsetWidth / 2;
+
+    if (elem === lower) {
+      minCoordShift = 0;
+      maxCoordShift = upper.getBoundingClientRect().left + lower.offsetWidth / 2 - slider.getBoundingClientRect().left;
+      currentLowValue = sliderLogic.checkExtremumCoords(e.pageX - slider.getBoundingClientRect().left);
     }
-    if (elem.getBoundingClientRect().left >= lower.getBoundingClientRect().right) {
-      minCoord = lower.getBoundingClientRect().right - slider.getBoundingClientRect().left;
-      maxCoord = slider.offsetWidth - lower.offsetWidth;
-      currentUpperValue = sliderLogic.checkExtremumCoords(minCoord, maxCoord)  - lower.offsetWidth;
+    if (elem === upper) {
+      minCoordShift = lower.getBoundingClientRect().left - slider.getBoundingClientRect().left + upper.offsetWidth / 2;
+      maxCoordShift = slider.getBoundingClientRect().right - slider.getBoundingClientRect().left;
+      currentUpperValue = sliderLogic.checkExtremumCoords(e.pageX - slider.getBoundingClientRect().left);
     }
-    sliderLogic.setActualCoord = e.pageX - 5 * elem.offsetWidth / 4;
-    elem.style.left = sliderLogic.checkExtremumCoords(minCoord, maxCoord) + 'px';
-    if (currentLowValue >= 0 && currentUpperValue <= 80) {
-      getValues();
+    
+    if (e.pageX - slider.getBoundingClientRect().left >= minCoordShift && e.pageX - slider.getBoundingClientRect().left <= maxCoordShift) {
+      elem.style.left = sliderLogic.checkExtremumCoords(e.pageX - slider.getBoundingClientRect().left) + 'px';
+      getValues();     
     }
   }
 
@@ -45,6 +55,7 @@ window.addEventListener('DOMContentLoaded', () => {
       return false;
     };
   }
+  getValues();
 
   upper.addEventListener('mousedown', () => addEvents(upper));
   lower.addEventListener('mousedown', () => addEvents(lower));

@@ -1,30 +1,30 @@
 import SliderLogic from '../src/sliderLogic';
 
-const sliderLogic = new SliderLogic();
+const init = {
+  minCoord: 0,
+  maxCoord: 200,
+  minCoordCustom: 0,
+  maxCoordCustom: 100,
+};
+
+const sliderLogic = new SliderLogic(init);
 
 describe('slider values', () => {
-  const valueReal = 30;
+  const valueReal = Math.round((init.maxCoord - init.minCoord) / 2);
   it('custom coords', () => {
-    expect(sliderLogic.toCustomValue(valueReal)).toEqual(38);
+    expect(sliderLogic.toCustomValue(valueReal)).toEqual(valueReal * ((init.maxCoordCustom - init.minCoordCustom) / (init.maxCoord - init.minCoord)));
   });
 });
 
 describe('check extremum values', () => {
-  const coordMin: number = 50;
-  const coordMax: number = 200;
+  const validCoord = Math.round((init.maxCoord - init.minCoord) / 2);
   it('check < min', () => {
-    sliderLogic.setActualCoord = 10;
-    expect(sliderLogic.getActualCoord).toEqual(10);
-    expect(sliderLogic.checkExtremumCoords(coordMin, coordMax)).toEqual(50);
+    expect(sliderLogic.checkExtremumCoords(validCoord)).toEqual(validCoord);
   });
   it('check > max', () => {
-    sliderLogic.setActualCoord = 300;
-    expect(sliderLogic.getActualCoord).toEqual(300);
-    expect(sliderLogic.checkExtremumCoords(coordMin, coordMax)).toEqual(200);
+    expect(sliderLogic.checkExtremumCoords(init.minCoord - 10)).toEqual(init.minCoord);
   });
   it('check normal value', () => {
-    sliderLogic.setActualCoord = 150;
-    expect(sliderLogic.getActualCoord).toEqual(150);
-    expect(sliderLogic.checkExtremumCoords(coordMin, coordMax)).toEqual(150);
+    expect(sliderLogic.checkExtremumCoords(init.maxCoord + 10)).toEqual(init.maxCoord);
   });
 });
