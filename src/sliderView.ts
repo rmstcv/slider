@@ -8,6 +8,12 @@ window.addEventListener('DOMContentLoaded', () => {
   let currentLowValue = init.minCoord;
   let currentUpperValue = init.maxCoord;
 
+  function highlight() {
+    const sliderHighlight: HTMLElement = document.querySelector('.slider__highlight');
+    sliderHighlight.style.width = upper.getBoundingClientRect().left - lower.getBoundingClientRect().right + 'px';
+    sliderHighlight.style.left = lower.getBoundingClientRect().right - slider.getBoundingClientRect().left + 'px';
+  }
+
   function getValues() {
     document.querySelector('.slider__values-lower').innerHTML = sliderLogic.toCustomValue(currentLowValue).toString();
     document.querySelector('.slider__values-upper').innerHTML = sliderLogic.toCustomValue(currentUpperValue).toString();
@@ -37,6 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (e.pageX - sliderLeftCoord >= minCoordShift && e.pageX - sliderLeftCoord <= maxCoordShift) {
       elem.style.left = sliderLogic.checkExtremumCoords(e.pageX - sliderLeftCoord) + 'px';
       getValues();   
+      highlight();
     }
   }
 

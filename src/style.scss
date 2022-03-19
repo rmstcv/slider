@@ -1,7 +1,6 @@
 body {
   background-color: rgb(27, 25, 25);
 }
-
 .slider-name {
   color: rgb(65, 49, 49);
 }
@@ -42,5 +41,13 @@ body {
   }
   &__handle-upper {
     left: 400px;
+  }
+  &__highlight {
+    width: 100%;
+    background-color: black;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    z-index: 0;
   }
 }
