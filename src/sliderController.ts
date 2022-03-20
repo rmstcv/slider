@@ -1,8 +1,7 @@
 import SliderLogic from '../src/sliderLogic';
 
 const init = {
-  minCoord: 0,
-  maxCoord: 400,
+  sliderLength: 400,
   minCoordCustom: 0,
   maxCoordCustom: 100,
 };

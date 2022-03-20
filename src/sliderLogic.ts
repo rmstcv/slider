@@ -1,36 +1,32 @@
 class SliderLogic {
 
-  min: number;
-
-  max: number;
+  sliderLength: number;
 
   customMin: number;
 
   customMax: number;
 
-  constructor(init: { minCoord: number; maxCoord: number; minCoordCustom: number; maxCoordCustom: number; }) {
-    this.min = init.minCoord;
-    this.max = init.maxCoord;
+  constructor(init: { sliderLength: number; minCoordCustom: number; maxCoordCustom: number; }) {
+    this.sliderLength = init.sliderLength;
     this.customMin = init.minCoordCustom;
     this.customMax = init.maxCoordCustom;
   }
 
   toCustomValue(coord: number) {
-    const total = this.max - this.min;
-    const totalCustom = this.customMax - this.customMin;
-    const multiplier = totalCustom / total;
+    const lengthCustom = this.customMax - this.customMin;
+    const multiplier = lengthCustom / this.sliderLength;
     const value = Math.round(coord * multiplier);
     return value;
   }
 
-  checkExtremumCoords(coordCurrent: number) {
+  checkExtremumCoords(coordCurrent: number, min: number, max: number) {
     let coordChecked = coordCurrent;
     
-    if (coordCurrent < this.min) {
-      coordChecked = this.min;
+    if (coordCurrent < min) {
+      coordChecked = min;
     }
-    if (coordChecked > this.max) {
-      coordChecked = this.max;
+    if (coordChecked > max) {
+      coordChecked = max;
     }    
     return coordChecked;
   }
