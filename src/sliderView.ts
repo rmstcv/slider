@@ -1,5 +1,3 @@
-import { init, sliderLogic } from '../src/sliderController';
-
 class SliderView {
 
   slider: HTMLElement;
@@ -27,77 +25,57 @@ class SliderView {
     return targetElem;
   }
 
-  progressHighlight(minCoord: number, maxCoord: number) {
+  progressHighlight() {
     const sliderHighlight: HTMLElement = this.findElem('.slider__highlight');
-    const progressLength = maxCoord - minCoord;
+    const progressLength = this.currentUpperValue - this.currentLowValue;
+    
     if ( progressLength >= 0 ) {
       sliderHighlight.style.width = progressLength + 'px';
-      sliderHighlight.style.left = minCoord - this.slider.getBoundingClientRect().left + 'px';
+      sliderHighlight.style.left = this.currentLowValue + 'px';
     } else {
       sliderHighlight.style.width = 0 + 'px';
     }
   } 
 
-  showValues() {
-    document.querySelector('.slider__values-lower').innerHTML = sliderLogic.toCustomValue(this.currentLowValue).toString();
-    document.querySelector('.slider__values-upper').innerHTML = sliderLogic.toCustomValue(this.currentUpperValue).toString();
+  showValues(num) {
+    const [min, max] = num;
+
+    document.querySelector('.slider__values-lower').innerHTML = min.toString();
+    document.querySelector('.slider__values-upper').innerHTML = max.toString();   
   }
 
-  shift(elem: HTMLElement, e: MouseEvent) {
+  checkExtremumCoords(coordCurrent: number, min: number, max: number) {
+    let coordChecked = coordCurrent;
+    
+    if (coordCurrent < min) {
+      coordChecked = min;
+    }
+    if (coordChecked > max) {
+      coordChecked = max;
+    }    
+    return coordChecked;
+  }
+
+  shift(elem: HTMLElement, coords: number[]) {
+    
     const lower = this.findElem('.slider__handle-lower');
     const upper = this.findElem('.slider__handle-upper');
-    const minCoord = lower.getBoundingClientRect().right;
-    const maxCoord = upper.getBoundingClientRect().left;
-    const sliderLeftCoord = this.slider.getBoundingClientRect().left;
-    const sliderRightCoord = this.slider.getBoundingClientRect().right;
-  
-    let minCoordShift = minCoord - lower.offsetWidth / 2 - sliderLeftCoord;
-    let maxCoordShift = maxCoord - sliderLeftCoord - lower.offsetWidth / 2;
-    
+    let [min, max] = coords;
+
     if (elem === lower) {
-      minCoordShift = 0;
-      maxCoordShift = maxCoord + lower.offsetWidth / 2 - sliderLeftCoord;
-      this.currentLowValue = sliderLogic.checkExtremumCoords(e.pageX - sliderLeftCoord, minCoordShift, maxCoordShift);
       lower.style.zIndex = '10';
       upper.style.zIndex = '1';
-      elem = lower;    
+      elem.style.left = min + 'px';
+      this.currentLowValue = min;
     }
     if (elem === upper) {
-      minCoordShift = minCoord - upper.offsetWidth - sliderLeftCoord + upper.offsetWidth / 2;
-      maxCoordShift = sliderRightCoord - sliderLeftCoord;
-      this.currentUpperValue = sliderLogic.checkExtremumCoords(e.pageX - sliderLeftCoord, minCoordShift, maxCoordShift);
       upper.style.zIndex = '10';
       lower.style.zIndex = '1';
-      elem = upper;
+      elem.style.left = max + 'px';
+      this.currentUpperValue = max;
     }
-    
-    elem.style.left = sliderLogic.checkExtremumCoords(e.pageX - sliderLeftCoord, minCoordShift, maxCoordShift) + 'px';
-    this.showValues();
-    this.progressHighlight(minCoord, maxCoord);
-  }
-  
-  addEvents(elem: HTMLElement) {
-    const bindShift = this.shift.bind(this, elem);
-    
-    document.addEventListener('mousemove', bindShift);
-    document.addEventListener('mouseup', () => {
-      document.removeEventListener('mousemove', bindShift);
-      document.onmouseup = null;
-    });
-    document.ondragstart = function () {
-      return false;
-    };
-  }
-
-  init() {
-    const lower = this.findElem('.slider__handle-lower');
-    const upper = this.findElem('.slider__handle-upper');
-    this.showValues();
-    upper.addEventListener('mousedown', () => this.addEvents(upper));
-    lower.addEventListener('mousedown', () => this.addEvents(lower));
-    
+    this.progressHighlight();
   }
 }
 
-const sliderView = new SliderView(document.querySelector('.slider'), init.sliderLength);
-sliderView.init();
+export default SliderView;

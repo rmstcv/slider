@@ -1,3 +1,4 @@
 import './style.scss';
 import './sliderCreater';
-import './sliderView';
+// import './sliderView';
+import './sliderController';
