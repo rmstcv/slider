@@ -1,68 +1,81 @@
-import SliderLogic from './sliderLogic';
+import SliderModel from './sliderModel';
 import SliderView from './sliderView';
 
 const init = {
   sliderLength: 400,
   minCoordCustom: 0,
   maxCoordCustom: 100,
+  step: 50,
 };
 
-const sliderLogic = new SliderLogic(init);
-
+const sliderModel = new SliderModel(init);
 const sliderView = new SliderView(document.querySelector('.slider'), init.sliderLength);
-const lower: HTMLElement = document.querySelector('.slider__handle-lower');
-const upper: HTMLElement = document.querySelector('.slider__handle-upper');
-const slider = document.querySelector('.slider');
-let minCoordPrev: number = 0;
 
-function getValues(e: MouseEvent, elem: HTMLElement) {
-  minCoordPrev = e.pageX;
-  if (elem === lower) {
-    sliderLogic.currentCoordMin = e.pageX - slider.getBoundingClientRect().left;
-  } 
-  if (elem === upper) {
-    sliderLogic.currentCoordMax = e.pageX - slider.getBoundingClientRect().left;
-  } 
+class SliderController {
+  lower: HTMLElement = document.querySelector('.slider__handle-lower');
 
-  return [sliderLogic.setMin(), sliderLogic.setMax()];
-}
+  upper: HTMLElement = document.querySelector('.slider__handle-upper');
 
-function showValues() {
-  const [min, max] = [sliderLogic.setMin(), sliderLogic.setMax()];
-  sliderView.showValues([min, max]);
-}
+  slider: HTMLElement = document.querySelector('.slider');
 
-function addEvents(elem: HTMLElement) {
-  
-  function shift(e: MouseEvent) {
-    if (minCoordPrev < e.pageX) {
-      sliderLogic.direction = 1;
+  minCoordPrev: number = 0;
+
+  constructor() {
+    this.slider = document.querySelector('.slider');
+  }
+
+  getValues(e: MouseEvent, elem: HTMLElement) {
+    this.minCoordPrev = e.pageX;
+    if (elem === this.lower) {
+      sliderModel.cursorCoordLow = e.pageX - this.slider.getBoundingClientRect().left;
+    } 
+    if (elem === this.upper) {
+      sliderModel.cursorCoordUpper = e.pageX - this.slider.getBoundingClientRect().left;
+    } 
+
+    return [sliderModel.setMin(), sliderModel.setMax()];
+  }
+
+  showValues() {
+    const [min, max] = [sliderModel.setMin(), sliderModel.setMax()];
+    sliderView.showValues([min, max]);
+  }
+
+
+  shiftBind(elem: HTMLElement, e: MouseEvent) {
+    if (this.minCoordPrev < e.pageX) {
+      sliderModel.direction = 1;
     }
-    if (minCoordPrev > e.pageX) {
-      sliderLogic.direction = - 1;
+    if (this.minCoordPrev > e.pageX) {
+      sliderModel.direction = - 1;
     }
     
-    sliderView.shift(elem, getValues(e, elem));  
+    sliderView.shift(elem, this.getValues(e, elem));  
   }
-  
-  document.addEventListener('mousemove', shift);
-  document.addEventListener('mousemove', showValues);
-  document.addEventListener('mouseup', () => {
-    document.removeEventListener('mousemove', shift);
-    document.removeEventListener('mousemove', showValues);
-    document.onmouseup = null;
-  });
-  document.ondragstart = function () {
-    return false;
-  };
+
+  addEvents(elem: HTMLElement) {
+    
+    const shift = this.shiftBind.bind(this, elem);
+
+    document.addEventListener('mousemove', shift);
+    document.addEventListener('mousemove', this.showValues);
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', shift);
+      document.removeEventListener('mousemove', this.showValues);
+      document.onmouseup = null;
+    });
+    document.ondragstart = function () {
+      return false;
+    };
+  }
+
+  addListeners() {
+    sliderView.showValues([init.minCoordCustom, init.maxCoordCustom]);
+    this.upper.addEventListener('mousedown', () => this.addEvents(this.upper));
+    this.lower.addEventListener('mousedown', () => this.addEvents(this.lower));
+  }
 }
 
-function addListeners() {
-  sliderView.showValues([init.minCoordCustom, init.maxCoordCustom]);
-  upper.addEventListener('mousedown', () => addEvents(upper));
-  lower.addEventListener('mousedown', () => addEvents(lower));
-}
+const controller = new SliderController();
 
-addListeners();
-
-export { init, sliderLogic };
+controller.addListeners();

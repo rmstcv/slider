@@ -1,3 +1,5 @@
+import './sliderCreater';
+
 class SliderView {
 
   slider: HTMLElement;
