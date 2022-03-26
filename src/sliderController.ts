@@ -18,37 +18,29 @@ class SliderController {
 
   slider: HTMLElement = document.querySelector('.slider');
 
-  minCoordPrev: number = 0;
-
   constructor() {
     this.slider = document.querySelector('.slider');
   }
 
   getValues(e: MouseEvent, elem: HTMLElement) {
-    this.minCoordPrev = e.pageX;
+
     if (elem === this.lower) {
-      sliderModel.cursorCoordLow = e.pageX - this.slider.getBoundingClientRect().left;
+      sliderModel.setMin(e.pageX - this.slider.getBoundingClientRect().left);
     } 
     if (elem === this.upper) {
-      sliderModel.cursorCoordUpper = e.pageX - this.slider.getBoundingClientRect().left;
+      sliderModel.setMax(e.pageX - this.slider.getBoundingClientRect().left);
     } 
 
-    return [sliderModel.setMin(), sliderModel.setMax()];
+    return sliderModel.getMinMax();
   }
 
   showValues() {
-    const [min, max] = [sliderModel.setMin(), sliderModel.setMax()];
+    const [min, max] = sliderModel.getMinMax();
     sliderView.showValues([min, max]);
   }
 
 
   shiftBind(elem: HTMLElement, e: MouseEvent) {
-    if (this.minCoordPrev < e.pageX) {
-      sliderModel.direction = 1;
-    }
-    if (this.minCoordPrev > e.pageX) {
-      sliderModel.direction = - 1;
-    }
     
     sliderView.shift(elem, this.getValues(e, elem));  
   }
