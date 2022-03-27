@@ -7,7 +7,7 @@
     "test": "karma start karma.conf.js",
     "build": "webpack --mode production --config webpack.config.js",
     "dev": "webpack-dev-server --mode development --open --config webpack.config.js",
-    "jest": "jest --coverage --watchAll"
+    "jest": "jest --coverage --watch"
   },
   "author": "",
   "license": "ISC",

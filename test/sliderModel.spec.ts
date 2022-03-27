@@ -85,3 +85,10 @@ describe('get min-max', () => {
     expect(sliderModel.getMinMax()).toEqual([0, 200]);
   });
 });
+
+describe('get custom min-max', () => {
+  it('value', () => {
+    const valuesCustom = sliderModel.getMinMaxCustom();
+    expect(valuesCustom).toEqual([0, 100]);
+  });
+});

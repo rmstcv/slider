@@ -21,11 +21,18 @@ body {
   }
   &__values-lower,
   &__values-upper {
-    font-size: 32px;
+    font-size: 24px;
     width: 40px;
     height: 20px;
     margin-bottom: 32px;
+    background-color: rgb(27, 25, 25);
+    border: none;
   }
+  &__values-lower:focus,
+  &__values-upper:focus {
+    outline: none;
+  }
+
   &__handle-lower,
   &__handle-upper {
     position: absolute;

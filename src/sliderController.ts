@@ -5,7 +5,7 @@ const init = {
   sliderLength: 400,
   minCoordCustom: 0,
   maxCoordCustom: 100,
-  step: 50,
+  step: 10,
 };
 
 const sliderModel = new SliderModel(init);
@@ -35,7 +35,7 @@ class SliderController {
   }
 
   showValues() {
-    const [min, max] = sliderModel.getMinMax();
+    const [min, max] = sliderModel.getMinMaxCustom();
     sliderView.showValues([min, max]);
   }
 
@@ -62,7 +62,7 @@ class SliderController {
   }
 
   addListeners() {
-    sliderView.showValues([init.minCoordCustom, init.maxCoordCustom]);
+    sliderView.showValues(sliderModel.getMinMaxCustom());
     this.upper.addEventListener('mousedown', () => this.addEvents(this.upper));
     this.lower.addEventListener('mousedown', () => this.addEvents(this.lower));
   }

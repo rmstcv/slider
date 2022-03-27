@@ -1,3 +1,5 @@
+import ToCustomValue from './toCustomValue';
+
 interface Init {
   sliderLength: number;
   minCoordCustom: number;
@@ -23,6 +25,8 @@ class SliderModel {
 
   step: number;
 
+  toCustomValue: ToCustomValue;
+
   constructor(init: Init) {
     this.sliderLength = init.sliderLength;
     this.customMin = init.minCoordCustom;
@@ -32,13 +36,7 @@ class SliderModel {
     this.sliderMax = init.sliderLength;
     this.currentLow = this.sliderMin;
     this.currentUpper = this.sliderMax;
-  }
-
-  toCustomValue(coord: number) {
-    const lengthCustom = this.customMax - this.customMin;
-    const multiplier = lengthCustom / this.sliderMax - this.sliderMax;
-    const value = Math.round(coord * multiplier);
-    return value;
+    this.toCustomValue = new ToCustomValue(this.sliderLength, this.customMax - this.customMin);
   }
 
   checkExtremumCoords(coordCurrent: number, min: number, max: number) {
@@ -67,7 +65,7 @@ class SliderModel {
 
   getNextValue(currentCoord: number, min: number, max: number, currentCursor: number) {
     const direction = this.checkDirection(currentCoord, currentCursor);
-    const increase = this.step * direction;
+    const increase = this.toCustomValue.convertFromCustom(this.step) * direction;
     const nextValue = this.checkExtremumCoords(currentCoord + increase, min, max);
     
     return nextValue;
@@ -99,6 +97,10 @@ class SliderModel {
 
   getMinMax() {
     return [this.currentLow, this.currentUpper];
+  }
+
+  getMinMaxCustom() {
+    return this.toCustomValue.getValuesCustom(this.getMinMax());
   }
 }
 
