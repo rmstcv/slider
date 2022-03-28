@@ -7,11 +7,11 @@ const init = {
   step: 50,
 };
 
-const sliderModel = new SliderModel(init);
+let sliderModel = new SliderModel(init);
+const multiplierFromCustom = 1 / ((init.maxCoordCustom - init.minCoordCustom) / init.sliderLength);
 
 afterEach(() => {
-  sliderModel.currentLow = 0;
-  sliderModel.currentUpper = init.sliderLength;
+  sliderModel = new SliderModel(init);
 });
 
 describe('check extremum values', () => {
@@ -50,32 +50,32 @@ describe('get next value', () => {
   const max = init.sliderLength;
   const currentCursor = init.sliderLength / 2;
   it('next value', () => {
-    expect(sliderModel.getNextValue(currentCoord, min, max, currentCursor)).toEqual(currentCoord + init.step);
+    expect(sliderModel.getNextValue(currentCoord, min, max, currentCursor)).toEqual(currentCoord + init.step * multiplierFromCustom);
   });
 });
 
 describe('set current value', () => {
   const currentValue = init.sliderLength / 4;
-  let cursorCoord = currentValue + init.step + init.step / 2;
-  let nextValue = currentValue + init.step;
+  let cursorCoord = currentValue + init.step * multiplierFromCustom + init.step * multiplierFromCustom / 2;
+  let nextValue = currentValue + init.step * multiplierFromCustom;
   it('current value to right', () => {
     expect(sliderModel.setCurrentValue(currentValue, cursorCoord, nextValue)).toEqual(nextValue);
   });
   it('current value to left', () => {
-    cursorCoord = currentValue - init.step - init.step / 2;
-    nextValue = currentValue - init.step;
+    cursorCoord = currentValue - init.step * multiplierFromCustom - init.step * multiplierFromCustom / 2;
+    nextValue = currentValue - init.step * multiplierFromCustom;
     expect(sliderModel.setCurrentValue(currentValue, cursorCoord, nextValue)).toEqual(nextValue);
   });
 });
 
 describe('set min-max', () => {
-  const cursorCoordLow = init.step + init.step / 2;
-  const cursorCoordUpper = init.sliderLength - init.step - init.step / 2;
+  const cursorCoordLow = init.step * multiplierFromCustom * multiplierFromCustom + init.step * multiplierFromCustom * multiplierFromCustom / 2;
+  const cursorCoordUpper = init.sliderLength - init.step * multiplierFromCustom - init.step * multiplierFromCustom / 2;
   it('min value', () => {
-    expect(sliderModel.setMin(cursorCoordLow)).toEqual(init.step);
+    expect(sliderModel.setNextMin(cursorCoordLow)).toEqual(init.step * multiplierFromCustom);
   });
   it('max value', () => {
-    expect(sliderModel.setMax(cursorCoordUpper)).toEqual(init.sliderLength - init.step);
+    expect(sliderModel.setNextMax(cursorCoordUpper)).toEqual(init.sliderLength - init.step * multiplierFromCustom);
   });
   
 });
@@ -90,5 +90,12 @@ describe('get custom min-max', () => {
   it('value', () => {
     const valuesCustom = sliderModel.getMinMaxCustom();
     expect(valuesCustom).toEqual([0, 100]);
+  });
+});
+
+describe('get custom min-max', () => {
+  it('value', () => {
+    const valuesCustom = sliderModel.setMinMaxCustom(init.maxCoordCustom / 4, init.maxCoordCustom / 2);
+    expect(valuesCustom).toEqual([(init.maxCoordCustom / 4) * multiplierFromCustom, (init.maxCoordCustom / 2) * multiplierFromCustom]);
   });
 });

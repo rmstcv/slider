@@ -8,10 +8,16 @@ class SliderView {
 
   currentUpperValue: number;
 
+  lower: HTMLElement;
+
+  upper: HTMLElement;
+
   constructor(slider: HTMLElement, sliderLength: number) {
     this.slider = slider;
     this.currentLowValue = 0;
     this.currentUpperValue = sliderLength;
+    this.lower = this.findElem('.slider__handle-lower');
+    this.upper = this.findElem('.slider__handle-upper');
   }
 
   findElem(selector: string) {
@@ -61,19 +67,17 @@ class SliderView {
 
   shift(elem: HTMLElement, coords: number[]) {
     
-    const lower = this.findElem('.slider__handle-lower');
-    const upper = this.findElem('.slider__handle-upper');
     let [min, max] = coords;
 
-    if (elem === lower) {
-      lower.style.zIndex = '10';
-      upper.style.zIndex = '1';
+    if (elem === this.lower) {
+      this.lower.style.zIndex = '10';
+      this.upper.style.zIndex = '1';
       elem.style.left = min + 'px';
       this.currentLowValue = min;
     }
-    if (elem === upper) {
-      upper.style.zIndex = '10';
-      lower.style.zIndex = '1';
+    if (elem === this.upper) {
+      this.upper.style.zIndex = '10';
+      this.lower.style.zIndex = '1';
       elem.style.left = max + 'px';
       this.currentUpperValue = max;
     }

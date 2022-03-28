@@ -83,16 +83,23 @@ class SliderModel {
     return newCurrentValue;
   }
 
-  setMin(cursorCoordLow: number) {
+  setNextMin(cursorCoordLow: number) {
     const nextValue = this.getNextValue(this.currentLow, this.sliderMin, this.currentUpper, cursorCoordLow);
     this.currentLow = this.setCurrentValue(this.currentLow, cursorCoordLow, nextValue);
     return this.currentLow;
   }
 
-  setMax(cursorCoordUpper: number) {
+  setNextMax(cursorCoordUpper: number) {
     const nextValue = this.getNextValue(this.currentUpper, this.currentLow, this.sliderMax, cursorCoordUpper);
     this.currentUpper = this.setCurrentValue(this.currentUpper, cursorCoordUpper, nextValue);
     return this.currentUpper;
+  }
+
+  setMinMaxCustom(minCustom: number, maxCustom: number) {
+    const [min, max] = [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)];
+    this.currentLow = min;
+    this.currentUpper = max;    
+    return [min, max];
   }
 
   getMinMax() {
