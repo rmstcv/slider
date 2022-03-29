@@ -47,10 +47,15 @@ class SliderView {
 
   showValues(minMax: number[]) {
     const [min, max] = minMax;
-    const lower: HTMLInputElement = document.querySelector('.slider__values-lower');
-    lower.value = min.toString();
-    const upper: HTMLInputElement = document.querySelector('.slider__values-upper');
-    upper.value = max.toString(); 
+    const lowerCount: HTMLElement = document.querySelector('.slider__handle-lower-count');
+    lowerCount.innerHTML = min.toString();
+    const upperCount: HTMLElement = document.querySelector('.slider__handle-upper-count');
+    upperCount.innerHTML = max.toString(); 
+    if (min === max) {
+      lowerCount.style.opacity = '0';
+    } else {
+      lowerCount.style.opacity = '1';
+    }
   }
 
   checkExtremumCoords(coordCurrent: number, min: number, max: number) {
