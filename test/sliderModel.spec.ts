@@ -69,7 +69,7 @@ describe('set current value', () => {
 });
 
 describe('set min-max', () => {
-  const cursorCoordLow = init.step * multiplierFromCustom * multiplierFromCustom + init.step * multiplierFromCustom * multiplierFromCustom / 2;
+  const cursorCoordLow = init.step * multiplierFromCustom + init.step * multiplierFromCustom / 2;
   const cursorCoordUpper = init.sliderLength - init.step * multiplierFromCustom - init.step * multiplierFromCustom / 2;
   it('min value', () => {
     expect(sliderModel.setNextMin(cursorCoordLow)).toEqual(init.step * multiplierFromCustom);

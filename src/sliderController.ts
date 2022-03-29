@@ -8,6 +8,7 @@ const init = {
   step: 10,
   setMin: 10,
   setMax: 50,
+  sliderType: 'range',
 };
 
 class SliderController {
@@ -56,15 +57,21 @@ class SliderController {
     this.sliderView.showValues(this.sliderModel.getMinMaxCustom());
   }
 
-  getValues(e: MouseEvent, elem: HTMLElement) {
+  getValues(e: MouseEvent | TouchEvent, elem: HTMLElement) {
+    let pagex: number;
+    if (e instanceof MouseEvent) {
+      pagex = e.pageX;
+    }
+    if (e instanceof TouchEvent) {
+      pagex = e.touches[0].pageX;
+    }
 
     if (elem === this.lower) {
-      this.sliderModel.setNextMin(e.pageX - this.slider.getBoundingClientRect().left);
+      this.sliderModel.setNextMin(pagex - this.slider.getBoundingClientRect().left);
     } 
     if (elem === this.upper) {
-      this.sliderModel.setNextMax(e.pageX - this.slider.getBoundingClientRect().left);
-    } 
-
+      this.sliderModel.setNextMax(pagex - this.slider.getBoundingClientRect().left);
+    }
     return this.sliderModel.getMinMax();
   }
 
@@ -80,15 +87,23 @@ class SliderController {
   addEvents(elem: HTMLElement) {
     const shiftBind = this.shift.bind(this, elem);
     const showValuesBind = this.showValues.bind(this);
-    const removeMouseUp = function mouseUpClear() {
-      document.removeEventListener('mousemove', shiftBind);
-      document.removeEventListener('mousemove', showValuesBind);
-      document.removeEventListener('mouseup', removeMouseUp);
+    const events = [shiftBind, showValuesBind];
+    const removeEvents = function () {
+      events.forEach((item) => {
+        document.removeEventListener('mousemove', item);
+        document.removeEventListener('touchmove', item);
+      }); 
+      document.removeEventListener('mouseup', removeEvents);
+      document.removeEventListener('touchend', removeEvents);
       document.onmouseup = null;
+      document.ontouchend = null;
     };
-    document.addEventListener('mousemove', shiftBind);
-    document.addEventListener('mousemove', showValuesBind);
-    document.addEventListener('mouseup', removeMouseUp);
+    events.forEach((item) => {
+      document.addEventListener('mousemove', item);
+      document.addEventListener('touchmove', item);
+    }); 
+    document.addEventListener('mouseup', removeEvents);
+    document.addEventListener('touchend', removeEvents);
     document.ondragstart = function () {
       return false;
     };
@@ -99,9 +114,23 @@ class SliderController {
     this.setValues([init.setMin, init.setMax]);
     this.upper.addEventListener('mousedown', () => this.addEvents(this.upper));
     this.lower.addEventListener('mousedown', () => this.addEvents(this.lower));
+    this.upper.addEventListener('touchstart', () => this.addEvents(this.upper));
+    this.lower.addEventListener('touchstart', () => this.addEvents(this.lower));
+  }
+
+  checkSliderType() {
+    if (init.sliderType === 'single') {
+      this.lower.style.display = 'none';
+      init.setMin = 0;
+    }
+  }
+
+  init() {
+    this.checkSliderType();
+    this.addListeners();
   }
 }
 
 const controller = new SliderController(document.querySelector('.slider'));
 
-controller.addListeners();
+controller.init();
