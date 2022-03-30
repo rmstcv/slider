@@ -33,18 +33,22 @@ class SliderController {
   searchElem(selector: string) {
     const elems = document.querySelectorAll(selector);
     let targetElem: HTMLElement;
-    let checkElem = (checkedElem: HTMLElement) => {
-
-      if (checkedElem.parentElement === this.slider) {
-        targetElem = checkedElem;
-      } else if (targetElem !== undefined){
-        checkElem(checkedElem.parentElement);
+    let parentElem: HTMLElement;
+    let checkElem = (item: HTMLElement) => {
+      if (item.parentElement === this.slider) {
+        parentElem = item;
+      } else if (item.parentElement){
+        checkElem(item.parentElement);
       } else {
-        targetElem = this.slider;
+        return;
       }
     };
-    elems.forEach((item: HTMLElement) => {
-      checkElem(item);
+
+    elems.forEach((elem: HTMLElement) => {
+      checkElem(elem);
+      if (parentElem) {
+        targetElem = elem;
+      }
     });
     return targetElem;
   }
@@ -110,7 +114,6 @@ class SliderController {
   }
 
   addListeners() {    
-    this.sliderView.showValues(this.sliderModel.getMinMaxCustom());
     this.setValues([init.setMin, init.setMax]);
     this.upper.addEventListener('mousedown', () => this.addEvents(this.upper));
     this.lower.addEventListener('mousedown', () => this.addEvents(this.lower));

@@ -12,44 +12,56 @@ class SliderView {
 
   upper: HTMLElement;
 
+  progressBar: HTMLElement;
+
   constructor(slider: HTMLElement, sliderLength: number) {
     this.slider = slider;
     this.currentLowValue = 0;
     this.currentUpperValue = sliderLength;
-    this.lower = this.findElem('.slider__handle-lower');
-    this.upper = this.findElem('.slider__handle-upper');
+    this.lower = this.searchElem('.slider__handle-lower');
+    this.upper = this.searchElem('.slider__handle-upper');
+    this.progressBar = this.searchElem('.slider__highlight');
   }
 
-  findElem(selector: string) {
+  searchElem(selector: string) {
     const elems = document.querySelectorAll(selector);
     let targetElem: HTMLElement;
-    
+    let parentElem: HTMLElement;
+    let checkElem = (item: HTMLElement) => {
+      if (item.parentElement === this.slider) {
+        parentElem = item;
+      } else if (item.parentElement){
+        checkElem(item.parentElement);
+      } else {
+        return;
+      }
+    };
+
     elems.forEach((elem: HTMLElement) => {
-      if (elem.parentNode === this.slider) {
+      checkElem(elem);
+      if (parentElem) {
         targetElem = elem;
       }
     });
-    
     return targetElem;
   }
 
-  progressHighlight() {
-    const sliderHighlight: HTMLElement = this.findElem('.slider__highlight');
+  progressBarHighlight() {
     const progressLength = this.currentUpperValue - this.currentLowValue;
     
     if ( progressLength >= 0 ) {
-      sliderHighlight.style.width = progressLength + 'px';
-      sliderHighlight.style.left = this.currentLowValue + 'px';
+      this.progressBar.style.width = progressLength + 'px';
+      this.progressBar.style.left = this.currentLowValue + 'px';
     } else {
-      sliderHighlight.style.width = 0 + 'px';
+      this.progressBar.style.width = 0 + 'px';
     }
   } 
 
   showValues(minMax: number[]) {
     const [min, max] = minMax;
-    const lowerCount: HTMLElement = document.querySelector('.slider__handle-lower-count');
+    const lowerCount: HTMLElement = this.searchElem('.slider__handle-lower-count');
     lowerCount.innerHTML = min.toString();
-    const upperCount: HTMLElement = document.querySelector('.slider__handle-upper-count');
+    const upperCount: HTMLElement = this.searchElem('.slider__handle-upper-count');
     upperCount.innerHTML = max.toString(); 
     if (min === max) {
       lowerCount.style.opacity = '0';
@@ -86,7 +98,7 @@ class SliderView {
       elem.style.left = max + 'px';
       this.currentUpperValue = max;
     }
-    this.progressHighlight();
+    this.progressBarHighlight();
   }
 }
 
