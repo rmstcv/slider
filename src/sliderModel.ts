@@ -44,6 +44,7 @@ class SliderModel {
     
     if (coordCurrent < min) {
       coordChecked = min;
+      
     }
     if (coordChecked > max) {
       coordChecked = max;
@@ -73,25 +74,27 @@ class SliderModel {
 
   setCurrentValue(currentValue: number, cursorCoord: number, nextValue: number) {
     let newCurrentValue: number = currentValue;
-
+    
     if (cursorCoord > nextValue && nextValue > currentValue) {
-      newCurrentValue = nextValue;
+      newCurrentValue = Math.round( cursorCoord / this.step) * this.step;
     }
     if (cursorCoord < currentValue && cursorCoord < nextValue) {
-      newCurrentValue = nextValue;
+      newCurrentValue = Math.round( cursorCoord / this.step) * this.step;
     }
     return newCurrentValue;
   }
 
   setNextMin(cursorCoordLow: number) {
     const nextValue = this.getNextValue(this.currentLow, this.sliderMin, this.currentUpper, cursorCoordLow);
-    this.currentLow = this.setCurrentValue(this.currentLow, cursorCoordLow, nextValue);
+    const newCurrentValue = this.setCurrentValue(this.currentLow, cursorCoordLow, nextValue);
+    this.currentLow = this.checkExtremumCoords(newCurrentValue, this.sliderMin, this.currentUpper);
     return this.currentLow;
   }
 
   setNextMax(cursorCoordUpper: number) {
     const nextValue = this.getNextValue(this.currentUpper, this.currentLow, this.sliderMax, cursorCoordUpper);
-    this.currentUpper = this.setCurrentValue(this.currentUpper, cursorCoordUpper, nextValue);
+    const newCurrentValue = this.setCurrentValue(this.currentUpper, cursorCoordUpper, nextValue);
+    this.currentUpper = this.checkExtremumCoords(newCurrentValue, this.currentLow, this.sliderMax);
     return this.currentUpper;
   }
 
