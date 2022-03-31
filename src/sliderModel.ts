@@ -1,6 +1,6 @@
 import ToCustomValue from './toCustomValue';
 
-interface Init {
+interface InitModel {
   sliderLength: number;
   minCoordCustom: number;
   maxCoordCustom: number; 
@@ -27,7 +27,7 @@ class SliderModel {
 
   toCustomValue: ToCustomValue;
 
-  constructor(init: Init) {
+  constructor(init: InitModel) {
     this.sliderLength = init.sliderLength;
     this.customMin = init.minCoordCustom;
     this.customMax = init.maxCoordCustom;

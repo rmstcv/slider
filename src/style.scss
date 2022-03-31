@@ -67,5 +67,11 @@ body {
     transform: translate(-50%, -100%);
     user-select: none;
     font-size: 22px;
+    &_vertical {
+      width: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(100%, -50%);
+    }
   }
 }

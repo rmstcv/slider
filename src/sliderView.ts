@@ -1,5 +1,11 @@
 import './sliderCreater';
 
+interface InitView {
+  sliderLength: number;
+  orientation?: 'vertical' | 'horizontal',
+  sliderType: 'range' | 'single',
+}
+
 class SliderView {
 
   slider: HTMLElement;
@@ -12,15 +18,24 @@ class SliderView {
 
   upper: HTMLElement;
 
+  lowerCount: HTMLElement;
+
+  upperCount: HTMLElement;
+
   progressBar: HTMLElement;
 
-  constructor(slider: HTMLElement, sliderLength: number) {
+  initView: InitView;
+
+  constructor(slider: HTMLElement, initView: InitView) {
     this.slider = slider;
     this.currentLowValue = 0;
-    this.currentUpperValue = sliderLength;
+    this.currentUpperValue = initView.sliderLength;
     this.lower = this.searchElem('.slider__handle-lower');
     this.upper = this.searchElem('.slider__handle-upper');
+    this.lowerCount = this.searchElem('.slider__handle-lower-count');
+    this.upperCount = this.searchElem('.slider__handle-upper-count');
     this.progressBar = this.searchElem('.slider__highlight');
+    this.initView = initView;
   }
 
   searchElem(selector: string) {
@@ -28,6 +43,7 @@ class SliderView {
     let targetElem: HTMLElement;
     let parentElem: HTMLElement;
     let checkElem = (item: HTMLElement) => {
+
       if (item.parentElement === this.slider) {
         parentElem = item;
       } else if (item.parentElement){
@@ -47,26 +63,35 @@ class SliderView {
   }
 
   progressBarHighlight() {
-    const progressLength = this.currentUpperValue - this.currentLowValue;
-    
-    if ( progressLength >= 0 ) {
-      this.progressBar.style.width = progressLength + 'px';
-      this.progressBar.style.left = this.currentLowValue + 'px';
-    } else {
-      this.progressBar.style.width = 0 + 'px';
+    const progressLength = this.currentUpperValue - this.currentLowValue; 
+
+    if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
+      if ( progressLength >= 0 ) {
+        this.progressBar.style.width = progressLength + 'px';
+        this.progressBar.style.left = this.currentLowValue + 'px';
+      } else {
+        this.progressBar.style.width = 0 + 'px';
+      }
+    }
+    if (this.initView.orientation === 'vertical') {
+      if ( progressLength >= 0 ) {
+        this.progressBar.style.height = progressLength + 'px';
+        this.progressBar.style.top = this.currentLowValue + 'px';
+      } else {
+        this.progressBar.style.height = 0 + 'px';
+      }
     }
   } 
 
   showValues(minMax: number[]) {
     const [min, max] = minMax;
-    const lowerCount: HTMLElement = this.searchElem('.slider__handle-lower-count');
-    lowerCount.innerHTML = min.toString();
-    const upperCount: HTMLElement = this.searchElem('.slider__handle-upper-count');
-    upperCount.innerHTML = max.toString(); 
+    this.lowerCount.innerHTML = min.toString();
+    this.upperCount.innerHTML = max.toString();
+
     if (min === max) {
-      lowerCount.style.opacity = '0';
+      this.lowerCount.style.opacity = '0';
     } else {
-      lowerCount.style.opacity = '1';
+      this.lowerCount.style.opacity = '1';
     }
   }
 
@@ -83,22 +108,57 @@ class SliderView {
   }
 
   shift(elem: HTMLElement, coords: number[]) {
-    
     let [min, max] = coords;
 
     if (elem === this.lower) {
       this.lower.style.zIndex = '10';
       this.upper.style.zIndex = '1';
-      elem.style.left = min + 'px';
+      if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
+        elem.style.left = min + 'px';
+      }
+      if (this.initView.orientation === 'vertical') {
+        elem.style.top = min + 'px';
+      }
       this.currentLowValue = min;
     }
     if (elem === this.upper) {
       this.upper.style.zIndex = '10';
       this.lower.style.zIndex = '1';
-      elem.style.left = max + 'px';
+      if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
+        elem.style.left = max + 'px';
+      }
+      if (this.initView.orientation === 'vertical') {
+        elem.style.top = max + 'px';
+      }
       this.currentUpperValue = max;
     }
     this.progressBarHighlight();
+  }
+
+  checkSliderType() {
+    if (this.initView.sliderType === 'single') {
+      this.lower.style.display = 'none';
+    }
+  }
+
+  checkSliderOrientation() {
+    this.slider.style.width = `${this.initView.sliderLength}px`;
+    this.slider.style.height = '20px';
+    if (this.initView.orientation === 'vertical') {
+      this.slider.style.width = '20px';
+      this.slider.style.height = `${this.initView.sliderLength}px`;
+      this.lower.style.top = '0'; 
+      this.lower.style.left = '50%'; 
+      this.upper.style.top = `${this.initView.sliderLength}px`; 
+      this.upper.style.left = '50%'; 
+      this.lowerCount.classList.add('slider__handle-upper-count_vertical');
+      this.upperCount.classList.add('slider__handle-lower-count_vertical');
+    }
+  }
+
+  init() {
+    this.checkSliderType();
+    this.checkSliderOrientation();
   }
 }
 
