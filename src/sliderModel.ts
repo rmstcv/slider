@@ -74,12 +74,12 @@ class SliderModel {
 
   setCurrentValue(currentValue: number, cursorCoord: number, nextValue: number) {
     let newCurrentValue: number = currentValue;
-    
+    const step = this.toCustomValue.convertFromCustom(this.step);
     if (cursorCoord > nextValue && nextValue > currentValue) {
-      newCurrentValue = Math.round( cursorCoord / this.step) * this.step;
+      newCurrentValue = Math.round( cursorCoord / step) * step;
     }
     if (cursorCoord < currentValue && cursorCoord < nextValue) {
-      newCurrentValue = Math.round( cursorCoord / this.step) * this.step;
+      newCurrentValue = Math.round( cursorCoord / step) * step;
     }
     return newCurrentValue;
   }
