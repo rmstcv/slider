@@ -30,36 +30,34 @@ class SliderView {
     this.slider = slider;
     this.currentLowValue = 0;
     this.currentUpperValue = initView.sliderLength;
-    this.lower = this.searchElem('.slider__handle-lower');
-    this.upper = this.searchElem('.slider__handle-upper');
-    this.lowerCount = this.searchElem('.slider__handle-lower-count');
-    this.upperCount = this.searchElem('.slider__handle-upper-count');
-    this.progressBar = this.searchElem('.slider__highlight');
+    this.lower = this.searchElem('.slider__handle-lower') as HTMLElement;
+    this.upper = this.searchElem('.slider__handle-upper') as HTMLElement;
+    this.lowerCount = this.searchElem('.slider__handle-lower-count') as HTMLElement;
+    this.upperCount = this.searchElem('.slider__handle-upper-count') as HTMLElement;
+    this.progressBar = this.searchElem('.slider__highlight') as HTMLElement;
     this.initView = initView;
   }
 
   searchElem(selector: string) {
-    const elems = document.querySelectorAll(selector);
-    let targetElem: HTMLElement;
-    let parentElem: HTMLElement;
+    const elems: NodeListOf<HTMLElement> = document.querySelectorAll(selector);
     let checkElem = (item: HTMLElement) => {
 
       if (item.parentElement === this.slider) {
-        parentElem = item;
+        return item;
       } else if (item.parentElement){
         checkElem(item.parentElement);
-      } else {
-        return;
       }
+      return item;
     };
-
-    elems.forEach((elem: HTMLElement) => {
-      checkElem(elem);
-      if (parentElem) {
-        targetElem = elem;
+    const check = () => {
+      for (let i = 0; i < elems.length; i ++) {
+        checkElem(elems[i]);
+        if (checkElem(elems[i])) {
+          return elems[i];
+        }
       }
-    });
-    return targetElem;
+    }; 
+    return check();
   }
 
   progressBarHighlight() {

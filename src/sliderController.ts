@@ -6,8 +6,8 @@ const init = {
   minCoordCustom: 0,
   maxCoordCustom: 200,
   step: 20,
-  setMin: 50,
-  setMax: 150,
+  setMin: 40,
+  setMax: 160,
   sliderType: 'range',
   orientation: 'horizontal',
 };
@@ -38,8 +38,8 @@ class SliderController {
 
   constructor(slider: HTMLElement, initController: InitController) {
     this.slider = slider;
-    this.lower = this.searchElem('.slider__handle-lower');
-    this.upper = this.searchElem('.slider__handle-upper');
+    this.lower = <HTMLElement> this.searchElem('.slider__handle-lower');
+    this.upper = <HTMLElement> this.searchElem('.slider__handle-upper');
     this.sliderModel = new SliderModel({
       sliderLength: initController.sliderLength,
       minCoordCustom: initController.minCoordCustom,
@@ -55,26 +55,24 @@ class SliderController {
   }
 
   searchElem(selector: string) {
-    const elems = document.querySelectorAll(selector);
-    let targetElem: HTMLElement;
-    let parentElem: HTMLElement;
+    const elems: NodeListOf<HTMLElement> = document.querySelectorAll(selector);
     let checkElem = (item: HTMLElement) => {
+
       if (item.parentElement === this.slider) {
-        parentElem = item;
+        return item;
       } else if (item.parentElement){
         checkElem(item.parentElement);
-      } else {
-        return;
       }
     };
-
-    elems.forEach((elem: HTMLElement) => {
-      checkElem(elem);
-      if (parentElem) {
-        targetElem = elem;
+    const check = () => {
+      for (let i = 0; i < elems.length; i ++) {
+        checkElem(elems[i]);
+        if (checkElem(elems[i])) {
+          return elems[i];
+        }
       }
-    });
-    return targetElem;
+    }; 
+    return check();
   }
 
   setValues(values: number[]) {
@@ -86,33 +84,36 @@ class SliderController {
   }
 
   getValues(e: MouseEvent | TouchEvent, elem: HTMLElement) {
-    let currentCoord: number;
-    
-    if (e instanceof MouseEvent) {
-      currentCoord = e.pageX;
-      if (init.orientation === 'vertical') {
-        currentCoord = e.clientY;
+    let getCoord = () => {
+
+      if (e instanceof MouseEvent) {
+        if (init.orientation === 'vertical') {
+          return e.clientY;
+        } else {
+          return e.pageX;
+        }
       }
-    }
-    if (window.TouchEvent && e instanceof TouchEvent) {
-      currentCoord = e.touches[0].pageX;
-      if (init.orientation === 'vertical') {
-        currentCoord = e.touches[0].pageY;
+      if (window.TouchEvent && e instanceof TouchEvent) {
+        if (init.orientation === 'vertical') {
+          return e.touches[0].pageY;
+        } else {
+          return e.touches[0].pageX;
+        }
       }
-    }
+      return process.exit();
+    };
+    let currentCoord: number = getCoord();
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
 
     if (init.orientation === 'vertical') {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
-
     if (elem === this.lower) {
       this.sliderModel.setNextMin(clientCoord);  
     } 
     if (elem === this.upper) {
       this.sliderModel.setNextMax(clientCoord);
     }
-    
     return this.sliderModel.getMinMax();
   }
 
@@ -121,7 +122,7 @@ class SliderController {
     this.sliderView.showValues([min, max]);
   }
 
-  shift(elem: HTMLElement, e: MouseEvent) {
+  shift(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     this.sliderView.shift(elem, this.getValues(e, elem));  
   }
 
@@ -131,7 +132,6 @@ class SliderController {
     const showValuesBind = this.showValues.bind(this);
     const actions = [shiftBind, showValuesBind];
     const removeEvents = function () {
-      
       actions.forEach((action) => {
         document.removeEventListener('mousemove', action);
         document.removeEventListener('touchmove', action);
@@ -173,6 +173,6 @@ class SliderController {
   }
 }
 
-const controller = new SliderController(document.querySelector('.slider'), init as InitController);
+const controller = new SliderController(document.querySelector('.slider') as HTMLElement, init as InitController);
 
 controller.init();
