@@ -50,6 +50,8 @@ class SliderController {
       sliderLength: initController.sliderLength, 
       orientation: initController.orientation,
       sliderType: initController.sliderType,
+      maxCoordCustom: initController.maxCoordCustom,
+      step: initController.step,
     });
     this.initController = initController;
   }
@@ -123,7 +125,7 @@ class SliderController {
   }
 
   shift(elem: HTMLElement, e: MouseEvent | TouchEvent) {
-    this.sliderView.shift(elem, this.getValues(e, elem));  
+    this.sliderView.shift(elem, this.getValues(e, elem));
   }
 
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
@@ -166,10 +168,20 @@ class SliderController {
     }
   }
 
+  addScaleListeners() {
+    this.slider.addEventListener('click', (e: Event) => {
+      const elem: HTMLElement = e.target as HTMLElement;
+      if (elem.classList.contains('slider__scale-marker-value')) {
+        this.setValues([0, parseInt(elem.getAttribute('data-value'))]);
+      }
+    });
+  }
+
   init() {
     this.checkSliderType();
     this.sliderView.init();
     this.addListeners();
+    this.addScaleListeners();
   }
 }
 

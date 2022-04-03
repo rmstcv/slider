@@ -2,9 +2,10 @@
   "compilerOptions": {
     "sourceMap": true,
     "target": "esnext",
-    "removeComments": false,
+    "removeComments": true,
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "lib": ["DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules"],

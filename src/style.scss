@@ -55,7 +55,7 @@ body {
     background-color: black;
     height: 100%;
     left: 0;
-    position: absolute;
+    position: relative;
     z-index: 0;
     top: 0;
   }
@@ -73,5 +73,34 @@ body {
       left: 50%;
       transform: translate(100%, -50%);
     }
+  }
+  &__scale-container {
+    transform: translateY(100%);
+    width: 100%;
+    height: 30px;
+    background-color: #171212;
+    display: flex;
+    justify-content: space-between;
+  }
+  &__scale-marker {
+    width: 2px;
+    height: 10px;
+    background-color: black;
+    &_large {
+      width: 3px;
+      height: 20px;
+    }
+  }
+  &__scale-value-container {
+    // display: flex;
+    // justify-content: space-between;
+    margin-top: 50px;
+    height: 1rem;
+  }
+  &__scale-marker-value {
+    position: absolute;
+    transform: translateX(-50%);
+    cursor: pointer;
+    height: 1rem;
   }
 }
