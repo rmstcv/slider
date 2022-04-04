@@ -1,5 +1,6 @@
 import SliderModel from './sliderModel';
 import SliderView from './sliderView';
+import searchElem from './searchElem';
 
 const init = {
   sliderLength: 400,
@@ -10,6 +11,7 @@ const init = {
   setMax: 160,
   sliderType: 'range',
   orientation: 'horizontal',
+  scale: true,
 };
 
 interface InitController {
@@ -21,6 +23,7 @@ interface InitController {
   setMax: number,
   sliderType: 'range' | 'single',
   orientation?: 'vertical' | 'horizontal',
+  scale?: boolean,
 }
 
 class SliderController {
@@ -38,8 +41,8 @@ class SliderController {
 
   constructor(slider: HTMLElement, initController: InitController) {
     this.slider = slider;
-    this.lower = <HTMLElement> this.searchElem('.slider__handle-lower');
-    this.upper = <HTMLElement> this.searchElem('.slider__handle-upper');
+    this.lower = <HTMLElement> searchElem('.slider__handle-lower', this.slider);
+    this.upper = <HTMLElement> searchElem('.slider__handle-upper', this.slider);
     this.sliderModel = new SliderModel({
       sliderLength: initController.sliderLength,
       minCoordCustom: initController.minCoordCustom,
@@ -54,27 +57,6 @@ class SliderController {
       step: initController.step,
     });
     this.initController = initController;
-  }
-
-  searchElem(selector: string) {
-    const elems: NodeListOf<HTMLElement> = document.querySelectorAll(selector);
-    let checkElem = (item: HTMLElement) => {
-
-      if (item.parentElement === this.slider) {
-        return item;
-      } else if (item.parentElement){
-        checkElem(item.parentElement);
-      }
-    };
-    const check = () => {
-      for (let i = 0; i < elems.length; i ++) {
-        checkElem(elems[i]);
-        if (checkElem(elems[i])) {
-          return elems[i];
-        }
-      }
-    }; 
-    return check();
   }
 
   setValues(values: number[]) {
@@ -168,20 +150,24 @@ class SliderController {
     }
   }
 
-  addScaleListeners() {
-    this.slider.addEventListener('click', (e: Event) => {
-      const elem: HTMLElement = e.target as HTMLElement;
-      if (elem.classList.contains('slider__scale-marker-value')) {
-        this.setValues([0, parseInt(elem.getAttribute('data-value'))]);
-      }
-    });
+  addScale() {
+    if (this.initController.scale) {
+      this.slider.addEventListener('click', (e: Event) => {
+        const elem: HTMLElement = e.target as HTMLElement;
+        const value: number = Number(elem.getAttribute('data-value'));
+        if (elem.classList.contains('slider__scale-marker-value')) {
+          this.setValues([0, value]);
+        }
+      });
+      this.sliderView.createScail();
+    }
   }
 
   init() {
     this.checkSliderType();
     this.sliderView.init();
     this.addListeners();
-    this.addScaleListeners();
+    this.addScale();
   }
 }
 

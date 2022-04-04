@@ -1,4 +1,6 @@
 import './sliderCreater';
+import SliderScale from './sliderScale';
+import searchElem from './searchElem';
 
 interface InitView {
   sliderLength: number;
@@ -28,38 +30,22 @@ class SliderView {
 
   initView: InitView;
 
+  sliderScale: SliderScale;
+
   constructor(slider: HTMLElement, initView: InitView) {
     this.slider = slider;
     this.currentLowValue = 0;
     this.currentUpperValue = initView.sliderLength;
-    this.lower = this.searchElem('.slider__handle-lower') as HTMLElement;
-    this.upper = this.searchElem('.slider__handle-upper') as HTMLElement;
-    this.lowerCount = this.searchElem('.slider__handle-lower-count') as HTMLElement;
-    this.upperCount = this.searchElem('.slider__handle-upper-count') as HTMLElement;
-    this.progressBar = this.searchElem('.slider__highlight') as HTMLElement;
+    this.lower = searchElem('.slider__handle-lower', this.slider) as HTMLElement;
+    this.upper = searchElem('.slider__handle-upper', this.slider) as HTMLElement;
+    this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
+    this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
+    this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
     this.initView = initView;
-  }
-
-  searchElem(selector: string) {
-    const elems: NodeListOf<HTMLElement> = document.querySelectorAll(selector);
-    let checkElem = (item: HTMLElement) => {
-
-      if (item.parentElement === this.slider) {
-        return item;
-      } else if (item.parentElement){
-        checkElem(item.parentElement);
-      }
-      return item;
-    };
-    const check = () => {
-      for (let i = 0; i < elems.length; i ++) {
-        checkElem(elems[i]);
-        if (checkElem(elems[i])) {
-          return elems[i];
-        }
-      }
-    }; 
-    return check();
+    this.sliderScale = new SliderScale(this.slider, {
+      maxCoordCustom: this.initView.maxCoordCustom,
+      step: this.initView.step,
+    });
   }
 
   progressBarHighlight() {
@@ -85,6 +71,7 @@ class SliderView {
 
   showValues(minMax: number[]) {
     const [min, max] = minMax;
+    
     this.lowerCount.innerHTML = min.toString();
     this.upperCount.innerHTML = max.toString();
 
@@ -157,51 +144,12 @@ class SliderView {
   }
 
   createScail() {
-    const scale = this.searchElem('.slider__scale');
-    const scaleContainer = document.createElement('div');
-    scaleContainer.classList.add('slider__scale-container');
-    const scaleValue = this.searchElem('.slider__scale-value');
-    const scaleValueContainer = document.createElement('div');
-    scaleValueContainer.classList.add('slider__scale-value-container');
-    const scaleMultiplier = 2;
-    for ( let i = 0; i <= (this.initView.maxCoordCustom / this.initView.step) * scaleMultiplier; i += 1) {
-      const elemScale: HTMLElement = document.createElement('div');
-      
-      elemScale.classList.add('slider__scale-marker');
-      
-      if (i % scaleMultiplier === 0) {   
-        elemScale.classList.add('slider__scale-marker_large');
-
-        const elemScaleValue: HTMLElement = document.createElement('div');
-        elemScaleValue.classList.add('slider__scale-marker-value');
-        elemScaleValue.setAttribute('data-value', `${i * this.initView.step / scaleMultiplier}`);
-        elemScaleValue.innerHTML = `${i * this.initView.step / scaleMultiplier}`;
-        elemScaleValue.style.left = `${i * this.initView.step}px`;
-        scaleValueContainer.appendChild(elemScaleValue);
-      }
-      scaleContainer.appendChild(elemScale);
-    }
-    if (scale) {
-      scale.innerHTML = '';
-      scale?.append(scaleContainer);
-    } 
-    if (scaleValue) {
-      scaleValue.innerHTML = '';
-      scaleValue?.append(scaleValueContainer);
-    } 
-    // this.slider.addEventListener('click', (e: Event) => {
-    //   const elem: HTMLElement = e.target as HTMLElement;
-    //   if (elem.classList.contains('slider__scale-marker-value')) {
-    //     console.log(elem.getAttribute('data-value')); 
-    //   }
-      
-    // });
+    this.sliderScale.createScail();
   }
 
   init() {
     this.checkSliderType();
     this.checkSliderOrientation();
-    this.createScail();
   }
 }
 
