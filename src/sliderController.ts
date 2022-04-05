@@ -1,14 +1,14 @@
 import SliderModel from './sliderModel';
 import SliderView from './sliderView';
 import searchElem from './searchElem';
+import ToCustomValue from './toCustomValue';
 
 const init = {
-  sliderLength: 400,
   minCoordCustom: 0,
-  maxCoordCustom: 200,
-  step: 20,
-  setMin: 40,
-  setMax: 160,
+  maxCoordCustom: 30,
+  step: 2,
+  setMin: 4,
+  setMax: 16,
   sliderType: 'range',
   orientation: 'horizontal',
   scale: true,
@@ -39,31 +39,47 @@ class SliderController {
 
   initController: InitController;
 
+  sliderWidth: number;
+
+  toCustomValue: ToCustomValue;
+
   constructor(slider: HTMLElement, initController: InitController) {
+    this.initController = initController;
     this.slider = slider;
+    this.sliderWidth = this.checkSliderOrientation() ;
     this.lower = <HTMLElement> searchElem('.slider__handle-lower', this.slider);
     this.upper = <HTMLElement> searchElem('.slider__handle-upper', this.slider);
+    this.toCustomValue = new ToCustomValue(this.sliderWidth, initController.maxCoordCustom - initController.minCoordCustom);
     this.sliderModel = new SliderModel({
-      sliderLength: initController.sliderLength,
       minCoordCustom: initController.minCoordCustom,
       maxCoordCustom: initController.maxCoordCustom,
       step: initController.step,
     });
     this.sliderView = new SliderView(slider, {
-      sliderLength: initController.sliderLength, 
       orientation: initController.orientation,
       sliderType: initController.sliderType,
-      maxCoordCustom: initController.maxCoordCustom,
-      step: initController.step,
+      maxCoordCustom: initController.maxCoordCustom - initController.minCoordCustom,
+      step: this.toCustomValue.convertFromCustom(initController.step),
+      sliderWidth: this.sliderWidth,
     });
-    this.initController = initController;
   }
 
-  setValues(values: number[]) {
-    const [minCustom, maxCustom] = values;
+  checkSliderOrientation() {
+    if (this.initController.orientation === 'vertical') {
+      this.slider.classList.add('slider_vertical');
+      return this.slider.getBoundingClientRect().height!;
+    } else {
+      return this.slider.getBoundingClientRect().width!;
+    }
+  }
+
+  setValues(values: number[]) { 
+    let [minCustom, maxCustom] = values;
     this.sliderModel.setMinMaxCustom(minCustom, maxCustom);
-    this.sliderView.shift(this.lower, this.sliderModel.getMinMax()); 
-    this.sliderView.shift(this.upper, this.sliderModel.getMinMax()); 
+    [minCustom, maxCustom] = this.sliderModel.getMinMax();
+    
+    this.sliderView.shift(this.lower, [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)]); 
+    this.sliderView.shift(this.upper, [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)]); 
     this.sliderView.showValues(this.sliderModel.getMinMaxCustom());
   }
 
@@ -93,12 +109,16 @@ class SliderController {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
     if (elem === this.lower) {
-      this.sliderModel.setNextMin(clientCoord);  
+      this.sliderModel.setNextMin(this.toCustomValue.convertToCustom(clientCoord));
     } 
     if (elem === this.upper) {
-      this.sliderModel.setNextMax(clientCoord);
+      this.sliderModel.setNextMax(this.toCustomValue.convertToCustom(clientCoord));
     }
-    return this.sliderModel.getMinMax();
+    let [min, max] = this.sliderModel.getMinMax();
+    
+    [min, max] = [this.toCustomValue.convertFromCustom(min), this.toCustomValue.convertFromCustom(max)];
+    
+    return [min, max];
   }
 
   showValues() {
@@ -171,6 +191,7 @@ class SliderController {
   }
 }
 
-const controller = new SliderController(document.querySelector('.slider') as HTMLElement, init as InitController);
-
-controller.init();
+window.addEventListener('load', () => {
+  const controller = new SliderController(document.querySelector('.slider') as HTMLElement, init as InitController);
+  controller.init();
+});

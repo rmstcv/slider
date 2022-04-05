@@ -3,11 +3,11 @@ import SliderScale from './sliderScale';
 import searchElem from './searchElem';
 
 interface InitView {
-  sliderLength: number;
   orientation?: 'vertical' | 'horizontal',
   sliderType: 'range' | 'single',
   maxCoordCustom: number,
-  step: number
+  step: number,
+  sliderWidth: number,
 }
 
 class SliderView {
@@ -32,19 +32,24 @@ class SliderView {
 
   sliderScale: SliderScale;
 
+  sliderLength: number;
+
   constructor(slider: HTMLElement, initView: InitView) {
+    this.initView = initView;
     this.slider = slider;
     this.currentLowValue = 0;
-    this.currentUpperValue = initView.sliderLength;
+    this.sliderLength = this.initView.sliderWidth;
+    this.currentUpperValue = this.sliderLength;
     this.lower = searchElem('.slider__handle-lower', this.slider) as HTMLElement;
     this.upper = searchElem('.slider__handle-upper', this.slider) as HTMLElement;
     this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
     this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
     this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
-    this.initView = initView;
     this.sliderScale = new SliderScale(this.slider, {
       maxCoordCustom: this.initView.maxCoordCustom,
       step: this.initView.step,
+      orientation: this.initView.orientation,
+      sliderWidth: this.initView.sliderWidth,
     });
   }
 
@@ -82,21 +87,9 @@ class SliderView {
     }
   }
 
-  checkExtremumCoords(coordCurrent: number, min: number, max: number) {
-    let coordChecked = coordCurrent;
-    
-    if (coordCurrent < min) {
-      coordChecked = min;
-    }
-    if (coordChecked > max) {
-      coordChecked = max;
-    }    
-    return coordChecked;
-  }
-
   shift(elem: HTMLElement, coords: number[]) {
     let [min, max] = coords;
-
+    
     if (elem === this.lower) {
       this.lower.style.zIndex = '10';
       this.upper.style.zIndex = '1';
@@ -129,22 +122,16 @@ class SliderView {
   }
 
   checkSliderOrientation() {
-    this.slider.style.width = `${this.initView.sliderLength}px`;
-    this.slider.style.height = '20px';
+
     if (this.initView.orientation === 'vertical') {
-      this.slider.style.width = '20px';
-      this.slider.style.height = `${this.initView.sliderLength}px`;
-      this.lower.style.top = '0'; 
-      this.lower.style.left = '50%'; 
-      this.upper.style.top = `${this.initView.sliderLength}px`; 
-      this.upper.style.left = '50%'; 
-      this.lowerCount.classList.add('slider__handle-upper-count_vertical');
-      this.upperCount.classList.add('slider__handle-lower-count_vertical');
+      this.slider.classList.add('slider_vertical');
+      // this.slider.style.height = `${this.sliderLength}px`;
+      // this.upper.style.top = `${this.sliderLength}px`;   
     }
   }
 
   createScail() {
-    this.sliderScale.createScail();
+    this.sliderScale.init();
   }
 
   init() {

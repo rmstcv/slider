@@ -1,7 +1,4 @@
-import ToCustomValue from './toCustomValue';
-
 interface InitModel {
-  sliderLength: number;
   minCoordCustom: number;
   maxCoordCustom: number; 
   step: number
@@ -13,8 +10,6 @@ class SliderModel {
 
   sliderMax: number;
 
-  sliderLength: number;
-
   customMin: number;
 
   customMax: number;
@@ -25,18 +20,14 @@ class SliderModel {
 
   step: number;
 
-  toCustomValue: ToCustomValue;
-
   constructor(init: InitModel) {
-    this.sliderLength = init.sliderLength;
     this.customMin = init.minCoordCustom;
     this.customMax = init.maxCoordCustom;
     this.step = init.step;
-    this.sliderMin = 0;
-    this.sliderMax = init.sliderLength;
+    this.sliderMin = init.minCoordCustom;
+    this.sliderMax = init.maxCoordCustom;
     this.currentLow = this.sliderMin;
     this.currentUpper = this.sliderMax;
-    this.toCustomValue = new ToCustomValue(this.sliderLength, this.customMax - this.customMin);
   }
 
   checkExtremumCoords(coordCurrent: number, min: number, max: number) {
@@ -66,7 +57,7 @@ class SliderModel {
 
   getNextValue(currentCoord: number, min: number, max: number, currentCursor: number) {
     const direction = this.checkDirection(currentCoord, currentCursor);
-    const increase = this.toCustomValue.convertFromCustom(this.step) * direction;
+    const increase = (this.step) * direction;
     const nextValue = this.checkExtremumCoords(currentCoord + increase, min, max);
     
     return nextValue;
@@ -74,7 +65,7 @@ class SliderModel {
 
   setCurrentValue(currentValue: number, cursorCoord: number, nextValue: number) {
     let newCurrentValue: number = currentValue;
-    const step = this.toCustomValue.convertFromCustom(this.step);
+    const step = (this.step);
     if (cursorCoord > nextValue && nextValue > currentValue) {
       newCurrentValue = Math.round( cursorCoord / step) * step;
     }
@@ -99,7 +90,7 @@ class SliderModel {
   }
 
   setMinMaxCustom(minCustom: number, maxCustom: number) {
-    const [min, max] = [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)];
+    const [min, max] = [(minCustom), (maxCustom)];
     this.currentLow = min;
     this.currentUpper = max;    
     return [min, max];
@@ -110,7 +101,7 @@ class SliderModel {
   }
 
   getMinMaxCustom() {
-    return this.toCustomValue.getValuesCustom(this.getMinMax());
+    return this.getMinMax();
   }
 }
 
