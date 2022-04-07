@@ -39,7 +39,7 @@ class SliderView {
     this.slider = slider;
     this.currentLowValue = 0;
     this.sliderLength = this.initView.sliderWidth;
-    this.currentUpperValue = this.sliderLength;
+    this.currentUpperValue = 100;
     this.lower = searchElem('.slider__handle-lower', this.slider) as HTMLElement;
     this.upper = searchElem('.slider__handle-upper', this.slider) as HTMLElement;
     this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
@@ -58,18 +58,18 @@ class SliderView {
 
     if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
       if ( progressLength >= 0 ) {
-        this.progressBar.style.width = progressLength + 'px';
-        this.progressBar.style.left = this.currentLowValue + 'px';
+        this.progressBar.style.width = (100 /  this.initView.maxCoordCustom) * progressLength + '%';
+        this.progressBar.style.left = (100 /  this.initView.maxCoordCustom) * this.currentLowValue + '%';
       } else {
-        this.progressBar.style.width = 0 + 'px';
+        this.progressBar.style.width = 0 + '%';
       }
     }
     if (this.initView.orientation === 'vertical') {
       if ( progressLength >= 0 ) {
-        this.progressBar.style.height = progressLength + 'px';
-        this.progressBar.style.top = this.currentLowValue + 'px';
+        this.progressBar.style.height = (100 /  this.initView.maxCoordCustom) * progressLength + '%';
+        this.progressBar.style.top = (100 /  this.initView.maxCoordCustom) * this.currentLowValue + '%';
       } else {
-        this.progressBar.style.height = 0 + 'px';
+        this.progressBar.style.height = 0 + '%';
       }
     }
   } 
@@ -88,16 +88,16 @@ class SliderView {
   }
 
   shift(elem: HTMLElement, coords: number[]) {
-    let [min, max] = coords;
-    
+    let [min, max] = coords;  
+
     if (elem === this.lower) {
       this.lower.style.zIndex = '10';
       this.upper.style.zIndex = '1';
       if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
-        elem.style.left = min + 'px';
+        elem.style.left = (100 /  this.initView.maxCoordCustom) * min + '%';
       }
       if (this.initView.orientation === 'vertical') {
-        elem.style.top = min + 'px';
+        elem.style.top = (100 /  this.initView.maxCoordCustom) * min + '%';
       }
       this.currentLowValue = min;
     }
@@ -105,10 +105,10 @@ class SliderView {
       this.upper.style.zIndex = '10';
       this.lower.style.zIndex = '1';
       if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
-        elem.style.left = max + 'px';
+        elem.style.left = (100 /  this.initView.maxCoordCustom) * max + '%';
       }
       if (this.initView.orientation === 'vertical') {
-        elem.style.top = max + 'px';
+        elem.style.top = (100 /  this.initView.maxCoordCustom) * max + '%';
       }
       this.currentUpperValue = max;
     }
@@ -124,9 +124,7 @@ class SliderView {
   checkSliderOrientation() {
 
     if (this.initView.orientation === 'vertical') {
-      this.slider.classList.add('slider_vertical');
-      // this.slider.style.height = `${this.sliderLength}px`;
-      // this.upper.style.top = `${this.sliderLength}px`;   
+      this.slider.classList.add('slider_vertical'); 
     }
   }
 

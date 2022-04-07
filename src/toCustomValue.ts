@@ -1,20 +1,32 @@
 class ToCustomValue {
 
-  sliderLength: number;
+  slider: HTMLElement;
 
   customLength: number;
 
-  constructor(sliderLength: number, customLength: number) {
-    this.sliderLength = sliderLength;
+  orientation: 'vertical' | 'horizontal';
+
+  constructor(slider: HTMLElement, customLength: number, orientation: 'vertical' | 'horizontal') {
+    this.slider = slider;
     this.customLength = customLength;
+    this.orientation = orientation;
   }
 
   convertToCustom(value: number) {
-    return Math.round((value * this.customLength / this.sliderLength) * Math.pow(10, 2)) / Math.pow(10, 2);
+    if (this.orientation === 'vertical') {
+      return Math.round((value * this.customLength / this.slider.getBoundingClientRect().height) * Math.pow(10, 2)) / Math.pow(10, 2);
+    } else {
+      return Math.round((value * this.customLength / this.slider.getBoundingClientRect().width) * Math.pow(10, 2)) / Math.pow(10, 2);
+    }
+   
   }
 
   convertFromCustom(value: number) {
-    return value / (this.customLength / this.sliderLength);
+    if (this.orientation === 'vertical') {
+      return value / (this.customLength / this.slider.getBoundingClientRect().height);
+    } else {
+      return value / (this.customLength / this.slider.getBoundingClientRect().width);
+    }
   }
 
   getValuesCustom(valuesInit: number[]) {

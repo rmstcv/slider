@@ -49,7 +49,7 @@ class SliderController {
     this.sliderWidth = this.checkSliderOrientation() ;
     this.lower = <HTMLElement> searchElem('.slider__handle-lower', this.slider);
     this.upper = <HTMLElement> searchElem('.slider__handle-upper', this.slider);
-    this.toCustomValue = new ToCustomValue(this.sliderWidth, initController.maxCoordCustom - initController.minCoordCustom);
+    this.toCustomValue = new ToCustomValue(this.slider, initController.maxCoordCustom - initController.minCoordCustom, initController.orientation);
     this.sliderModel = new SliderModel({
       minCoordCustom: initController.minCoordCustom,
       maxCoordCustom: initController.maxCoordCustom,
@@ -78,8 +78,8 @@ class SliderController {
     this.sliderModel.setMinMaxCustom(minCustom, maxCustom);
     [minCustom, maxCustom] = this.sliderModel.getMinMax();
     
-    this.sliderView.shift(this.lower, [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)]); 
-    this.sliderView.shift(this.upper, [this.toCustomValue.convertFromCustom(minCustom), this.toCustomValue.convertFromCustom(maxCustom)]); 
+    this.sliderView.shift(this.lower, [minCustom, maxCustom]); 
+    this.sliderView.shift(this.upper, [minCustom, maxCustom]); 
     this.sliderView.showValues(this.sliderModel.getMinMaxCustom());
   }
 
@@ -89,7 +89,7 @@ class SliderController {
       if (e instanceof MouseEvent) {
         if (init.orientation === 'vertical') {
           return e.clientY;
-        } else {
+        } else {     
           return e.pageX;
         }
       }
@@ -102,9 +102,11 @@ class SliderController {
       }
       return process.exit();
     };
+    
+
     let currentCoord: number = getCoord();
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
-
+    
     if (init.orientation === 'vertical') {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
@@ -115,9 +117,6 @@ class SliderController {
       this.sliderModel.setNextMax(this.toCustomValue.convertToCustom(clientCoord));
     }
     let [min, max] = this.sliderModel.getMinMax();
-    
-    [min, max] = [this.toCustomValue.convertFromCustom(min), this.toCustomValue.convertFromCustom(max)];
-    
     return [min, max];
   }
 
@@ -183,11 +182,18 @@ class SliderController {
     }
   }
 
+  sliderChange() {
+    this.slider.parentElement?.addEventListener('onchange', (e) => {
+      console.log(e);
+    });
+  }
+
   init() {
     this.checkSliderType();
     this.sliderView.init();
     this.addListeners();
     this.addScale();
+    this.sliderChange();
   }
 }
 

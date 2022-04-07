@@ -38,10 +38,10 @@ class SliderScale {
         elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier}`);
         elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier}`;
         if (this.initViewScale.orientation === 'vertical') {   
-          elemScaleValue.style.top = `${i * this.initViewScale.step / scaleMultiplier }px`;
+          elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.initViewScale.maxCoordCustom)}%`;
                 
         } else {
-          elemScaleValue.style.left = `${i * this.initViewScale.step / scaleMultiplier }px`;
+          elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.initViewScale.maxCoordCustom)}%`;
         }
         scaleValueContainer.appendChild(elemScaleValue);
       }
