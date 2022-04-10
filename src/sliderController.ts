@@ -4,26 +4,28 @@ import searchElem from './searchElem';
 import ToCustomValue from './toCustomValue';
 
 const init = {
-  minCoordCustom: 0,
-  maxCoordCustom: 30,
+  min: 0,
+  max: 30,
   step: 2,
   setMin: 4,
   setMax: 16,
   sliderType: 'range',
   orientation: 'horizontal',
   scale: true,
+  toolTip: true,
 };
 
 interface InitController {
   sliderLength: number,
-  minCoordCustom: number,
-  maxCoordCustom: number,
+  min: number,
+  max: number,
   step: number,
   setMin: number,
   setMax: number,
   sliderType: 'range' | 'single',
   orientation?: 'vertical' | 'horizontal',
   scale?: boolean,
+  toolTip: boolean
 }
 
 class SliderController {
@@ -41,26 +43,30 @@ class SliderController {
 
   sliderWidth: number;
 
+  sliderCirrentValues: number[];
+
   toCustomValue: ToCustomValue;
 
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
     this.slider = slider;
-    this.sliderWidth = this.checkSliderOrientation() ;
+    this.sliderWidth = this.checkSliderOrientation();
     this.lower = <HTMLElement> searchElem('.slider__handle-lower', this.slider);
     this.upper = <HTMLElement> searchElem('.slider__handle-upper', this.slider);
-    this.toCustomValue = new ToCustomValue(this.slider, initController.maxCoordCustom - initController.minCoordCustom, initController.orientation);
+    this.sliderCirrentValues = [initController.min, initController.max];
+    this.toCustomValue = new ToCustomValue(this.slider, initController.max - initController.min, initController.orientation!);
     this.sliderModel = new SliderModel({
-      minCoordCustom: initController.minCoordCustom,
-      maxCoordCustom: initController.maxCoordCustom,
+      sliderMin: initController.min,
+      sliderMax: initController.max,
       step: initController.step,
     });
     this.sliderView = new SliderView(slider, {
       orientation: initController.orientation,
       sliderType: initController.sliderType,
-      maxCoordCustom: initController.maxCoordCustom - initController.minCoordCustom,
+      max: initController.max - initController.min,
       step: this.toCustomValue.convertFromCustom(initController.step),
       sliderWidth: this.sliderWidth,
+      toolTip: initController.toolTip,
     });
   }
 
@@ -73,17 +79,7 @@ class SliderController {
     }
   }
 
-  setValues(values: number[]) { 
-    let [minCustom, maxCustom] = values;
-    this.sliderModel.setMinMaxCustom(minCustom, maxCustom);
-    [minCustom, maxCustom] = this.sliderModel.getMinMax();
-    
-    this.sliderView.shift(this.lower, [minCustom, maxCustom]); 
-    this.sliderView.shift(this.upper, [minCustom, maxCustom]); 
-    this.sliderView.showValues(this.sliderModel.getMinMaxCustom());
-  }
-
-  getValues(e: MouseEvent | TouchEvent, elem: HTMLElement) {
+  updateValues(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     let getCoord = () => {
 
       if (e instanceof MouseEvent) {
@@ -102,7 +98,7 @@ class SliderController {
       }
       return process.exit();
     };
-    
+    let [min, max]: number[] = [];
 
     let currentCoord: number = getCoord();
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
@@ -111,29 +107,25 @@ class SliderController {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
     if (elem === this.lower) {
-      this.sliderModel.setNextMin(this.toCustomValue.convertToCustom(clientCoord));
+      min = this.toCustomValue.convertToCustom(clientCoord);
     } 
     if (elem === this.upper) {
-      this.sliderModel.setNextMax(this.toCustomValue.convertToCustom(clientCoord));
+      max = this.toCustomValue.convertToCustom(clientCoord);
     }
-    let [min, max] = this.sliderModel.getMinMax();
+    this.updateSlider([min, max]);
     return [min, max];
   }
 
-  showValues() {
-    const [min, max] = this.sliderModel.getMinMaxCustom();
-    this.sliderView.showValues([min, max]);
-  }
-
-  shift(elem: HTMLElement, e: MouseEvent | TouchEvent) {
-    this.sliderView.shift(elem, this.getValues(e, elem));
+  updateSlider([min, max]: number[]) {
+    this.sliderCirrentValues = [min, max];
+    const [left, right] = this.sliderModel.update([min, max]); 
+    this.sliderView.update([left, right] );
   }
 
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
-    const shiftBind = this.shift.bind(this, elem);
-    const showValuesBind = this.showValues.bind(this);
-    const actions = [shiftBind, showValuesBind];
+    const updateValuesBind = this.updateValues.bind(this, elem);
+    const actions = [updateValuesBind];
     const removeEvents = function () {
       actions.forEach((action) => {
         document.removeEventListener('mousemove', action);
@@ -156,7 +148,6 @@ class SliderController {
   }
 
   addListeners() {    
-    this.setValues([this.initController.setMin, this.initController.setMax]);
     this.upper.addEventListener('mousedown', (e) => this.addEvents(this.upper, e));
     this.lower.addEventListener('mousedown', (e) => this.addEvents(this.lower, e));
     this.upper.addEventListener('touchstart', (e) => this.addEvents(this.upper, e));
@@ -171,29 +162,23 @@ class SliderController {
 
   addScale() {
     if (this.initController.scale) {
-      this.slider.addEventListener('click', (e: Event) => {
+      this.sliderView.createScail();
+      this.slider.addEventListener('click', (e: Event) => {        
         const elem: HTMLElement = e.target as HTMLElement;
         const value: number = Number(elem.getAttribute('data-value'));
         if (elem.classList.contains('slider__scale-marker-value')) {
-          this.setValues([0, value]);
+          this.updateSlider([0, value]);
         }
       });
-      this.sliderView.createScail();
     }
-  }
-
-  sliderChange() {
-    this.slider.parentElement?.addEventListener('onchange', (e) => {
-      console.log(e);
-    });
   }
 
   init() {
     this.checkSliderType();
     this.sliderView.init();
     this.addListeners();
+    this.updateSlider([this.initController.setMin, this.initController.setMax]);
     this.addScale();
-    this.sliderChange();
   }
 }
 

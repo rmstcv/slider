@@ -1,6 +1,6 @@
 interface InitModel {
-  minCoordCustom: number;
-  maxCoordCustom: number; 
+  sliderMin: number;
+  sliderMax: number; 
   step: number
 }
 
@@ -10,98 +10,85 @@ class SliderModel {
 
   sliderMax: number;
 
-  customMin: number;
-
-  customMax: number;
-
   currentLow: number;
 
   currentUpper: number;
 
   step: number;
 
+  newPosition: number = 0;
+
   constructor(init: InitModel) {
-    this.customMin = init.minCoordCustom;
-    this.customMax = init.maxCoordCustom;
     this.step = init.step;
-    this.sliderMin = init.minCoordCustom;
-    this.sliderMax = init.maxCoordCustom;
+    this.sliderMin = init.sliderMin;
+    this.sliderMax = init.sliderMax;
     this.currentLow = this.sliderMin;
     this.currentUpper = this.sliderMax;
   }
 
-  checkExtremumCoords(coordCurrent: number, min: number, max: number) {
-    let coordChecked = coordCurrent;
+  checkExtremumCoords(current: number, min: number, max: number) {
+    let currentChecked = current;
     
-    if (coordCurrent < min) {
-      coordChecked = min;
+    if (current < min) {
+      currentChecked = min;
       
     }
-    if (coordChecked > max) {
-      coordChecked = max;
+    if (current > max) {
+      currentChecked = max;
     }    
-    return coordChecked;
+    return currentChecked;
   }
 
-  checkDirection(currentCoord: number, cursorCoord: number) {
+  checkDirection(currentValue: number, nextValue: number) {
     let  direction: 1 | -1 = 1;
 
-    if (currentCoord <= cursorCoord) {
+    if (currentValue <= nextValue) {
       direction = 1;
     }
-    if (currentCoord > cursorCoord) {
+    if (currentValue > nextValue) {
       direction = -1;
     }
     return direction;
   }
 
-  getNextValue(currentCoord: number, min: number, max: number, currentCursor: number) {
-    const direction = this.checkDirection(currentCoord, currentCursor);
-    const increase = (this.step) * direction;
-    const nextValue = this.checkExtremumCoords(currentCoord + increase, min, max);
-    
-    return nextValue;
-  }
+  findNextValue(currentValue: number, min: number, max: number) {
+    const increment = this.step * this.checkDirection(currentValue, this.newPosition);
+    const nextValue = this.checkExtremumCoords(currentValue + increment, min, max);  
+    let newCurrentValue = currentValue;
 
-  setCurrentValue(currentValue: number, cursorCoord: number, nextValue: number) {
-    let newCurrentValue: number = currentValue;
-    const step = (this.step);
-    if (cursorCoord > nextValue && nextValue > currentValue) {
-      newCurrentValue = Math.round( cursorCoord / step) * step;
+    if (this.newPosition >= nextValue && nextValue > currentValue) {
+      newCurrentValue = Math.round(this.newPosition / this.step) * this.step;
     }
-    if (cursorCoord < currentValue && cursorCoord < nextValue) {
-      newCurrentValue = Math.round( cursorCoord / step) * step;
+    if (this.newPosition < currentValue && this.newPosition <= nextValue) {
+      newCurrentValue = Math.round(this.newPosition / this.step) * this.step;
     }
+    newCurrentValue = this.checkExtremumCoords(newCurrentValue, min, max); 
     return newCurrentValue;
   }
 
-  setNextMin(cursorCoordLow: number) {
-    const nextValue = this.getNextValue(this.currentLow, this.sliderMin, this.currentUpper, cursorCoordLow);
-    const newCurrentValue = this.setCurrentValue(this.currentLow, cursorCoordLow, nextValue);
-    this.currentLow = this.checkExtremumCoords(newCurrentValue, this.sliderMin, this.currentUpper);
+  setNewLowValue(cursorCoordLow: number) {
+    this.newPosition = cursorCoordLow;
+    const nextValue = this.findNextValue(this.currentLow, this.sliderMin, this.currentUpper);
+    this.currentLow = nextValue;  
     return this.currentLow;
   }
 
-  setNextMax(cursorCoordUpper: number) {
-    const nextValue = this.getNextValue(this.currentUpper, this.currentLow, this.sliderMax, cursorCoordUpper);
-    const newCurrentValue = this.setCurrentValue(this.currentUpper, cursorCoordUpper, nextValue);
-    this.currentUpper = this.checkExtremumCoords(newCurrentValue, this.currentLow, this.sliderMax);
+  setNewUpValue(cursorCoordUpper: number) {
+    this.newPosition = cursorCoordUpper;
+    const nextValue = this.findNextValue(this.currentUpper, this.currentLow, this.sliderMax);
+    this.currentUpper = nextValue;
     return this.currentUpper;
   }
 
-  setMinMaxCustom(minCustom: number, maxCustom: number) {
-    const [min, max] = [(minCustom), (maxCustom)];
-    this.currentLow = min;
-    this.currentUpper = max;    
-    return [min, max];
-  }
-
-  getMinMax() {
-    return [this.currentLow, this.currentUpper];
-  }
-
-  getMinMaxCustom() {
-    return this.getMinMax();
+  update([min, max]: number[]) {
+    let [minNew, maxNew] = [min, max];
+    if (min !== undefined) {
+      minNew = this.setNewLowValue(min); 
+    }
+    if (max !== undefined) {
+      maxNew = this.setNewUpValue(max);
+    }
+    return [minNew, maxNew];
   }
 }
 
