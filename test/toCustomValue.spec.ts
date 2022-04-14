@@ -2,7 +2,9 @@ import ToCustomValue from '../src/toCustomValue';
 
 const sliderLength = 200;
 const customLength = 100;
-const toCustomValue = new ToCustomValue(sliderLength, customLength);
+const slider = document.createElement('div');
+slider.style.width = '200';
+const toCustomValue = new ToCustomValue(slider, sliderLength, 'horizontal');
 
 describe('value display', () => {
   it('value', () => {

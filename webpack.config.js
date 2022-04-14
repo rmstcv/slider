@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -41,6 +42,17 @@ module.exports = {
         test: /\.(css|s[ac]ss)$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
+       {
+        test: require.resolve('jquery'),
+        use: [
+          {
+            loader: "expose-loader",
+            options: {
+              exposes: ["$", "jQuery"]
+            }
+          }
+        ]
+      },
     ],
   },
   resolve: {
@@ -63,5 +75,9 @@ module.exports = {
       filename: '[name].[contenthash].css',
     }),
     new ESLintPlugin(),
-  ]
+    // new webpack.ProvidePlugin({
+    //   $: 'jquery',
+    //   jQuery: 'jquery'
+    // }),
+  ],
 };

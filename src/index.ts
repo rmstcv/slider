@@ -1,2 +1,2 @@
 import './style.scss';
-import './sliderController';
+import './jquery.slider-plugin';

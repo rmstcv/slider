@@ -4,9 +4,9 @@ class ToCustomValue {
 
   customLength: number;
 
-  orientation: 'vertical' | 'horizontal';
+  orientation?: 'vertical' | 'horizontal';
 
-  constructor(slider: HTMLElement, customLength: number, orientation: 'vertical' | 'horizontal') {
+  constructor(slider: HTMLElement, customLength: number, orientation?: 'vertical' | 'horizontal') {
     this.slider = slider;
     this.customLength = customLength;
     this.orientation = orientation;

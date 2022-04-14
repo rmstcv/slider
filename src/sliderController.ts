@@ -3,18 +3,6 @@ import SliderView from './sliderView';
 import searchElem from './searchElem';
 import ToCustomValue from './toCustomValue';
 
-const init = {
-  min: 0,
-  max: 30,
-  step: 2,
-  setMin: 4,
-  setMax: 16,
-  sliderType: 'range',
-  orientation: 'horizontal',
-  scale: true,
-  toolTip: true,
-};
-
 interface InitController {
   sliderLength: number,
   min: number,
@@ -83,14 +71,14 @@ class SliderController {
     let getCoord = () => {
 
       if (e instanceof MouseEvent) {
-        if (init.orientation === 'vertical') {
+        if (this.initController.orientation === 'vertical') {
           return e.clientY;
         } else {     
           return e.pageX;
         }
       }
       if (window.TouchEvent && e instanceof TouchEvent) {
-        if (init.orientation === 'vertical') {
+        if (this.initController.orientation === 'vertical') {
           return e.touches[0].pageY;
         } else {
           return e.touches[0].pageX;
@@ -103,7 +91,7 @@ class SliderController {
     let currentCoord: number = getCoord();
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
     
-    if (init.orientation === 'vertical') {
+    if (this.initController.orientation === 'vertical') {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
     if (elem === this.lower) {
@@ -182,7 +170,4 @@ class SliderController {
   }
 }
 
-window.addEventListener('load', () => {
-  const controller = new SliderController(document.querySelector('.slider') as HTMLElement, init as InitController);
-  controller.init();
-});
+export default SliderController;

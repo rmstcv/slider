@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "target": "esnext",
+    "target": "es2015",
     "removeComments": true,
     "esModuleInterop": true,
     "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "lib": ["DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*", "test/**/*"],
