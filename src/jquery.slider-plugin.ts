@@ -17,25 +17,24 @@ interface Init {
 $.fn.sliderPlugin = function (slider: HTMLElement, options: Init) {
   const controller = new SliderController(slider as HTMLElement, options as Init);
   controller.init();
+  const setValues = function ([min, max]: number[]) {
+    controller.updateSlider([min, max]);
+  };
+  this.setValues = setValues;
+  const getValues = function () {
+    return controller.getModelValues();
+  };
+  this.getValues = getValues;
+  const getStep = function () {
+    return controller.initController.step;
+  };
+  this.getStep = getStep;
+  
   return this;
 };
 
-const slider = document.querySelector('.slider');
-const plug = $('.slider').sliderPlugin(slider, {
-  min: 0,
-  max: 30,
-  step: 2,
-  setMin: 4,
-  setMax: 16,
-  sliderType: 'range',
-  orientation: 'horizontal',
-  scale: true,
-  toolTip: true,
-});
+function sliderCreate(slider: HTMLElement, params: object) {
+  return $(slider).sliderPlugin(slider, params);
+}
 
-plug.init();
-
-
-
-
-
+export default sliderCreate;

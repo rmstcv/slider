@@ -116,9 +116,11 @@ class SliderView {
   update([min, max]: number[]) { 
     if (min !== undefined) {
       this.shiftLeftHandler(this.convertToPercent(min));
+      this.lower.setAttribute('data-lower', `${min}`);
     }
     if (max !== undefined) {
       this.shiftRightHandler(this.convertToPercent(max));
+      this.upper.setAttribute('data-upper', `${max}`);
     }
     this.progressBarHighlight();
 

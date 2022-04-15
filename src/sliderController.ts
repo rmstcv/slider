@@ -110,6 +110,10 @@ class SliderController {
     this.sliderView.update([left, right] );
   }
 
+  getModelValues() {
+    return this.sliderModel.getValues();
+  }
+
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
     const updateValuesBind = this.updateValues.bind(this, elem);

@@ -90,6 +90,10 @@ class SliderModel {
     }
     return [minNew, maxNew];
   }
+
+  getValues() {
+    return [this.currentLow, this.currentUpper];
+  }
 }
 
 export default SliderModel;
