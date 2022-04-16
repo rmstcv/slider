@@ -1,6 +1,5 @@
 import SliderModel from './sliderModel';
 import SliderView from './sliderView';
-import searchElem from './searchElem';
 import ToCustomValue from './toCustomValue';
 
 interface InitController {
@@ -37,16 +36,13 @@ class SliderController {
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
     this.slider = slider;
-    this.sliderWidth = this.checkSliderOrientation();
-    this.lower = <HTMLElement> searchElem('.slider__handle-lower', this.slider);
-    this.upper = <HTMLElement> searchElem('.slider__handle-upper', this.slider);
-    this.sliderCirrentValues = [initController.min, initController.max];
-    this.toCustomValue = new ToCustomValue(this.slider, initController.max - initController.min, initController.orientation!);
     this.sliderModel = new SliderModel({
       sliderMin: initController.min,
       sliderMax: initController.max,
       step: initController.step,
     });
+    this.toCustomValue = new ToCustomValue(this.slider, initController.max - initController.min, initController.orientation!);
+    this.sliderWidth = this.checkSliderOrientation();
     this.sliderView = new SliderView(slider, {
       orientation: initController.orientation,
       sliderType: initController.sliderType,
@@ -55,6 +51,9 @@ class SliderController {
       sliderWidth: this.sliderWidth,
       toolTip: initController.toolTip,
     });
+    this.lower = this.sliderView.lower;
+    this.upper = this.sliderView.upper;
+    this.sliderCirrentValues = [initController.min, initController.max];
   }
 
   checkSliderOrientation() {

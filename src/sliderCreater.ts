@@ -17,7 +17,6 @@ function createSliderView(slider: HTMLElement) {
   `;
 
   slider.innerHTML = sliderContent;
-  return slider;
 }
 
-createSliderView(document.querySelector('.slider')!);
+export default createSliderView;

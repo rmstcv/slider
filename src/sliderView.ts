@@ -1,4 +1,4 @@
-import './sliderCreater';
+import sliderCreater from './sliderCreater';
 import SliderScale from './sliderScale';
 import sliderToolTip from './sliderToolTip';
 import searchElem from './searchElem';
@@ -32,9 +32,12 @@ class SliderView {
 
   sliderToolTip: sliderToolTip;
 
+  sliderView: void;
+
   constructor(slider: HTMLElement, initView: InitView) {
     this.initView = initView;
     this.slider = slider;
+    this.sliderView = sliderCreater(this.slider);
     this.currentLowValue = 0;
     this.currentUpperValue = 100;
     this.lower = searchElem('.slider__handle-lower', this.slider) as HTMLElement;
@@ -112,7 +115,7 @@ class SliderView {
     }
     this.currentUpperValue = value;
   }
-
+  
   update([min, max]: number[]) { 
     if (min !== undefined) {
       this.shiftLeftHandler(this.convertToPercent(min));
