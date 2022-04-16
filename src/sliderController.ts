@@ -4,7 +4,6 @@ import searchElem from './searchElem';
 import ToCustomValue from './toCustomValue';
 
 interface InitController {
-  sliderLength: number,
   min: number,
   max: number,
   step: number,
