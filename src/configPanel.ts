@@ -31,6 +31,8 @@ class ConfigPanel {
 
   sliderInitConfig: Init;
 
+  step: number;
+
   constructor(sliderElem: HTMLElement) {
     this.lower = <HTMLElement> searchElem('.slider__handle-lower', sliderElem);
     this.upper = <HTMLElement> searchElem('.slider__handle-upper', sliderElem);
@@ -38,22 +40,28 @@ class ConfigPanel {
     this.maxInput = <HTMLInputElement> searchElem('.config-input_max', config);
     this.stepInput = <HTMLInputElement> searchElem('.config-input_step', config);
     this.sliderInitConfig = sliderInitConfig;
+    this.step = this.sliderInitConfig.step;
   }
 
   setMin() {
-    this.minInput.setAttribute('step', rangeSlider.getStep());
-    this.minInput.setAttribute('min', `${this.sliderInitConfig.min}`);
-    this.minInput.value = rangeSlider.getValues()[0];
+    this.minInput.setAttribute('step', `${this.step}`);
+    // this.minInput.setAttribute('min', `${this.sliderInitConfig.min}`);
+    // this.minInput.value = rangeSlider.getValues()[0];
+    // this.minInput.setAttribute('value', `${rangeSlider.getValues()[0]}`);
   }
 
   setMax() {
-    this.maxInput.setAttribute('step', rangeSlider.getStep());
-    this.maxInput.setAttribute('max', `${this.sliderInitConfig.max}`);
-    this.maxInput.value = rangeSlider.getValues()[1];
+    this.maxInput.setAttribute('step', `${this.step}`);
+    // this.maxInput.setAttribute('max', `${this.sliderInitConfig.max}`);
+    // this.maxInput.value = rangeSlider.getValues()[1];
+    // this.maxInput.setAttribute('value', `${rangeSlider.getValues()[1]}`);
   }
 
   setStep() {
-    this.stepInput.value = `${this.sliderInitConfig.step}`;
+    this.stepInput.value = `${this.step}`;
+    this.stepInput.setAttribute('step', `${(this.sliderInitConfig.max - this.sliderInitConfig.min) / 20}`);
+    this.stepInput.setAttribute('max', `${this.sliderInitConfig.max - this.sliderInitConfig.min}`);
+    this.stepInput.setAttribute('min', '0');
   }
 
   addListeners() {
@@ -62,12 +70,18 @@ class ConfigPanel {
       this.maxInput.value = rangeSlider.getValues()[1];
     });
     this.minInput?.addEventListener('input', () => {
-      rangeSlider.setValues([this.minInput.value, undefined]);
-      this.minInput.setAttribute('max', `${this.upper?.getAttribute('data-upper')}`);
+      rangeSlider.setValues([+this.minInput.value, undefined]);
+      // this.minInput.value = this.lower.getAttribute('data-lower')!;
     });
     this.maxInput?.addEventListener('input', () => {
-      rangeSlider.setValues([undefined, this.maxInput.value]);
-      this.maxInput.setAttribute('min', `${this.lower?.getAttribute('data-lower')}`);
+      rangeSlider.setValues([undefined, +this.maxInput.value]);
+      // this.maxInput.value = this.upper.getAttribute('data-upper')!;
+    });
+    this.stepInput?.addEventListener('input', () => {
+      this.step = Number(this.stepInput.value);
+      this.minInput.setAttribute('step', `${this.step}`);
+      this.maxInput.setAttribute('step', `${this.step}`);
+      rangeSlider.setStep(Number(this.stepInput.value));
     });
   }
 

@@ -132,7 +132,8 @@ class SliderView {
     }
   }
 
-  init() {
+  init([min, max]: number[]) {
+    this.update([min, max]);
     this.checkSliderType();
     this.checkSliderOrientation();
   }

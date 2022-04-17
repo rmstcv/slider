@@ -21,25 +21,28 @@ class SliderController {
 
   slider: HTMLElement;
 
+  initController: InitController;
+
+  step: number;
+
   sliderModel: SliderModel;
 
   sliderView: SliderView;
 
-  initController: InitController;
-
   sliderWidth: number;
 
-  sliderCirrentValues: number[];
+  sliderCurrentValues: number[];
 
   toCustomValue: ToCustomValue;
 
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
     this.slider = slider;
+    this.step = this.checkStep(this.initController.step);
     this.sliderModel = new SliderModel({
       sliderMin: initController.min,
       sliderMax: initController.max,
-      step: initController.step,
+      step: this.step,
     });
     this.toCustomValue = new ToCustomValue(this.slider, initController.max - initController.min, initController.orientation!);
     this.sliderWidth = this.checkSliderOrientation();
@@ -47,13 +50,21 @@ class SliderController {
       orientation: initController.orientation,
       sliderType: initController.sliderType,
       max: initController.max - initController.min,
-      step: this.toCustomValue.convertFromCustom(initController.step),
+      step: this.toCustomValue.convertFromCustom(this.step),
       sliderWidth: this.sliderWidth,
       toolTip: initController.toolTip,
     });
     this.lower = this.sliderView.lower;
     this.upper = this.sliderView.upper;
-    this.sliderCirrentValues = [initController.min, initController.max];
+    this.sliderCurrentValues = [initController.min, initController.max];
+  }
+
+  checkStep(step: number) {
+    let newStep = step;
+    if (step <= 0 || step >= 30 || !step) {
+      newStep = (this.initController.max - this.initController.min) / 20;
+    }
+    return newStep;
   }
 
   checkSliderOrientation() {
@@ -103,13 +114,23 @@ class SliderController {
   }
 
   updateSlider([min, max]: number[]) {
-    this.sliderCirrentValues = [min, max];
+    this.sliderCurrentValues = [min, max];
     const [left, right] = this.sliderModel.update([min, max]); 
-    this.sliderView.update([left, right] );
+    this.sliderView.update([left, right]);
   }
 
   getModelValues() {
     return this.sliderModel.getValues();
+  }
+
+  setModelValues([min, max]: number[]) {
+    this.sliderCurrentValues = [min, max];
+    const [left, right] = this.sliderModel.setValues([min, max]); 
+    this.sliderView.update([left, right]);
+  }
+
+  setStep(step: number) {
+    this.sliderModel.step = step;
   }
 
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
@@ -157,7 +178,8 @@ class SliderController {
         const elem: HTMLElement = e.target as HTMLElement;
         const value: number = Number(elem.getAttribute('data-value'));
         if (elem.classList.contains('slider__scale-marker-value')) {
-          this.updateSlider([0, value]);
+          this.sliderView.update([0, value]);
+          this.sliderModel.setValues([0, value]);
         }
       });
     }
@@ -165,9 +187,9 @@ class SliderController {
 
   init() {
     this.checkSliderType();
-    this.sliderView.init();
+    this.sliderView.init([this.initController.setMin, this.initController.setMax]);
+    this.sliderModel.init([this.initController.setMin, this.initController.setMax]);
     this.addListeners();
-    this.updateSlider([this.initController.setMin, this.initController.setMax]);
     this.addScale();
   }
 }

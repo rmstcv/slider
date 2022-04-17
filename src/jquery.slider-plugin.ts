@@ -5,7 +5,7 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
   const controller = new SliderController(slider, options);
   controller.init();
   const setValues = function ([min, max]: number[]) {
-    controller.updateSlider([min, max]);
+    controller.setModelValues([min, max]);
   };
   this.setValues = setValues;
   const getValues = function () {
@@ -16,6 +16,10 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     return controller.initController.step;
   };
   this.getStep = getStep;
+  const setStep = function (step: number) {
+    controller.setStep(step);
+  };
+  this.setStep = setStep;
   
   return this;
 };

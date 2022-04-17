@@ -15,4 +15,5 @@ interface JQuery {
   setValues: any;
   getValues: any;
   getStep: any;
+  setStep: any;
 }
