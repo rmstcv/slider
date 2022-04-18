@@ -1,6 +1,5 @@
 import SliderModel from './sliderModel';
 import SliderView from './sliderView';
-import ToCustomValue from './toCustomValue';
 
 interface InitController {
   min: number,
@@ -33,8 +32,6 @@ class SliderController {
 
   sliderCurrentValues: number[];
 
-  toCustomValue: ToCustomValue;
-
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
     this.slider = slider;
@@ -44,19 +41,26 @@ class SliderController {
       sliderMax: initController.max,
       step: this.step,
     });
-    this.toCustomValue = new ToCustomValue(this.slider, initController.max - initController.min, initController.orientation!);
     this.sliderWidth = this.checkSliderOrientation();
     this.sliderView = new SliderView(slider, {
       orientation: initController.orientation,
       sliderType: initController.sliderType,
       max: initController.max - initController.min,
-      step: this.toCustomValue.convertFromCustom(this.step),
+      step: this.convertFromCustom(this.step),
       sliderWidth: this.sliderWidth,
       toolTip: initController.toolTip,
     });
     this.lower = this.sliderView.lower;
     this.upper = this.sliderView.upper;
     this.sliderCurrentValues = [initController.min, initController.max];
+  }
+  
+  convertToCustom(value: number) {
+    return Math.round((value * (this.initController.max - this.initController.min) / this.checkSliderOrientation()) * Math.pow(10, 2)) / Math.pow(10, 2);
+  }
+
+  convertFromCustom(value: number) {
+    return value / ((this.initController.max - this.initController.min ) / this.checkSliderOrientation());
   }
 
   checkStep(step: number) {
@@ -69,7 +73,6 @@ class SliderController {
 
   checkSliderOrientation() {
     if (this.initController.orientation === 'vertical') {
-      this.slider.classList.add('slider_vertical');
       return this.slider.getBoundingClientRect().height!;
     } else {
       return this.slider.getBoundingClientRect().width!;
@@ -104,10 +107,10 @@ class SliderController {
       clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
     }
     if (elem === this.lower) {
-      min = this.toCustomValue.convertToCustom(clientCoord);
+      min = this.convertToCustom(clientCoord);
     } 
     if (elem === this.upper) {
-      max = this.toCustomValue.convertToCustom(clientCoord);
+      max = this.convertToCustom(clientCoord);
     }
     this.updateSlider([min, max]);
     return [min, max];
@@ -131,6 +134,12 @@ class SliderController {
 
   setStep(step: number) {
     this.sliderModel.step = step;
+  }
+
+  setOrientation(orientation: 'vertical' | 'horizontal') {
+    this.initController.orientation = orientation;
+    this.sliderView.initView.orientation = orientation;
+    this.sliderView.setOrientation(orientation);
   }
 
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {

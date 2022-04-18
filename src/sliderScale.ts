@@ -18,10 +18,12 @@ class SliderScale {
   }
 
   createScail() {
-    const scale = searchElem('.slider__scale', this.slider);
+    const scale = searchElem('.slider__scale', this.slider)!;
+    scale.innerHTML = '';
     const scaleContainer = document.createElement('div');
     scaleContainer.classList.add('slider__scale-container');
-    const scaleValue = searchElem('.slider__scale-value', this.slider);
+    const scaleValue = searchElem('.slider__scale-value', this.slider)!;
+    scaleValue.innerHTML = '';
     const scaleValueContainer = document.createElement('div');
     scaleValueContainer.classList.add('slider__scale-value-container');
     const scaleMultiplier = 4;

@@ -12,14 +12,14 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     return controller.getModelValues();
   };
   this.getValues = getValues;
-  const getStep = function () {
-    return controller.initController.step;
-  };
-  this.getStep = getStep;
   const setStep = function (step: number) {
     controller.setStep(step);
   };
   this.setStep = setStep;
+  const setOrientation = function (orientation: 'vertical' | 'horizontal') {
+    controller.setOrientation(orientation);
+  };
+  this.setOrientation = setOrientation;
   
   return this;
 };

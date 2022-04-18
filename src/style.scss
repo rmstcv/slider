@@ -119,7 +119,7 @@ body {
     transform: none;
     margin-left: 100px;
     position: absolute;
-    top: 0;
+    // top: 0;
   }
   
   .slider__scale-container {
@@ -127,6 +127,15 @@ body {
     height: 100%;
     flex-direction: column;
     transform: none;
+  }
+
+  .slider__scale-value {
+    position: absolute;
+    height: 100%;
+  }
+
+  .slider__scale-value-container {
+    margin-top: 0;
   }
   
   .slider__scale-marker {

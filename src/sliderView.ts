@@ -81,6 +81,8 @@ class SliderView {
   checkSliderOrientation() {
     if (this.initView.orientation === 'vertical') {
       this.slider.classList.add('slider_vertical'); 
+    } else {
+      this.slider.classList.remove('slider_vertical'); 
     }
   }
 
@@ -130,6 +132,28 @@ class SliderView {
     if (this.initView.toolTip) {
       this.sliderToolTip.update([min, max]);
     }
+  }
+
+  setOrientation(orientation: 'vertical' | 'horizontal') {
+    
+    if (orientation === 'vertical') {
+      this.upper.style.left = '';
+      this.lower.style.left = '';
+      this.progressBar.style.width = '';
+      this.progressBar.style.left = '';
+    }
+    if (orientation === 'horizontal') {
+      this.upper.style.top = '';
+      this.lower.style.top = '';
+      this.progressBar.style.height = '';
+      this.progressBar.style.top = '';
+    }
+
+    this.checkSliderOrientation();
+    this.progressBarHighlight();
+    this.update([+this.lower.getAttribute('data-lower')!, +this.upper.getAttribute('data-upper')!]);
+    this.sliderScale.initViewScale.orientation = orientation;
+    this.sliderScale.init();
   }
 
   init([min, max]: number[]) {

@@ -16,4 +16,5 @@ interface JQuery {
   getValues: any;
   getStep: any;
   setStep: any;
+  setOrientation: any;
 }
