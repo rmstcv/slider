@@ -39,37 +39,21 @@ class SliderModel {
     return currentChecked;
   }
 
-  checkDirection(currentValue: number, nextValue: number) {
-    let  direction: 1 | -1 = 1;
-
-    if (currentValue <= nextValue) {
-      direction = 1;
-    }
-    if (currentValue > nextValue) {
-      direction = -1;
-    }
-    return direction;
-  }
-
-  findNextValue(currentValue: number, min: number, max: number) {
-    const increment = this.step * this.checkDirection(currentValue, this.newPosition);
-    const nextValue = this.checkExtremumValues(currentValue + increment, min, max);  
+  findNextValue(currentValue: number, min: number, max: number) { 
     let newCurrentValue = currentValue;
-    
-    if (this.newPosition >= nextValue && nextValue > currentValue) {    
-      newCurrentValue = currentValue + this.step;
+    let stepsIncr = Math.floor((this.newPosition - currentValue) / this.step);
+    if (currentValue > this.newPosition) {
+      stepsIncr = Math.ceil((this.newPosition - currentValue) / this.step);
     }
-    if (this.newPosition < currentValue && this.newPosition <= nextValue) {
-      newCurrentValue = currentValue - this.step;
-    }
-    newCurrentValue = this.checkExtremumValues(newCurrentValue, min, max); 
+    newCurrentValue = currentValue + stepsIncr * this.step;
+    newCurrentValue = this.checkExtremumValues(newCurrentValue, min, max);
     return newCurrentValue;
   }
 
   setNewLowValue(cursorCoord: number) {
     this.newPosition = cursorCoord;
     const nextValue = this.findNextValue(this.currentLow, this.sliderMin, this.currentUp);
-    this.currentLow = nextValue;  
+    this.currentLow = nextValue;
     return this.currentLow;
   }
 
@@ -83,10 +67,12 @@ class SliderModel {
   update([min, max]: number[]) {
     let [minNew, maxNew] = [min, max];
     if (min !== undefined) {
-      minNew = this.setNewLowValue(min); 
+      minNew = this.setNewLowValue(min);
+      minNew = parseFloat(minNew.toFixed(2));
     }
     if (max !== undefined) {
       maxNew = this.setNewUpValue(max);
+      maxNew = parseFloat(maxNew.toFixed(2));
     }
     return [minNew, maxNew];
   }

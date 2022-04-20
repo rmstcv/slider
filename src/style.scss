@@ -169,12 +169,33 @@ body {
       transform: translate(100%, -50%);
   }
 }
-
 .config {
   margin-left: 100px;
+  margin-top: 50px;
   input {
     width: 100px;
     background-color: #100d0d;
     color: darkslategray;
+    border: none;
   }
+}
+.config-input_orientation {
+  opacity: 0;
+  &:checked ~ .config-input__button {
+    transform: translateX(100%);
+  }
+}
+.config-input__position {
+  border: 1px solid black;
+  position: relative;
+  width: 100px;
+  height: 50%;
+}
+.config-input__button {
+  position: absolute;
+  left: 0;
+  width: 50%;
+  background-color: #100d0d;
+  height: 100%;
+  top: 0;
 }

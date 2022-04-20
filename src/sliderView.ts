@@ -6,6 +6,7 @@ import searchElem from './searchElem';
 interface InitView {
   orientation?: 'vertical' | 'horizontal',
   sliderType: 'range' | 'single',
+  min: number,
   max: number,
   step: number,
   sliderWidth: number,
@@ -44,6 +45,7 @@ class SliderView {
     this.upper = searchElem('.slider__handle-upper', this.slider) as HTMLElement;
     this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
     this.sliderScale = new SliderScale(this.slider, {
+      minCustom: this.initView.min,
       maxCustom: this.initView.max,
       step: this.initView.step,
       orientation: this.initView.orientation,
@@ -91,7 +93,7 @@ class SliderView {
   }
 
   convertToPercent(customValue: number) {
-    return (100 / this.initView.max) * customValue;
+    return (100 / Math.abs(this.initView.max - this.initView.min)) * (-this.initView.min + customValue);
   }
 
   shiftLeftHandler(value: number) {
@@ -103,6 +105,7 @@ class SliderView {
     if (this.initView.orientation === 'vertical') {
       this.lower.style.top = value + '%';
     }
+    
     this.currentLowValue = value;
   }
 
@@ -119,6 +122,7 @@ class SliderView {
   }
   
   update([min, max]: number[]) { 
+    
     if (min !== undefined) {
       this.shiftLeftHandler(this.convertToPercent(min));
       this.lower.setAttribute('data-lower', `${min}`);

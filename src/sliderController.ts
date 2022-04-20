@@ -32,20 +32,24 @@ class SliderController {
 
   sliderCurrentValues: number[];
 
+  sliderSize: number;
+
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
     this.slider = slider;
     this.step = this.checkStep(this.initController.step);
+    this.sliderSize = Math.abs(this.initController.max - this.initController.min);
     this.sliderModel = new SliderModel({
-      sliderMin: initController.min,
-      sliderMax: initController.max,
+      sliderMin: this.initController.min,
+      sliderMax: this.initController.max,
       step: this.step,
     });
     this.sliderWidth = this.checkSliderOrientation();
     this.sliderView = new SliderView(slider, {
       orientation: initController.orientation,
       sliderType: initController.sliderType,
-      max: initController.max - initController.min,
+      min: this.initController.min,
+      max: this.initController.max,
       step: this.convertFromCustom(this.step),
       sliderWidth: this.sliderWidth,
       toolTip: initController.toolTip,
@@ -56,17 +60,17 @@ class SliderController {
   }
   
   convertToCustom(value: number) {
-    return Math.round((value * (this.initController.max - this.initController.min) / this.checkSliderOrientation()) * Math.pow(10, 2)) / Math.pow(10, 2);
+    return Math.round((value * ((this.sliderSize) / this.checkSliderOrientation()) + this.initController.min) * Math.pow(10, 2)) / Math.pow(10, 2);
   }
 
   convertFromCustom(value: number) {
-    return value / ((this.initController.max - this.initController.min ) / this.checkSliderOrientation());
+    return value / ((this.sliderSize ) / this.checkSliderOrientation());
   }
 
   checkStep(step: number) {
     let newStep = step;
     if (step <= 0 || step >= 30 || !step) {
-      newStep = (this.initController.max - this.initController.min) / 20;
+      newStep = (this.sliderSize) / 20;
     }
     return newStep;
   }
@@ -187,8 +191,8 @@ class SliderController {
         const elem: HTMLElement = e.target as HTMLElement;
         const value: number = Number(elem.getAttribute('data-value'));
         if (elem.classList.contains('slider__scale-marker-value')) {
-          this.sliderView.update([0, value]);
-          this.sliderModel.setValues([0, value]);
+          this.sliderView.update([this.initController.min, value]);
+          this.sliderModel.setValues([this.initController.min, value]);
         }
       });
     }

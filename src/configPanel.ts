@@ -2,11 +2,11 @@ import sliderCreate from './jquery.slider-plugin';
 import searchElem from './searchElem';
 
 const sliderInitConfig: Init = {
-  min: 0,
+  min: -30,
   max: 30,
-  step: 2,
-  setMin: 4,
-  setMax: 16,
+  step: 5,
+  setMin: -10,
+  setMax: 10,
   sliderType: 'range',
   orientation: 'horizontal',
   scale: true,

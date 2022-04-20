@@ -1,6 +1,7 @@
 import searchElem from './searchElem';
 
 interface InitViewScale {
+  minCustom: number,
   maxCustom: number,
   step: number,
   orientation?: 'vertical' | 'horizontal',
@@ -12,9 +13,12 @@ class SliderScale {
 
   initViewScale: InitViewScale;
 
+  sliderSize: number;
+
   constructor(slider: HTMLElement, initViewScale: InitViewScale) {
     this.slider = slider;
     this.initViewScale = initViewScale;
+    this.sliderSize = this.initViewScale.maxCustom - this.initViewScale.minCustom;
   }
 
   createScail() {
@@ -27,9 +31,9 @@ class SliderScale {
     const scaleValueContainer = document.createElement('div');
     scaleValueContainer.classList.add('slider__scale-value-container');
     const scaleMultiplier = 4;
-    const stepCustom = this.initViewScale.step * ((this.initViewScale.maxCustom / this.initViewScale.sliderWidth));
+    const stepCustom = this.sliderSize / 10;
   
-    for ( let i = 0; i <= (this.initViewScale.maxCustom / stepCustom) * scaleMultiplier; i += 1) {
+    for ( let i = 0; i <= (this.sliderSize / stepCustom) * scaleMultiplier; i += 1) {
       const elemScale: HTMLElement = document.createElement('div');
       elemScale.classList.add('slider__scale-marker');
       
@@ -37,13 +41,14 @@ class SliderScale {
         elemScale.classList.add('slider__scale-marker_large');
         const elemScaleValue: HTMLElement = document.createElement('div');
         elemScaleValue.classList.add('slider__scale-marker-value');
-        elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier}`);
-        elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier}`;
+        elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
+        elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;
+
         if (this.initViewScale.orientation === 'vertical') {   
-          elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.initViewScale.maxCustom)}%`;
+          elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
                 
         } else {
-          elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.initViewScale.maxCustom)}%`;
+          elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
         }
         scaleValueContainer.appendChild(elemScaleValue);
       }
@@ -60,7 +65,6 @@ class SliderScale {
   init() {
     this.createScail();
   }
-
 }
 
 export default SliderScale;
