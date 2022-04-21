@@ -108,9 +108,9 @@ class SliderController {
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
     
     if (this.initController.orientation === 'vertical') {
-      clientCoord = currentCoord - this.slider.getBoundingClientRect().top;
+      clientCoord = this.slider.getBoundingClientRect().height! - currentCoord + this.slider.getBoundingClientRect().top;
     }
-    if (elem === this.lower) {
+    if (elem === this.lower) {  
       min = this.convertToCustom(clientCoord);
     } 
     if (elem === this.upper) {

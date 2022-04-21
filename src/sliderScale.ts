@@ -41,14 +41,14 @@ class SliderScale {
         elemScale.classList.add('slider__scale-marker_large');
         const elemScaleValue: HTMLElement = document.createElement('div');
         elemScaleValue.classList.add('slider__scale-marker-value');
-        elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
-        elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;
-
         if (this.initViewScale.orientation === 'vertical') {   
           elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
-                
+          elemScaleValue.setAttribute('data-value', `${this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
+          elemScaleValue.innerHTML = `${this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;  
         } else {
           elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
+          elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
+          elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;
         }
         scaleValueContainer.appendChild(elemScaleValue);
       }

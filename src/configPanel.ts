@@ -19,10 +19,6 @@ const rangeSlider = sliderCreate(slider, sliderInitConfig);
 
 class ConfigPanel {
 
-  lower: HTMLElement;
-
-  upper: HTMLElement;
-
   minInput: HTMLInputElement;
 
   maxInput: HTMLInputElement;
@@ -35,9 +31,7 @@ class ConfigPanel {
 
   orientation: HTMLInputElement;
 
-  constructor(sliderElem: HTMLElement) {
-    this.lower = <HTMLElement> searchElem('.slider__handle-lower', sliderElem);
-    this.upper = <HTMLElement> searchElem('.slider__handle-upper', sliderElem);
+  constructor() {
     this.minInput = <HTMLInputElement> searchElem('.config-input_min', config);
     this.maxInput = <HTMLInputElement> searchElem('.config-input_max', config);
     this.stepInput = <HTMLInputElement> searchElem('.config-input_step', config);
@@ -105,5 +99,5 @@ class ConfigPanel {
   }
 }
 
-const configPanel = new ConfigPanel(slider);
+const configPanel = new ConfigPanel();
 configPanel.init();

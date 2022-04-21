@@ -119,7 +119,6 @@ body {
     transform: none;
     margin-left: 100px;
     position: absolute;
-    // top: 0;
   }
   
   .slider__scale-container {
@@ -172,30 +171,29 @@ body {
 .config {
   margin-left: 100px;
   margin-top: 50px;
-  input {
+  .config-input {
     width: 100px;
     background-color: #100d0d;
     color: darkslategray;
     border: none;
-  }
-}
-.config-input_orientation {
-  opacity: 0;
-  &:checked ~ .config-input__button {
-    transform: translateX(100%);
-  }
-}
-.config-input__position {
-  border: 1px solid black;
-  position: relative;
-  width: 100px;
-  height: 50%;
-}
-.config-input__button {
-  position: absolute;
-  left: 0;
-  width: 50%;
-  background-color: #100d0d;
-  height: 100%;
-  top: 0;
+    &__position {
+      border: 1px solid black;
+      position: relative;
+    }
+    &__button {
+      position: absolute;
+      left: 0;
+      background-color: #1b1919;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      display: flex;
+    }
+    &_orientation {
+      opacity: 0;
+      &:checked~.config-input__button {
+        transform: translateX(100%);
+      }
+    }
+  } 
 }

@@ -67,7 +67,7 @@ class SliderView {
     if (this.initView.orientation === 'vertical') {
       if ( progressLength >= 0 ) {
         this.progressBar.style.height = progressLength + '%';
-        this.progressBar.style.top = this.currentLowValue + '%';
+        this.progressBar.style.top = 100 - this.currentUpperValue + '%';
       } else {
         this.progressBar.style.height = 0 + '%';
       }
@@ -103,7 +103,7 @@ class SliderView {
       this.lower.style.left = value + '%';
     }
     if (this.initView.orientation === 'vertical') {
-      this.lower.style.top = value + '%';
+      this.lower.style.top = 100 - value + '%';
     }
     
     this.currentLowValue = value;
@@ -116,7 +116,7 @@ class SliderView {
       this.upper.style.left = value + '%';
     }
     if (this.initView.orientation === 'vertical') {
-      this.upper.style.top = value + '%';
+      this.upper.style.top = 100 - value + '%';
     }
     this.currentUpperValue = value;
   }
@@ -126,6 +126,7 @@ class SliderView {
     if (min !== undefined) {
       this.shiftLeftHandler(this.convertToPercent(min));
       this.lower.setAttribute('data-lower', `${min}`);
+      
     }
     if (max !== undefined) {
       this.shiftRightHandler(this.convertToPercent(max));
@@ -139,7 +140,7 @@ class SliderView {
   }
 
   setOrientation(orientation: 'vertical' | 'horizontal') {
-    
+
     if (orientation === 'vertical') {
       this.upper.style.left = '';
       this.lower.style.left = '';
