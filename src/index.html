@@ -11,9 +11,21 @@
     <div class="slider"></div>
   </div>
   <div class="config">
-    <input type="number" class="config-input config-input_min">
-    <input type="number" class="config-input config-input_max">
-    <input type="number" class="config-input config-input_step">
+    <div class="config__input-min">
+      <div class="config__dec"></div>
+      <input type="number" class="config-input config-input_min">
+      <div class="config__inc"></div>
+    </div>
+    <div class="config__input-max">
+      <div class="config__dec"></div>
+      <input type="number" class="config-input config-input_max">
+      <div class="config__inc"></div>
+    </div>
+    <div class="config__input-step">
+      <div class="config__dec"></div>
+      <input type="number" class="config-input config-input_step">
+      <div class="config__inc"></div>
+    </div>
     <label for="position" class="config-input config-input__position">
       <input type="checkbox" id="position" class="config-input config-input_orientation">
       <div class="config-input__button"></div>
