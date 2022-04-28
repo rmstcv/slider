@@ -47,15 +47,17 @@ class ConfigPanel {
   }
 
   setMin() {
-    this.minInput.setAttribute('min', `${this.sliderInitConfig.min}`);
-    this.minInput.setAttribute('max', `${this.max}`);
-    this.minInput.value = `${this.sliderInitConfig.setMin}`;
+    this.minInput.setAttribute('max', this.maxInput.value);
+    rangeSlider.setValues([this.min, undefined]);
+    this.min = rangeSlider.getValues()[0];
+    this.minInput.value = `${this.min}`;  
   }
 
   setMax() {
-    this.maxInput.setAttribute('min', `${this.min}`);
-    this.maxInput.setAttribute('max', `${this.sliderInitConfig.max}`);
-    this.maxInput.value = `${this.sliderInitConfig.setMax}`;
+    this.maxInput.setAttribute('min', this.minInput.value);
+    rangeSlider.setValues([undefined, this.max]);
+    this.max = rangeSlider.getValues()[1];
+    this.maxInput.value = `${this.max}`;
   }
 
   setStep() {
@@ -69,82 +71,82 @@ class ConfigPanel {
     rangeSlider.setOrientation(orientation);
   }
 
+  changeValues(e: Event) {
+    const elem = e.target as HTMLElement;
+    const elemPar = elem.parentNode as HTMLElement;
+    
+    if (elemPar.classList.contains('config__input-min')) {
+      if (elem.classList.contains('config__inc') && this.min < this.max) {
+        this.min += this.step;
+      }
+      if (elem.classList.contains('config__dec') && this.min > this.sliderInitConfig.min) {
+        this.min -= this.step;
+      }
+      this.setMin();
+      
+    }
+    if (elemPar.classList.contains('config__input-max')) {
+      if (elem.classList.contains('config__inc') && this.max < this.sliderInitConfig.max) {
+        this.max += this.step;
+      }
+      if (elem.classList.contains('config__dec') && this.max > this.min) {
+        this.max -= this.step;
+      }
+      this.setMax();
+    }
+  }
+
+  setValues() {
+    this.minInput.value = rangeSlider.getValues()[0];
+    this.maxInput.value = rangeSlider.getValues()[1];
+    this.min = +this.minInput.value;
+    this.max = +this.maxInput.value;
+    this.maxInput.setAttribute('min', this.minInput.value);
+    this.minInput.setAttribute('max', this.maxInput.value);
+  }
+
+  changeValuesFromScale(e: Event) {
+    const elem: HTMLElement = e.target as HTMLElement;
+    const value: number = Number(elem.getAttribute('data-value'));
+    if (elem.classList.contains('slider__scale-marker-value')) {
+      this.minInput.value = `${this.sliderInitConfig.min}`;
+      this.maxInput.value = `${value}`;
+      this.min = this.sliderInitConfig.min;
+      this.max = value;
+      this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
+      this.minInput.setAttribute('max', `${value}`);
+    }
+  }
+
   addListeners() {
+    const setValuesBind = this.setValues.bind(this);
+    const scale = searchElem('.slider__scale-value', slider)!;
 
-    const setValues = () => {
-      this.minInput.value = rangeSlider.getValues()[0];
-      this.maxInput.value = rangeSlider.getValues()[1];
-      this.min = +this.minInput.value;
-      this.max = +this.maxInput.value;
-      this.maxInput.setAttribute('min', this.minInput.value);
-      this.minInput.setAttribute('max', this.maxInput.value);
-    };
-
-    document.addEventListener('mouseup', () => {      
-      document.removeEventListener('mousemove', setValues);
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', setValuesBind);
     });
     
     document.addEventListener('mousedown', (e) => {
       if (e.target === searchElem('.slider__handle-lower', slider) || 
       e.target === searchElem('.slider__handle-upper', slider)) {
-        document.addEventListener('mousemove', setValues);
+        document.addEventListener('mousemove', setValuesBind);
       }
     });
 
-    config.addEventListener('click', (e) => {
-      const elem = e.target as HTMLElement;
-      const elemPar = elem.parentNode as HTMLElement;
-      const elemInput = searchElem('input', elemPar) as HTMLInputElement;
-      
-      if (elemPar.classList.contains('config__input-min')) {
-        if (elem.classList.contains('config__inc') && this.min < this.max) {
-          this.min += this.step;
-        }
-        if (elem.classList.contains('config__dec') && this.min > this.sliderInitConfig.min) {
-          this.min -= this.step;
-        }
-        rangeSlider.setValues([this.min, undefined]);
-        this.min = rangeSlider.getValues()[0];
-        elemInput.value = `${this.min}`;
-        this.maxInput.setAttribute('min', `${this.min}`);
-        
-      }
-      if (elemPar.classList.contains('config__input-max')) {
-        if (elem.classList.contains('config__inc') && this.max < this.sliderInitConfig.max) {
-          this.max += this.step;
-        }
-        if (elem.classList.contains('config__dec') && this.max > this.min) {
-          this.max -= this.step;
-        }
-        rangeSlider.setValues([undefined, this.max]);
-        this.max = rangeSlider.getValues()[1];
-        elemInput.value = `${this.max}`;
-        this.minInput.setAttribute('max', `${this.max}`);
-      }
-    });
-    const scale = searchElem('.slider__scale-value', slider)!;
-    scale.addEventListener('click', (e) => {
-      const elem: HTMLElement = e.target as HTMLElement;
-      const value: number = Number(elem.getAttribute('data-value'));
-      if (elem.classList.contains('slider__scale-marker-value')) {
-        this.minInput.value = `${this.sliderInitConfig.min}`;
-        this.maxInput.value = `${value}`;
-        this.min = this.sliderInitConfig.min;
-        this.max = value;
-        this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
-        this.minInput.setAttribute('max', `${value}`);
-      }
-    });
-    this.minInput?.addEventListener('input', () => {
+    config.addEventListener('click', (e) => this.changeValues(e));
+
+    scale.addEventListener('click', (e) => this.changeValuesFromScale(e));
+
+    this.minInput?.addEventListener('change', () => {
       this.min = +this.minInput.value;
-      this.minInput.setAttribute('max', this.maxInput.value);
-      rangeSlider.setValues([+this.minInput.value, undefined]);
+      this.setMin();
     });
-    this.maxInput?.addEventListener('input', () => {
+
+    this.maxInput?.addEventListener('change', () => {
       this.max = +this.maxInput.value;
-      this.maxInput.setAttribute('min', this.minInput.value);
-      rangeSlider.setValues([undefined, +this.maxInput.value]);
+      this.setMax();
     });
+
     this.stepInput?.addEventListener('input', () => {
       this.step = Number(this.stepInput.value);
       this.minInput.setAttribute('step', `${this.step}`);
@@ -161,8 +163,8 @@ class ConfigPanel {
   }
 
   init() {
-    this.setMax();
-    this.setMin();
+    this.minInput.value = `${this.sliderInitConfig.setMin}`;
+    this.maxInput.value = `${this.sliderInitConfig.setMax}`;
     this.setStep();
     this.addListeners();
   }
