@@ -39,13 +39,14 @@ class SliderModel {
     return currentChecked;
   }
 
-  findNextValue(currentValue: number, min: number, max: number) { 
+  findNextValue(currentValue: number, min: number, max: number) {
+    const step = this.checkExtremumValues(this.step, 0, this.sliderMax - this.sliderMin); 
     let newCurrentValue = currentValue;
-    let stepsIncr = Math.floor((this.newPosition - currentValue) / this.step);
+    let stepsIncr = Math.floor((this.newPosition - currentValue) / step);
     if (currentValue > this.newPosition) {
-      stepsIncr = Math.ceil((this.newPosition - currentValue) / this.step);
+      stepsIncr = Math.ceil((this.newPosition - currentValue) / step);
     }
-    newCurrentValue = currentValue + stepsIncr * this.step;
+    newCurrentValue = currentValue + stepsIncr * step;
     newCurrentValue = this.checkExtremumValues(newCurrentValue, min, max);
     return newCurrentValue;
   }
@@ -54,6 +55,12 @@ class SliderModel {
     this.newPosition = cursorCoord;
     const nextValue = this.findNextValue(this.currentLow, this.sliderMin, this.currentUp);
     this.currentLow = nextValue;
+    if (cursorCoord < this.sliderMin) {
+      this.currentLow = this.sliderMin;
+    }
+    if (cursorCoord > this.currentUp) {
+      this.currentLow = this.currentUp;
+    }
     return this.currentLow;
   }
 
@@ -61,11 +68,18 @@ class SliderModel {
     this.newPosition = cursorCoord;
     const nextValue = this.findNextValue(this.currentUp, this.currentLow, this.sliderMax);
     this.currentUp = nextValue;
+    if (cursorCoord > this.sliderMax) {
+      this.currentUp = this.sliderMax;
+    }
+    if (cursorCoord < this.currentLow) {
+      this.currentUp = this.currentLow;
+    }
     return this.currentUp;
   }
 
   update([min, max]: number[]) {
     let [minNew, maxNew] = [min, max];
+    
     if (min !== undefined) {
       minNew = this.setNewLowValue(min);
       minNew = parseFloat(minNew.toFixed(2));
@@ -95,7 +109,8 @@ class SliderModel {
   }
 
   setStep(step: number) {
-    this.step = step;
+    this.step = this.checkExtremumValues(step, 0, this.sliderMax - this.sliderMin);
+    return this.step;
   }
 
   init([min, max]: number[]) {

@@ -13,7 +13,7 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
   };
   this.getValues = getValues;
   const setStep = function (step: number) {
-    controller.setStep(step);
+    return controller.setStep(step);
   };
   this.setStep = setStep;
   const setOrientation = function (orientation: 'vertical' | 'horizontal') {

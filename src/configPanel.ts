@@ -47,24 +47,26 @@ class ConfigPanel {
   }
 
   setMin() {
-    this.minInput.setAttribute('max', this.maxInput.value);
     rangeSlider.setValues([this.min, undefined]);
     this.min = rangeSlider.getValues()[0];
     this.minInput.value = `${this.min}`;  
   }
 
   setMax() {
-    this.maxInput.setAttribute('min', this.minInput.value);
     rangeSlider.setValues([undefined, this.max]);
     this.max = rangeSlider.getValues()[1];
     this.maxInput.value = `${this.max}`;
   }
 
-  setStep() {
+  setStepInit() {
     this.stepInput.value = `${this.step}`;
-    this.stepInput.setAttribute('step', `${(this.sliderInitConfig.max - this.sliderInitConfig.min) / 20}`);
     this.stepInput.setAttribute('max', `${this.sliderInitConfig.max - this.sliderInitConfig.min}`);
     this.stepInput.setAttribute('min', '0');
+  }
+
+  setStep() { 
+    this.step = rangeSlider.setStep(this.step);
+    this.stepInput.value = `${this.step}`; 
   }
 
   setOrientation(orientation: string) {
@@ -101,8 +103,6 @@ class ConfigPanel {
     this.maxInput.value = rangeSlider.getValues()[1];
     this.min = +this.minInput.value;
     this.max = +this.maxInput.value;
-    this.maxInput.setAttribute('min', this.minInput.value);
-    this.minInput.setAttribute('max', this.maxInput.value);
   }
 
   changeValuesFromScale(e: Event) {
@@ -113,9 +113,22 @@ class ConfigPanel {
       this.maxInput.value = `${value}`;
       this.min = this.sliderInitConfig.min;
       this.max = value;
-      this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
-      this.minInput.setAttribute('max', `${value}`);
     }
+  }
+
+  changeStep(e: Event) {
+    const elem = e.target as HTMLElement;
+    const elemPar = elem.parentNode as HTMLElement;
+    const inc = (this.sliderInitConfig.max - this.sliderInitConfig.min) / 20;
+    if (elemPar.classList.contains('config__input-step')) {
+      if (elem.classList.contains('config__inc')) {
+        this.step += inc;
+      }
+      if (elem.classList.contains('config__dec')) {
+        this.step -= inc;
+      }
+    }
+    this.setStep();
   }
 
   addListeners() {
@@ -137,6 +150,8 @@ class ConfigPanel {
 
     scale.addEventListener('click', (e) => this.changeValuesFromScale(e));
 
+    config.addEventListener('click', (e) => this.changeStep(e));
+
     this.minInput?.addEventListener('change', () => {
       this.min = +this.minInput.value;
       this.setMin();
@@ -147,12 +162,11 @@ class ConfigPanel {
       this.setMax();
     });
 
-    this.stepInput?.addEventListener('input', () => {
-      this.step = Number(this.stepInput.value);
-      this.minInput.setAttribute('step', `${this.step}`);
-      this.maxInput.setAttribute('step', `${this.step}`);
-      rangeSlider.setStep(Number(this.stepInput.value));
+    this.stepInput?.addEventListener('change', () => {
+      this.step = +this.stepInput.value;
+      this.setStep();
     });
+
     this.orientation?.addEventListener('click', () => {
       if (this.orientation.checked) {
         this.setOrientation('vertical');
@@ -165,7 +179,7 @@ class ConfigPanel {
   init() {
     this.minInput.value = `${this.sliderInitConfig.setMin}`;
     this.maxInput.value = `${this.sliderInitConfig.setMax}`;
-    this.setStep();
+    this.setStepInit();
     this.addListeners();
   }
 }

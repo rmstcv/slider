@@ -137,7 +137,7 @@ class SliderController {
   }
 
   setStep(step: number) {
-    this.sliderModel.step = step;
+    return this.sliderModel.setStep(step);
   }
 
   setOrientation(orientation: 'vertical' | 'horizontal') {
