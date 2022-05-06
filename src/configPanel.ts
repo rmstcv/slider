@@ -2,11 +2,11 @@ import sliderCreate from './jquery.slider-plugin';
 import searchElem from './searchElem';
 
 const sliderInitConfig: Init = {
-  min: -30,
-  max: 30,
-  step: 5,
-  setMin: -10,
-  setMax: 10,
+  min: -0.0030,
+  max: 0.0030,
+  step: 0.0005,
+  setMin: -0.0010,
+  setMax: 0.0010,
   sliderType: 'range',
   orientation: 'horizontal',
   scale: true,
@@ -31,6 +31,8 @@ class ConfigPanel {
 
   orientation: HTMLInputElement;
 
+  type: HTMLInputElement;
+
   min: number;
 
   max: number;
@@ -40,6 +42,7 @@ class ConfigPanel {
     this.maxInput = <HTMLInputElement> searchElem('.config-input_max', config);
     this.stepInput = <HTMLInputElement> searchElem('.config-input_step', config);
     this.orientation = <HTMLInputElement> searchElem('.config-input_orientation', config);
+    this.type = <HTMLInputElement> searchElem('.config-input_type', config);
     this.sliderInitConfig = sliderInitConfig;
     this.step = this.sliderInitConfig.step;
     this.min = this.sliderInitConfig.setMin;
@@ -77,7 +80,7 @@ class ConfigPanel {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
     
-    if (elemPar.classList.contains('config__input-min')) {
+    if (elemPar.classList.contains('config__input-min') && this.sliderInitConfig.sliderType !== 'single') {
       if (elem.classList.contains('config__inc') && this.min < this.max) {
         this.min += this.step;
       }
@@ -119,16 +122,23 @@ class ConfigPanel {
   changeStep(e: Event) {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
-    const inc = (this.sliderInitConfig.max - this.sliderInitConfig.min) / 20;
+    const inc = (this.sliderInitConfig.max - this.sliderInitConfig.min) / 100;
+    
     if (elemPar.classList.contains('config__input-step')) {
       if (elem.classList.contains('config__inc')) {
-        this.step += inc;
+        this.step = parseFloat((this.step + inc).toFixed(this.sliderInitConfig.max.toString().length));
       }
       if (elem.classList.contains('config__dec')) {
-        this.step -= inc;
+        this.step = parseFloat((this.step - inc).toFixed(this.sliderInitConfig.max.toString().length));
       }
     }
     this.setStep();
+  }
+
+  setType(type: 'range' | 'single') {
+    this.sliderInitConfig.sliderType = type;
+    this.minInput.value = `${this.min}`;
+    rangeSlider.setType(type);
   }
 
   addListeners() {
@@ -153,8 +163,12 @@ class ConfigPanel {
     config.addEventListener('click', (e) => this.changeStep(e));
 
     this.minInput?.addEventListener('change', () => {
-      this.min = +this.minInput.value;
-      this.setMin();
+      if (this.sliderInitConfig.sliderType !== 'single') {
+        this.min = +this.minInput.value;
+        this.setMin();
+      } else {
+        this.minInput.value = `${this.min}`;
+      }
     });
 
     this.maxInput?.addEventListener('change', () => {
@@ -172,6 +186,15 @@ class ConfigPanel {
         this.setOrientation('vertical');
       } else {
         this.setOrientation('horizontal');
+      }
+    });
+
+    this.type?.addEventListener('click', () => {
+      if (this.sliderInitConfig.sliderType === 'single') {
+        this.setType('range');
+      } else {
+        this.min = this.sliderInitConfig.min;
+        this.setType('single');
       }
     });
   }

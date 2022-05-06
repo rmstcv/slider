@@ -78,6 +78,9 @@ class SliderView {
     if (this.initView.sliderType === 'single') {
       this.lower.style.display = 'none';
     }
+    if (this.initView.sliderType === 'range') {
+      this.lower.style.display = 'block';
+    }
   }
 
   checkSliderOrientation() {
@@ -105,7 +108,6 @@ class SliderView {
     if (this.initView.orientation === 'vertical') {
       this.lower.style.top = 100 - value + '%';
     }
-    
     this.currentLowValue = value;
   }
 
@@ -122,13 +124,13 @@ class SliderView {
   }
   
   update([min, max]: number[]) { 
-    
     if (min !== undefined) {
+      min = parseFloat((min).toFixed(this.initView.max.toString().length));
       this.shiftLeftHandler(this.convertToPercent(min));
       this.lower.setAttribute('data-lower', `${min}`);
-      
     }
     if (max !== undefined) {
+      max = parseFloat((max).toFixed(this.initView.max.toString().length));
       this.shiftRightHandler(this.convertToPercent(max));
       this.upper.setAttribute('data-upper', `${max}`);
     }
@@ -159,6 +161,17 @@ class SliderView {
     this.update([+this.lower.getAttribute('data-lower')!, +this.upper.getAttribute('data-upper')!]);
     this.sliderScale.initViewScale.orientation = orientation;
     this.sliderScale.init();
+  }
+
+  setType(type: 'range' | 'single') {
+    this.initView.sliderType = type;
+    this.checkSliderType();
+    // if (type === 'range') {
+    //   this.initView.sliderType = type;
+    // }
+    // if (type === 'single') {
+    //   console.log('single');
+    // }
   }
 
   init([min, max]: number[]) {

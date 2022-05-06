@@ -20,6 +20,10 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     controller.setOrientation(orientation);
   };
   this.setOrientation = setOrientation;
+  const setType = function (type: 'range' | 'single') {
+    controller.setType(type);
+  };
+  this.setType = setType;
   
   return this;
 };

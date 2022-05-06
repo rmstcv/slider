@@ -82,11 +82,9 @@ class SliderModel {
     
     if (min !== undefined) {
       minNew = this.setNewLowValue(min);
-      minNew = parseFloat(minNew.toFixed(2));
     }
     if (max !== undefined) {
       maxNew = this.setNewUpValue(max);
-      maxNew = parseFloat(maxNew.toFixed(2));
     }
     return [minNew, maxNew];
   }

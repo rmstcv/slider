@@ -17,4 +17,5 @@ interface JQuery {
   getStep: any;
   setStep: any;
   setOrientation: any;
+  setType: any;
 }

@@ -60,7 +60,8 @@ class SliderController {
   }
   
   convertToCustom(value: number) {
-    return Math.round((value * ((this.sliderSize) / this.checkSliderOrientation()) + this.initController.min) * Math.pow(10, 2)) / Math.pow(10, 2);
+    const pow = this.initController.max.toString().length;
+    return Math.round((value * ((this.sliderSize) / this.checkSliderOrientation()) + this.initController.min) * Math.pow(10, pow)) / Math.pow(10, pow);
   }
 
   convertFromCustom(value: number) {
@@ -69,8 +70,8 @@ class SliderController {
 
   checkStep(step: number) {
     let newStep = step;
-    if (step <= 0 || step >= 30 || !step) {
-      newStep = (this.sliderSize) / 20;
+    if (step <= 0 || step >= Math.abs(this.initController.max - this.initController.min) || !step) {
+      newStep = (Math.abs(this.initController.max - this.initController.min)) / 20;
     }
     return newStep;
   }
@@ -146,6 +147,19 @@ class SliderController {
     this.sliderView.setOrientation(orientation);
   }
 
+  setType(type: 'range' | 'single') {
+    this.setModelValues([this.initController.min, this.getModelValues()[1]]);
+    this.initController.sliderType = type;
+    this.sliderView.setType(type);
+  }
+
+  checkSliderType() {
+    if (this.initController.sliderType === 'single') {
+      this.initController.setMin = this.initController.min;
+      this.setType('single');
+    }
+  }
+
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
     const updateValuesBind = this.updateValues.bind(this, elem);
@@ -176,12 +190,6 @@ class SliderController {
     this.lower.addEventListener('mousedown', (e) => this.addEvents(this.lower, e));
     this.upper.addEventListener('touchstart', (e) => this.addEvents(this.upper, e));
     this.lower.addEventListener('touchstart', (e) => this.addEvents(this.lower, e));
-  }
-
-  checkSliderType() {
-    if (this.initController.sliderType === 'single') {
-      this.initController.setMin = 0;
-    }
   }
 
   addScale() {

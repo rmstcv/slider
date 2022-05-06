@@ -36,6 +36,8 @@ class SliderScale {
     for ( let i = 0; i <= (this.sliderSize / stepCustom) * scaleMultiplier; i += 1) {
       const elemScale: HTMLElement = document.createElement('div');
       elemScale.classList.add('slider__scale-marker');
+      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + this.initViewScale.minCustom).toFixed(this.initViewScale.maxCustom.toString().length));
+      const valueVertical = parseFloat((this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom).toFixed(this.initViewScale.maxCustom.toString().length));
       
       if (i % scaleMultiplier === 0) {   
         elemScale.classList.add('slider__scale-marker_large');
@@ -43,12 +45,12 @@ class SliderScale {
         elemScaleValue.classList.add('slider__scale-marker-value');
         if (this.initViewScale.orientation === 'vertical') {   
           elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
-          elemScaleValue.setAttribute('data-value', `${this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
-          elemScaleValue.innerHTML = `${this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;  
+          elemScaleValue.setAttribute('data-value', `${valueVertical}`);
+          elemScaleValue.innerHTML = `${valueVertical}`;  
         } else {
           elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
-          elemScaleValue.setAttribute('data-value', `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`);
-          elemScaleValue.innerHTML = `${i * stepCustom / scaleMultiplier + this.initViewScale.minCustom}`;
+          elemScaleValue.setAttribute('data-value', `${valueHorizontal}`);
+          elemScaleValue.innerHTML = `${valueHorizontal}`;
         }
         scaleValueContainer.appendChild(elemScaleValue);
       }
