@@ -91,6 +91,15 @@ class SliderView {
     }
   }
 
+  setToolTip() {
+    if (!this.initView.toolTip) {
+      this.initView.toolTip = true;
+    } else {
+      this.initView.toolTip = false;
+    }
+    this.sliderToolTip.setToolTip();
+  }
+
   createScail() {
     this.sliderScale.init();
   }
@@ -166,12 +175,6 @@ class SliderView {
   setType(type: 'range' | 'single') {
     this.initView.sliderType = type;
     this.checkSliderType();
-    // if (type === 'range') {
-    //   this.initView.sliderType = type;
-    // }
-    // if (type === 'single') {
-    //   console.log('single');
-    // }
   }
 
   init([min, max]: number[]) {

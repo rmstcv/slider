@@ -153,6 +153,15 @@ class SliderController {
     this.sliderView.setType(type);
   }
 
+  setToolTip() {
+    if (this.initController.toolTip) {
+      this.initController.toolTip = false;
+    } else {
+      this.initController.toolTip = true;
+    }
+    this.sliderView.setToolTip();
+  }
+
   checkSliderType() {
     if (this.initController.sliderType === 'single') {
       this.initController.setMin = this.initController.min;

@@ -24,6 +24,10 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     controller.setType(type);
   };
   this.setType = setType;
+  const setToolTip = function () {
+    controller.setToolTip();
+  };
+  this.setToolTip = setToolTip;
   
   return this;
 };

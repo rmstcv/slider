@@ -14,7 +14,6 @@ class ToolTip {
     this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
   }
 
-
   update([min, max]: number[]) { 
     if (min !== undefined) {
       this.lowerCount.innerHTML = min.toString();
@@ -29,6 +28,15 @@ class ToolTip {
     }
   }
 
+  setToolTip() {
+    if (this.lowerCount.style.display === 'none' && this.upperCount.style.display === 'none') {
+      this.lowerCount.style.display = 'block';
+      this.upperCount.style.display = 'block';
+    } else {
+      this.lowerCount.style.display = 'none';
+      this.upperCount.style.display = 'none';
+    }
+  }
 }
 
 export default ToolTip;

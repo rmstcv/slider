@@ -33,6 +33,8 @@ class ConfigPanel {
 
   type: HTMLInputElement;
 
+  toolTip: HTMLInputElement;
+
   min: number;
 
   max: number;
@@ -43,6 +45,7 @@ class ConfigPanel {
     this.stepInput = <HTMLInputElement> searchElem('.config-input_step', config);
     this.orientation = <HTMLInputElement> searchElem('.config-input_orientation', config);
     this.type = <HTMLInputElement> searchElem('.config-input_type', config);
+    this.toolTip = <HTMLInputElement> searchElem('.config-input_tool-tip', config);
     this.sliderInitConfig = sliderInitConfig;
     this.step = this.sliderInitConfig.step;
     this.min = this.sliderInitConfig.setMin;
@@ -141,6 +144,10 @@ class ConfigPanel {
     rangeSlider.setType(type);
   }
 
+  setToolTip() {
+    rangeSlider.setToolTip();
+  }
+
   addListeners() {
     const setValuesBind = this.setValues.bind(this);
     const scale = searchElem('.slider__scale-value', slider)!;
@@ -196,6 +203,15 @@ class ConfigPanel {
         this.min = this.sliderInitConfig.min;
         this.setType('single');
       }
+    });
+
+    this.toolTip?.addEventListener('click', () => {
+      if (this.sliderInitConfig.toolTip) {
+        this.sliderInitConfig.toolTip = false;
+      } else {
+        this.sliderInitConfig.toolTip = true;
+      }
+      this.setToolTip();
     });
   }
 
