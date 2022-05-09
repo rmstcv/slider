@@ -113,6 +113,7 @@ class SliderModel {
 
   init([min, max]: number[]) {
     this.setValues([min, max]);
+    return [this.currentLow, this.currentUp];
   }
 }
 

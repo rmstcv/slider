@@ -30,20 +30,6 @@ describe('check extremum values', () => {
   });
 });
 
-describe('check direction', () => {
-  let currentValue = ((init.sliderMax - init.sliderMin) / 2) / 4;
-  let nextValue = ((init.sliderMax - init.sliderMin) / 2) / 2;
-
-  it('right', () => {
-    expect(sliderModel.checkDirection(currentValue, nextValue)).toEqual(1);
-  });
-  it('left', () => {
-    currentValue = (init.sliderMax - init.sliderMin) / 2;
-    nextValue = (init.sliderMax - init.sliderMin) / 4;
-    expect(sliderModel.checkDirection(currentValue, nextValue)).toEqual(-1);
-  });
-});
-
 describe('find next value', () => {
   const currentValue = init.sliderMin ;
   const min = init.sliderMin;
@@ -56,9 +42,13 @@ describe('find next value', () => {
 describe('set new values', () => {
   it('set new min values', () => {
     expect(sliderModel.setNewLowValue(init.sliderMin + 2 * init.step)).toEqual(init.sliderMin + 2 * init.step);
+    expect(sliderModel.setNewLowValue(init.sliderMin - init.step)).toEqual(init.sliderMin);
+    expect(sliderModel.setNewLowValue(sliderModel.currentUp + init.step)).toEqual(sliderModel.currentLow);
   });
   it('set new max values', () => {
     expect(sliderModel.setNewUpValue(init.sliderMax - (3 / 2) * init.step)).toEqual(init.sliderMax - init.step);
+    expect(sliderModel.setNewUpValue(init.sliderMax + init.step)).toEqual(init.sliderMax);
+    expect(sliderModel.setNewUpValue(sliderModel.currentLow - init.step)).toEqual(sliderModel.currentLow);
   });
 });
 
@@ -67,5 +57,29 @@ describe('update values', () => {
   const max = init.sliderMax - (3 / 2) * init.step;
   it('update values', () => {
     expect(sliderModel.update([min, max])).toEqual([init.sliderMin + init.step, init.sliderMax - init.step]);
+  });
+});
+
+describe('get values', () => {
+  it('get values', () => {
+    expect(sliderModel.getValues()).toEqual([sliderModel.currentLow, sliderModel.currentUp]);
+  });
+});
+
+describe('set values', () => {
+  it('set values', () => {
+    expect(sliderModel.setValues([init.sliderMin - init.step, init.sliderMax])).toEqual([sliderModel.sliderMin, sliderModel.sliderMax]);
+  });
+});
+
+describe('set step', () => {
+  it('set step', () => {
+    expect(sliderModel.setStep(init.step / 2)).toEqual(init.step / 2);
+  });
+});
+
+describe('initialization', () => {
+  it('init', () => {
+    expect(sliderModel.init([init.sliderMin + init.step / 2, init.sliderMax])).toEqual([sliderModel.currentLow, sliderModel.currentUp]);
   });
 });
