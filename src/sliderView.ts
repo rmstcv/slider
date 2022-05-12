@@ -60,16 +60,12 @@ class SliderView {
       if ( progressLength >= 0 ) {
         this.progressBar.style.width = progressLength + '%';
         this.progressBar.style.left = this.currentLowValue + '%';
-      } else {
-        this.progressBar.style.width = 0 + '%';
       }
     }
     if (this.initView.orientation === 'vertical') {
       if ( progressLength >= 0 ) {
         this.progressBar.style.height = progressLength + '%';
         this.progressBar.style.top = 100 - this.currentUpperValue + '%';
-      } else {
-        this.progressBar.style.height = 0 + '%';
       }
     }
   } 
