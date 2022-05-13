@@ -52,6 +52,15 @@ class ConfigPanel {
     this.max = this.sliderInitConfig.setMax;
   }
 
+  initValues() {
+    this.minInput.value = `${this.sliderInitConfig.setMin}`;
+    this.minInput.setAttribute('max', `${this.sliderInitConfig.max}`);
+    this.minInput.setAttribute('min', `${this.sliderInitConfig.min}`);
+    this.maxInput.value = `${this.sliderInitConfig.setMax}`;
+    this.maxInput.setAttribute('max', `${this.sliderInitConfig.max}`);
+    this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
+  }
+
   setMin() {
     rangeSlider.setValues([this.min, undefined]);
     this.min = rangeSlider.getValues()[0];
@@ -216,8 +225,7 @@ class ConfigPanel {
   }
 
   init() {
-    this.minInput.value = `${this.sliderInitConfig.setMin}`;
-    this.maxInput.value = `${this.sliderInitConfig.setMax}`;
+    this.initValues();
     this.setStepInit();
     this.addListeners();
   }
