@@ -28,6 +28,10 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     controller.setToolTip();
   };
   this.setToolTip = setToolTip;
+  const setScale = function () {
+    controller.setScale();
+  };
+  this.setScale = setScale;
   
   return this;
 };

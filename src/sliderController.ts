@@ -128,7 +128,11 @@ class SliderController {
   }
 
   getModelValues() {
-    return this.sliderModel.getValues();
+    let [min, max] = this.sliderModel.getValues();
+    const pow = this.initController.max.toString().length;
+    min =  Math.round((min) * Math.pow(10, pow)) / Math.pow(10, pow);
+    max =  Math.round((max) * Math.pow(10, pow)) / Math.pow(10, pow);
+    return [min, max];
   }
 
   setModelValues([min, max]: number[]) {
@@ -160,6 +164,15 @@ class SliderController {
       this.initController.toolTip = true;
     }
     this.sliderView.setToolTip();
+  }
+
+  setScale() {
+    if (this.initController.scale) {
+      this.initController.scale = false;
+    } else {
+      this.initController.scale = true;
+    }
+    this.sliderView.setScale();
   }
 
   checkSliderType() {

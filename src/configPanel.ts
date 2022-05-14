@@ -35,6 +35,8 @@ class ConfigPanel {
 
   toolTip: HTMLInputElement;
 
+  scale: HTMLInputElement;
+
   min: number;
 
   max: number;
@@ -46,6 +48,7 @@ class ConfigPanel {
     this.orientation = <HTMLInputElement> searchElem('.config-input_orientation', config);
     this.type = <HTMLInputElement> searchElem('.config-input_type', config);
     this.toolTip = <HTMLInputElement> searchElem('.config-input_tool-tip', config);
+    this.scale = <HTMLInputElement> searchElem('.config-input_scale', config);
     this.sliderInitConfig = sliderInitConfig;
     this.step = this.sliderInitConfig.step;
     this.min = this.sliderInitConfig.setMin;
@@ -76,7 +79,7 @@ class ConfigPanel {
   setStepInit() {
     this.stepInput.value = `${this.step}`;
     this.stepInput.setAttribute('max', `${this.sliderInitConfig.max - this.sliderInitConfig.min}`);
-    this.stepInput.setAttribute('min', '0');
+    this.stepInput.setAttribute('min', `${this.step}`);
   }
 
   setStep() { 
@@ -157,6 +160,10 @@ class ConfigPanel {
     rangeSlider.setToolTip();
   }
 
+  setScale() {
+    rangeSlider.setScale();
+  }
+
   addListeners() {
     const setValuesBind = this.setValues.bind(this);
     const scale = searchElem('.slider__scale-value', slider)!;
@@ -221,6 +228,15 @@ class ConfigPanel {
         this.sliderInitConfig.toolTip = true;
       }
       this.setToolTip();
+    });
+
+    this.scale?.addEventListener('click', () => {
+      if (this.sliderInitConfig.scale) {
+        this.sliderInitConfig.scale = false;
+      } else {
+        this.sliderInitConfig.scale = true;
+      }
+      this.setScale();
     });
   }
 

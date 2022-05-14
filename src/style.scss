@@ -188,7 +188,7 @@ body {
     border: none;
     font-size: 20px;
     text-align: center;
-    &__position, &__type, &__tool-tip{
+    &__position, &__type, &__tool-tip, &__scale {
       border: 1px solid black;
       position: relative;
       padding: 5px;
@@ -203,7 +203,7 @@ body {
       height: 100%;
       display: flex;
     }
-    &_orientation, &_type, &_tool-tip {
+    &_orientation, &_type, &_tool-tip, &_scale {
       opacity: 0;
       &:checked~.config-input__button {
         transform: translateX(100%);

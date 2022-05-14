@@ -39,14 +39,13 @@ class SliderModel {
     return currentChecked;
   }
 
-  findNextValue(currentValue: number, min: number, max: number) {
-    const step = this.checkExtremumValues(this.step, 0, this.sliderMax - this.sliderMin); 
+  findNextValue(currentValue: number, min: number, max: number) {    
     let newCurrentValue = currentValue;
-    let stepsIncr = Math.floor((this.newPosition - currentValue) / step);
+    let stepsIncr = Math.floor((this.newPosition - currentValue) / this.step);
     if (currentValue > this.newPosition) {
-      stepsIncr = Math.ceil((this.newPosition - currentValue) / step);
+      stepsIncr = Math.ceil((this.newPosition - currentValue) / this.step);
     }
-    newCurrentValue = currentValue + stepsIncr * step;
+    newCurrentValue = currentValue + stepsIncr * this.step;
     newCurrentValue = this.checkExtremumValues(newCurrentValue, min, max);
     return newCurrentValue;
   }
@@ -107,7 +106,12 @@ class SliderModel {
   }
 
   setStep(step: number) {
-    this.step = this.checkExtremumValues(step, 0, this.sliderMax - this.sliderMin);
+    const prevStep = this.step;
+    if (step <= 0 || step > this.sliderMax - this.sliderMin) {
+      this.step = prevStep;
+    } else {
+      this.step = step;
+    }
     return this.step;
   }
 

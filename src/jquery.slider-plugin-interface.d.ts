@@ -19,4 +19,5 @@ interface JQuery {
   setOrientation: any;
   setType: any;
   setToolTip: any;
+  setScale: any;
 }

@@ -96,6 +96,18 @@ class SliderView {
     this.sliderToolTip.setToolTip();
   }
 
+  setScale() {
+    const scale = searchElem('.slider__scale', this.slider) as HTMLElement;
+    const scaleValues = searchElem('.slider__scale-value', this.slider) as HTMLElement;
+    if (scale.style.display !== 'none') {
+      scale.style.display = 'none';
+      scaleValues.style.display = 'none';
+    } else {
+      scale.style.display = 'block';
+      scaleValues.style.display = 'block';
+    }
+  }
+
   createScail() {
     this.sliderScale.init();
   }
