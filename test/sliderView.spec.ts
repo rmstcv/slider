@@ -54,3 +54,60 @@ describe('check orientation', () => {
     expect(sliderView.slider.classList.contains('slider_vertical')).toBeTruthy();
   });
 });
+
+describe('check tooltip', () => {
+  it('check slider tooltip', () => {
+    init.toolTip = true;
+    sliderView.setToolTip();
+    expect(sliderView.initView.toolTip).toEqual(false);
+    sliderView.setToolTip();
+    expect(sliderView.initView.toolTip).toEqual(true);
+  });
+});
+
+describe('check scale', () => {
+  it('checking for scale existence', () => {
+    sliderView.createScale();
+    expect(document.querySelector('.slider__scale')?.childNodes.length).toBeGreaterThan(0);
+  });
+});
+
+describe('create scale', () => {
+  it('check that the scale changes class', () => {
+    sliderView.setScale();
+    expect(document.querySelector<HTMLElement>('.slider__scale')!.style.display).toEqual('none');
+    sliderView.setScale();
+    expect(document.querySelector<HTMLElement>('.slider__scale')!.style.display).toEqual('block');
+  });
+});
+
+describe('convert to percent', () => {
+  it('check converting to percent', () => {
+    expect(sliderView.convertToPercent(init.min)).toEqual(0);
+    expect(sliderView.convertToPercent(init.max)).toEqual(100);
+  });
+});
+
+describe('shift left handler', () => {
+  it('check left handler shifting', () => {
+    sliderView.initView.orientation = 'vertical';
+    sliderView.shiftLeftHandler(sliderView.convertToPercent(init.min));
+    expect(sliderView.lower.style.top).toEqual('100%');
+  });
+});
+
+describe('shift right handler', () => {
+  it('check right handler shifting', () => {
+    sliderView.initView.orientation = 'vertical';
+    sliderView.shiftRightHandler(sliderView.convertToPercent(init.max));
+    expect(sliderView.upper.style.top).toEqual('0%');
+  });
+});
+
+describe('values update', () => {
+  it('check update', () => {
+    sliderView.update([init.min, init.max]);
+    expect(sliderView.lower.getAttribute('data-lower')).toEqual(`${init.min}`);
+    expect(sliderView.upper.getAttribute('data-upper')).toEqual(`${init.max}`);
+  });
+});

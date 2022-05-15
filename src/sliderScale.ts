@@ -15,19 +15,23 @@ class SliderScale {
 
   sliderSize: number;
 
+  scale: HTMLElement;
+
+  scaleValue: HTMLElement;
+
   constructor(slider: HTMLElement, initViewScale: InitViewScale) {
     this.slider = slider;
     this.initViewScale = initViewScale;
     this.sliderSize = this.initViewScale.maxCustom - this.initViewScale.minCustom;
+    this.scale = searchElem('.slider__scale', this.slider) as HTMLElement;
+    this.scaleValue = searchElem('.slider__scale-value', this.slider) as HTMLElement;
   }
 
-  createScail() {
-    const scale = searchElem('.slider__scale', this.slider)!;
-    scale.innerHTML = '';
+  createScale() {
+    this.scale.innerHTML = '';
     const scaleContainer = document.createElement('div');
     scaleContainer.classList.add('slider__scale-container');
-    const scaleValue = searchElem('.slider__scale-value', this.slider)!;
-    scaleValue.innerHTML = '';
+    this.scaleValue.innerHTML = '';
     const scaleValueContainer = document.createElement('div');
     scaleValueContainer.classList.add('slider__scale-value-container');
     const scaleMultiplier = 4;
@@ -56,16 +60,22 @@ class SliderScale {
       }
       scaleContainer.appendChild(elemScale);
     }
-    if (scale) {
-      scale?.append(scaleContainer);
+    if (this.scale) {
+      this.scale?.append(scaleContainer);
     } 
-    if (scaleValue) {
-      scaleValue?.append(scaleValueContainer);
+    if (this.scaleValue) {
+      this.scaleValue?.append(scaleValueContainer);
     }
   }
 
-  init() {
-    this.createScail();
+  setScale() {
+    if (this.scale.style.display !== 'none') {
+      this.scale.style.display = 'none';
+      this.scaleValue.style.display = 'none';
+    } else {
+      this.scale.style.display = 'block';
+      this.scaleValue.style.display = 'block';
+    }
   }
 }
 

@@ -216,7 +216,7 @@ class SliderController {
 
   addScale() {
     if (this.initController.scale) {
-      this.sliderView.createScail();
+      this.sliderView.createScale();
       this.slider.addEventListener('click', (e: Event) => {        
         const elem: HTMLElement = e.target as HTMLElement;
         const value: number = Number(elem.getAttribute('data-value'));

@@ -97,19 +97,11 @@ class SliderView {
   }
 
   setScale() {
-    const scale = searchElem('.slider__scale', this.slider) as HTMLElement;
-    const scaleValues = searchElem('.slider__scale-value', this.slider) as HTMLElement;
-    if (scale.style.display !== 'none') {
-      scale.style.display = 'none';
-      scaleValues.style.display = 'none';
-    } else {
-      scale.style.display = 'block';
-      scaleValues.style.display = 'block';
-    }
+    this.sliderScale.setScale();
   }
 
-  createScail() {
-    this.sliderScale.init();
+  createScale() {
+    this.sliderScale.createScale();
   }
 
   convertToPercent(customValue: number) {
@@ -177,7 +169,7 @@ class SliderView {
     this.progressBarHighlight();
     this.update([+this.lower.getAttribute('data-lower')!, +this.upper.getAttribute('data-upper')!]);
     this.sliderScale.initViewScale.orientation = orientation;
-    this.sliderScale.init();
+    this.sliderScale.createScale();
   }
 
   setType(type: 'range' | 'single') {
