@@ -1,5 +1,5 @@
-import SliderModel from './sliderModel';
-import SliderView from './sliderView';
+import SliderModel from '../Model/sliderModel';
+import SliderView from '../View/sliderView';
 
 interface InitController {
   min: number,

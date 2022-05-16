@@ -1,4 +1,4 @@
-import searchElem from './searchElem';
+import searchElem from '../../searchElem';
 
 class ToolTip {
 

@@ -47,14 +47,23 @@ body {
   }
   &__handle-lower {
     left: 0;
+    display: block;
     &_vertical {
       top: 0;
       left: 50%;
+    }
+    &_hidden {
+      display: none;
     }
   }
   &__handle-upper {
     &_vertical {
       left: 50%;
+    }
+  }
+  &__handle-lower, &__handle-upper {
+    &_z-index-up {
+      z-index: 10;
     }
   }
   &__highlight {

@@ -1,7 +1,7 @@
-import sliderCreater from './sliderCreater';
-import SliderScale from './sliderScale';
-import sliderToolTip from './sliderToolTip';
-import searchElem from './searchElem';
+import sliderCreater from './subViews/sliderCreater';
+import SliderScale from './subViews/sliderScale';
+import sliderToolTip from './subViews/sliderToolTip';
+import searchElem from '../searchElem';
 
 interface InitView {
   orientation?: 'vertical' | 'horizontal',
@@ -72,10 +72,9 @@ class SliderView {
 
   checkSliderType() {
     if (this.initView.sliderType === 'single') {
-      this.lower.style.display = 'none';
-    }
-    if (this.initView.sliderType === 'range') {
-      this.lower.style.display = 'block';
+      this.lower.classList.add('slider__handle-lower_hidden');
+    } else {
+      this.lower.classList.remove('slider__handle-lower_hidden');
     }
   }
 
@@ -108,9 +107,19 @@ class SliderView {
     return (100 / Math.abs(this.initView.max - this.initView.min)) * (-this.initView.min + customValue);
   }
 
+  toggleHandlersOrder(handle: HTMLElement) {
+    if (handle === this.lower && !this.lower.classList.contains('slider__handle-lower_z-index-up')) {
+      this.lower.classList.add('slider__handle-lower_z-index-up');
+      this.upper.classList.remove('slider__handle-upper_z-index-up');
+    }
+    if (handle === this.upper && !this.upper.classList.contains('slider__handle-upper_z-index-up')) {
+      this.upper.classList.add('slider__handle-upper_z-index-up');
+      this.lower.classList.remove('slider__handle-lower_z-index-up');
+    }
+  }
+
   shiftLeftHandler(value: number) {
-    this.lower.style.zIndex = '10';
-    this.upper.style.zIndex = '1';
+    this.toggleHandlersOrder(this.lower);
     if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
       this.lower.style.left = value + '%';
     }
@@ -121,8 +130,7 @@ class SliderView {
   }
 
   shiftRightHandler(value: number) {
-    this.upper.style.zIndex = '10';
-    this.lower.style.zIndex = '1';
+    this.toggleHandlersOrder(this.upper);
     if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
       this.upper.style.left = value + '%';
     }

@@ -1,4 +1,4 @@
-import SliderModel from '../src/sliderModel';
+import SliderModel from '../src/Model/sliderModel';
 
 const init = {
   sliderMin: 0,

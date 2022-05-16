@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import SliderController from './sliderController';
+import SliderController from './Controller/sliderController';
 
 $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init): JQuery {
   const controller = new SliderController(slider, options);
