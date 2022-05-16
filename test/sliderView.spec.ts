@@ -1,5 +1,5 @@
-import SliderView from '../src/sliderView';
-import sliderCreater from '../src/sliderCreater';
+import SliderView from '../src/View/sliderView';
+import sliderCreater from '../src/View/subViews/sliderCreater';
 
 const init = {
   orientation: 'horizontal' as const,
@@ -38,10 +38,10 @@ describe('check progress bar', () => {
 describe('check type', () => {
   it('check slider type', () => {
     sliderView.checkSliderType();
-    expect(sliderView.lower.style.display).toEqual('block');
+    expect(sliderView.lower.classList.contains('slider__handle-lower_hidden')).toEqual(false);
     sliderView.initView.sliderType = 'single';
     sliderView.checkSliderType();
-    expect(sliderView.lower.style.display).toEqual('none');
+    expect(sliderView.lower.classList.contains('slider__handle-lower_hidden')).toEqual(true);
   });
 });
 
@@ -109,5 +109,30 @@ describe('values update', () => {
     sliderView.update([init.min, init.max]);
     expect(sliderView.lower.getAttribute('data-lower')).toEqual(`${init.min}`);
     expect(sliderView.upper.getAttribute('data-upper')).toEqual(`${init.max}`);
+  });
+});
+
+describe('set orientation', () => {
+  it('check set orientation', () => {
+    const top = sliderView.lower.style.top;
+    sliderView.setOrientation('horizontal');
+    expect(sliderView.lower.style.top).toEqual('');
+    sliderView.setOrientation('vertical');
+    expect(sliderView.lower.style.top).toEqual(top);
+  });
+});
+
+describe('set type', () => {
+  it('check set type', () => {
+    sliderView.setType('range');
+    expect(sliderView.initView.sliderType).toEqual('range');
+  });
+});
+
+describe('init', () => {
+  it('check init', () => {
+    sliderView.init([init.min + init.step, init.max - init.step]);
+    expect(sliderView.lower.getAttribute('data-lower')).toEqual(`${init.min + init.step}`);
+    expect(sliderView.upper.getAttribute('data-upper')).toEqual(`${init.max - init.step}`);
   });
 });
