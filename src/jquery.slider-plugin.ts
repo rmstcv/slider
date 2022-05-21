@@ -3,9 +3,9 @@ import SliderController from './Controller/sliderController';
 
 $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init): JQuery {
   const controller = new SliderController(slider, options);
-  controller.init();
   const setValues = function ([min, max]: number[]) {
     controller.setModelValues([min, max]);
+
   };
   this.setValues = setValues;
   const getValues = function () {

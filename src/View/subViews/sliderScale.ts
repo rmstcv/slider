@@ -1,17 +1,9 @@
 import searchElem from '../../searchElem';
 
-interface InitViewScale {
-  minCustom: number,
-  maxCustom: number,
-  step: number,
-  orientation?: 'vertical' | 'horizontal',
-  sliderWidth: number
-}
-
 class SliderScale {
   slider: HTMLElement;
 
-  initViewScale: InitViewScale;
+  initViewScale: Init;
 
   sliderSize: number;
 
@@ -19,12 +11,13 @@ class SliderScale {
 
   scaleValue: HTMLElement;
 
-  constructor(slider: HTMLElement, initViewScale: InitViewScale) {
+  constructor(slider: HTMLElement, initViewScale: Init) {
     this.slider = slider;
     this.initViewScale = initViewScale;
-    this.sliderSize = this.initViewScale.maxCustom - this.initViewScale.minCustom;
+    this.sliderSize = this.initViewScale.max - this.initViewScale.min;
     this.scale = searchElem('.slider__scale', this.slider) as HTMLElement;
     this.scaleValue = searchElem('.slider__scale-value', this.slider) as HTMLElement;
+    this.createScale();
   }
 
   createScale() {
@@ -40,8 +33,8 @@ class SliderScale {
     for ( let i = 0; i <= (this.sliderSize / stepCustom) * scaleMultiplier; i += 1) {
       const elemScale: HTMLElement = document.createElement('div');
       elemScale.classList.add('slider__scale-marker');
-      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + this.initViewScale.minCustom).toFixed(this.initViewScale.maxCustom.toString().length));
-      const valueVertical = parseFloat((this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.minCustom).toFixed(this.initViewScale.maxCustom.toString().length));
+      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + this.initViewScale.min).toFixed(this.initViewScale.max.toString().length));
+      const valueVertical = parseFloat((this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.min).toFixed(this.initViewScale.max.toString().length));
       
       if (i % scaleMultiplier === 0) {   
         elemScale.classList.add('slider__scale-marker_large');

@@ -7,11 +7,24 @@ class ToolTip {
   lowerCount: HTMLElement;
 
   upperCount: HTMLElement;
+
+  initToolTip: Init;
     
-  constructor(slider: HTMLElement) {
+  constructor(slider: HTMLElement, initToolTip: Init) {
     this.slider = slider;
+    this.initToolTip = initToolTip;
     this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
     this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
+    this.init();
+  }
+
+  init() {
+    const { setMin, setMax, toolTip } = this.initToolTip;
+    this.update([setMin, setMax]);
+    if (!toolTip) {
+      this.lowerCount.classList.add('slider__handle-upper-count_hidden');
+      this.upperCount.classList.add('slider__handle-upper-count_hidden');
+    }
   }
 
   update([min, max]: number[]) { 
@@ -21,21 +34,16 @@ class ToolTip {
     if (max !== undefined) {
       this.upperCount.innerHTML = max.toString();
     }
-    if (min === max) {
-      this.lowerCount.style.opacity = '0';
+    if (this.upperCount.innerHTML === this.lowerCount.innerHTML) {
+      this.lowerCount.classList.add('slider__handle-lower-count_hidden');
     } else {
-      this.lowerCount.style.opacity = '1';
+      this.lowerCount.classList.remove('slider__handle-lower-count_hidden');
     }
   }
 
   setToolTip() {
-    if (this.lowerCount.style.display === 'none' && this.upperCount.style.display === 'none') {
-      this.lowerCount.style.display = 'block';
-      this.upperCount.style.display = 'block';
-    } else {
-      this.lowerCount.style.display = 'none';
-      this.upperCount.style.display = 'none';
-    }
+    this.lowerCount.classList.toggle('slider__handle-upper-count_hidden');
+    this.upperCount.classList.toggle('slider__handle-lower-count_hidden');
   }
 }
 

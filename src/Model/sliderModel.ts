@@ -76,7 +76,7 @@ class SliderModel {
     return this.currentUp;
   }
 
-  update([min, max]: number[]) {
+  updateValues([min, max]: number[]) {
     let [minNew, maxNew] = [min, max];
     
     if (min !== undefined) {

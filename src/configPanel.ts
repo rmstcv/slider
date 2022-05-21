@@ -1,17 +1,6 @@
 import sliderCreate from './jquery.slider-plugin';
 import searchElem from './searchElem';
-
-const sliderInitConfig: Init = {
-  min: -0.0030,
-  max: 0.0030,
-  step: 0.0005,
-  setMin: -0.0010,
-  setMax: 0.0010,
-  sliderType: 'range',
-  orientation: 'horizontal',
-  scale: true,
-  toolTip: true,
-};
+import sliderInitConfig from './sliderInitConfig';
 
 const slider = document.querySelector('.slider') as HTMLElement;
 const config = document.querySelector('.config') as HTMLElement;

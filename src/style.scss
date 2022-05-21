@@ -83,6 +83,9 @@ body {
     left: 50%;
     transform: translate(-50%, -100%);
     user-select: none;
+    &_hidden {
+      display: none;
+    }
   }
   &__scale {
     position: relative;

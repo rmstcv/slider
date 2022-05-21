@@ -5,8 +5,8 @@ interface Init {
   setMin: number,
   setMax: number,
   sliderType: 'range' | 'single',
-  orientation?: 'vertical' | 'horizontal',
-  scale?: boolean,
+  orientation: 'vertical' | 'horizontal',
+  scale: boolean,
   toolTip: boolean
 }
 
