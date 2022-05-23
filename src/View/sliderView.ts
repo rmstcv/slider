@@ -18,11 +18,11 @@ class SliderView {
 
   private progressBar!: HTMLElement;
 
-  initView: Init;
+  private initView: Init;
 
-  sliderScale: SliderScale;
+  private sliderScale!: SliderScale;
 
-  sliderToolTip: SliderToolTip;
+  sliderToolTip!: SliderToolTip;
 
   sliderController: SliderController;
 
@@ -30,15 +30,14 @@ class SliderView {
     this.initView = initView;
     this.slider = slider;
     this.sliderController = controller;
-    sliderCreater(slider);
-    this.sliderScale = new SliderScale(slider, initView);
-    this.sliderToolTip = new SliderToolTip(slider, initView);
     this.init();
   }
 
   private init(): void {
+    sliderCreater(this.slider);
+    this.sliderScale = new SliderScale(this.slider, this.initView);
+    this.sliderToolTip = new SliderToolTip(this.slider, this.initView);
     this.searchElems();
-    this.addScale();
     this.addListeners();
     this.update([this.initView.setMin, this.initView.setMax]);
     this.checkSliderOrientation();
@@ -51,14 +50,18 @@ class SliderView {
   }
 
   private progressBarHighlight(): void {
-    const progressLength = this.currentUpperValue - this.currentLowValue;     
+    const progressLength = this.currentUpperValue - this.currentLowValue; 
+
     if (!this.initView.orientation || this.initView.orientation === 'horizontal') {
+
       if ( progressLength >= 0 ) {
         this.progressBar.style.width = progressLength + '%';
         this.progressBar.style.left = this.currentLowValue + '%';
       }
     }
+
     if (this.initView.orientation === 'vertical') {
+
       if ( progressLength >= 0 ) {
         this.progressBar.style.height = progressLength + '%';
         this.progressBar.style.top = 100 - this.currentUpperValue + '%';
@@ -74,8 +77,35 @@ class SliderView {
     }
   }
 
-  setScale() {
+  public setToolTip(): void {
+    this.initView.toolTip = this.initView.toolTip ? false : true;
+    this.sliderToolTip.setToolTip();
+  }
+
+  private toolTipUpdate([min, max]: number[]): void {
+    this.sliderToolTip.update([min, max]);
+  }
+
+  public setType(type: 'range' | 'single'): void {
+    this.initView.sliderType = type;
+
+    if (this.initView.sliderType === 'single') {
+      this.lower.classList.add('slider__handle-lower_hidden');
+    } else {
+      this.lower.classList.remove('slider__handle-lower_hidden');
+    }
+  }
+
+  public setScale(): void {
     this.sliderScale.setScale();
+  }
+
+  private setValuesFromScale(target: HTMLElement) {
+    if (this.initView.scale) {
+      const value = this.sliderScale.getScaleValues(target as HTMLElement);
+
+      if (value !== undefined) this.sliderController.updateSliderFromScale(value);
+    }
   }
 
   convertToPercent(customValue: number) {
@@ -131,15 +161,6 @@ class SliderView {
     
   }
 
-  public setToolTip(): void{
-    this.initView.toolTip = this.initView.toolTip ? false : true ;
-    this.sliderToolTip.setToolTip();
-  }
-
-  toolTipUpdate([min, max]: number[]) {
-    this.sliderToolTip.update([min, max]);
-  }
-
   setOrientation(orientation: 'vertical' | 'horizontal') {
 
     if (orientation === 'vertical') {
@@ -159,17 +180,8 @@ class SliderView {
     this.progressBarHighlight();
     this.update([+this.lower.getAttribute('data-lower')!, +this.upper.getAttribute('data-upper')!]);
     this.initView.orientation = orientation;
-    this.sliderScale.initViewScale.orientation = orientation;
-    this.sliderScale.createScale();
-  }
-
-  public setType(type: 'range' | 'single'): void {
-    this.initView.sliderType = type;
-    if (this.initView.sliderType === 'single') {
-      this.lower.classList.add('slider__handle-lower_hidden');
-    } else {
-      this.lower.classList.remove('slider__handle-lower_hidden');
-    }
+    this.sliderScale.destroyScale();
+    this.sliderScale.setScale();
   }
 
   checkSliderOrientation1() {
@@ -226,18 +238,6 @@ class SliderView {
     return [min, max];
   }
 
-  addScale() {
-    if (this.initView.scale) {
-      this.slider.addEventListener('click', (e: Event) => {        
-        const elem: HTMLElement = e.target as HTMLElement;
-        const value: number = Number(elem.getAttribute('data-value'));
-        if (elem.classList.contains('slider__scale-marker-value')) {
-          this.sliderController.updateSliderFromScale(value);
-        }
-      });
-    }
-  }
-
   addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
     const updateValuesBind = this.updateValues.bind(this, elem);
@@ -268,6 +268,7 @@ class SliderView {
     this.lower.addEventListener('mousedown', (e) => this.addEvents(this.lower, e));
     this.upper.addEventListener('touchstart', (e) => this.addEvents(this.upper, e));
     this.lower.addEventListener('touchstart', (e) => this.addEvents(this.lower, e));
+    this.slider.addEventListener('click', (e) => this.setValuesFromScale(e.target as HTMLElement));
   }
 }
 

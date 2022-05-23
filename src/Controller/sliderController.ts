@@ -69,7 +69,6 @@ class SliderController {
 
   setOrientation(orientation: 'vertical' | 'horizontal') {
     this.initController.orientation = orientation;
-    this.sliderView.initView.orientation = orientation;
     this.sliderView.setOrientation(orientation);
   }
 
@@ -89,11 +88,7 @@ class SliderController {
   }
 
   setScale() {
-    if (this.initController.scale) {
-      this.initController.scale = false;
-    } else {
-      this.initController.scale = true;
-    }
+    this.initController.scale = this.initController.scale ? false : true;
     this.sliderView.setScale();
   }
 
@@ -103,4 +98,3 @@ class SliderController {
 }
 
 export default SliderController;
-

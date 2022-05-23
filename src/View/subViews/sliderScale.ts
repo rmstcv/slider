@@ -1,74 +1,88 @@
-import searchElem from '../../searchElem';
-
 class SliderScale {
-  slider: HTMLElement;
+  private slider: HTMLElement;
 
-  initViewScale: Init;
+  private initOptions: Init;
 
-  sliderSize: number;
+  private scale!: HTMLElement;
 
-  scale: HTMLElement;
+  private scaleValue!: HTMLElement;
 
-  scaleValue: HTMLElement;
-
-  constructor(slider: HTMLElement, initViewScale: Init) {
+  constructor(slider: HTMLElement, initOptions: Init) {
     this.slider = slider;
-    this.initViewScale = initViewScale;
-    this.sliderSize = this.initViewScale.max - this.initViewScale.min;
-    this.scale = searchElem('.slider__scale', this.slider) as HTMLElement;
-    this.scaleValue = searchElem('.slider__scale-value', this.slider) as HTMLElement;
-    this.createScale();
+    this.initOptions = initOptions;
+    this.init();
   }
 
-  createScale() {
-    this.scale.innerHTML = '';
-    const scaleContainer = document.createElement('div');
-    scaleContainer.classList.add('slider__scale-container');
-    this.scaleValue.innerHTML = '';
-    const scaleValueContainer = document.createElement('div');
-    scaleValueContainer.classList.add('slider__scale-value-container');
+  private init(): void {
+    if (this.initOptions.scale) {
+      this.createScaleElemets();
+      this.createScale();
+    }
+  }
+
+  private createScaleElemets(): void {
+    this.scale = document.createElement('div');
+    this.scale.classList.add('slider__scale');
+    this.slider.appendChild(this.scale);
+    this.scaleValue = document.createElement('div');
+    this.scaleValue.classList.add('slider__scale-value');
+    this.slider.appendChild(this.scaleValue);
+  }
+
+  private createScale(): void{
     const scaleMultiplier = 4;
-    const stepCustom = this.sliderSize / 10;
-  
-    for ( let i = 0; i <= (this.sliderSize / stepCustom) * scaleMultiplier; i += 1) {
+    const { min, max } = this.initOptions;
+    const sliderSize = max - min;
+    const stepCustom = sliderSize / 10;
+    const numOfDigits = max.toString().length;
+
+    for (let i = 0; i <= (sliderSize / stepCustom) * scaleMultiplier; i += 1) {
       const elemScale: HTMLElement = document.createElement('div');
       elemScale.classList.add('slider__scale-marker');
-      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + this.initViewScale.min).toFixed(this.initViewScale.max.toString().length));
-      const valueVertical = parseFloat((this.sliderSize - i * stepCustom / scaleMultiplier + this.initViewScale.min).toFixed(this.initViewScale.max.toString().length));
+      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits));
+      const valueVertical = parseFloat((sliderSize - i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits));
       
       if (i % scaleMultiplier === 0) {   
         elemScale.classList.add('slider__scale-marker_large');
         const elemScaleValue: HTMLElement = document.createElement('div');
         elemScaleValue.classList.add('slider__scale-marker-value');
-        if (this.initViewScale.orientation === 'vertical') {   
-          elemScaleValue.style.top = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
+        const percentagOffset = 100 * ((i * stepCustom / scaleMultiplier) / sliderSize);
+
+        if (this.initOptions.orientation === 'vertical') {   
+          elemScaleValue.style.top = `${percentagOffset}%`;
           elemScaleValue.setAttribute('data-value', `${valueVertical}`);
           elemScaleValue.innerHTML = `${valueVertical}`;  
         } else {
-          elemScaleValue.style.left = `${100 * ((i * stepCustom / scaleMultiplier) / this.sliderSize)}%`;
+          elemScaleValue.style.left = `${percentagOffset}%`;
           elemScaleValue.setAttribute('data-value', `${valueHorizontal}`);
           elemScaleValue.innerHTML = `${valueHorizontal}`;
         }
-        scaleValueContainer.appendChild(elemScaleValue);
+        this.scaleValue.appendChild(elemScaleValue);
       }
-      scaleContainer.appendChild(elemScale);
-    }
-    if (this.scale) {
-      this.scale?.append(scaleContainer);
-    } 
-    if (this.scaleValue) {
-      this.scaleValue?.append(scaleValueContainer);
+      this.scale.appendChild(elemScale);
     }
   }
 
-  setScale() {
-    if (this.scale.style.display !== 'none') {
-      this.scale.style.display = 'none';
-      this.scaleValue.style.display = 'none';
+  public destroyScale() {
+    this.scale.remove();
+    this.scaleValue.remove();
+  }
+
+  public setScale(): void {
+    if (!this.initOptions.scale) {
+      this.destroyScale();
     } else {
-      this.scale.style.display = 'block';
-      this.scaleValue.style.display = 'block';
+      this.init();
     }
+  }
+
+  public getScaleValues(target: HTMLElement): number | undefined {
+    let scaleValue: number | undefined = undefined;
+
+    if (target.classList.contains('slider__scale-marker-value')) {
+      scaleValue = Number(target.getAttribute('data-value'));
+    }
+    return scaleValue;
   }
 }
 

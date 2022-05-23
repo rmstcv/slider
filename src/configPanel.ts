@@ -112,10 +112,9 @@ class ConfigPanel {
     this.max = +this.maxInput.value;
   }
 
-  changeValuesFromScale(e: Event) {
-    const elem: HTMLElement = e.target as HTMLElement;
-    const value: number = Number(elem.getAttribute('data-value'));
-    if (elem.classList.contains('slider__scale-marker-value')) {
+  changeValuesFromScale(target: HTMLElement) {
+    if (target.classList.contains('slider__scale-marker-value')) {
+      const value: number = Number(target.getAttribute('data-value'));
       this.minInput.value = `${this.sliderInitConfig.min}`;
       this.maxInput.value = `${value}`;
       this.min = this.sliderInitConfig.min;
@@ -155,8 +154,6 @@ class ConfigPanel {
 
   addListeners() {
     const setValuesBind = this.setValues.bind(this);
-    const scale = searchElem('.slider__scale-value', slider)!;
-
     document.addEventListener('mouseup', () => {
       document.removeEventListener('mousemove', setValuesBind);
     });
@@ -170,7 +167,10 @@ class ConfigPanel {
 
     config.addEventListener('click', (e) => this.changeValues(e));
 
-    scale.addEventListener('click', (e) => this.changeValuesFromScale(e));
+    slider.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      this.changeValuesFromScale(target);
+    });
 
     config.addEventListener('click', (e) => this.changeStep(e));
 
@@ -220,11 +220,6 @@ class ConfigPanel {
     });
 
     this.scale?.addEventListener('click', () => {
-      if (this.sliderInitConfig.scale) {
-        this.sliderInitConfig.scale = false;
-      } else {
-        this.sliderInitConfig.scale = true;
-      }
       this.setScale();
     });
   }

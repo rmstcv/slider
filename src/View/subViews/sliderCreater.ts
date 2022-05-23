@@ -1,5 +1,4 @@
 function createSliderView(slider: HTMLElement) {
-
   const sliderContent: string = `
   <div class="slider__tracker">
     <div class="slider__handle-lower">
@@ -10,12 +9,7 @@ function createSliderView(slider: HTMLElement) {
       <div class="slider__handle-upper-count"></div>
     </div>
   </div>
-  <div class="slider__scale">
-  </div>
-  <div class="slider__scale-value">
-  </div>
   `;
-
   slider.innerHTML = sliderContent;
 }
 
