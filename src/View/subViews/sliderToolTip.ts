@@ -2,32 +2,41 @@ import searchElem from '../../searchElem';
 
 class ToolTip {
 
-  slider: HTMLElement;
+  private slider: HTMLElement;
 
-  lowerCount: HTMLElement;
+  private lowerCount!: HTMLElement;
 
-  upperCount: HTMLElement;
+  private upperCount!: HTMLElement;
 
-  initToolTip: Init;
+  private initToolTip: Init;
     
   constructor(slider: HTMLElement, initToolTip: Init) {
     this.slider = slider;
     this.initToolTip = initToolTip;
-    this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
-    this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
     this.init();
   }
 
-  init() {
-    const { setMin, setMax, toolTip } = this.initToolTip;
-    this.update([setMin, setMax]);
+  private init(): void {
+    this.searcElems();
+    const { setMin, setMax } = this.initToolTip;
+    this.update([setMin, setMax]); 
+    this.toggletoolTip();
+  }
+
+  private searcElems(): void {
+    this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
+    this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
+  }
+
+  private toggletoolTip(): void {
+    const { toolTip } = this.initToolTip;
     if (!toolTip) {
       this.lowerCount.classList.add('slider__handle-upper-count_hidden');
       this.upperCount.classList.add('slider__handle-upper-count_hidden');
     }
   }
 
-  update([min, max]: number[]) { 
+  public update([min, max]: number[]): void { 
     if (min !== undefined) {
       this.lowerCount.innerHTML = min.toString();
     }
@@ -41,7 +50,7 @@ class ToolTip {
     }
   }
 
-  setToolTip() {
+  public setToolTip(): void {
     this.lowerCount.classList.toggle('slider__handle-upper-count_hidden');
     this.upperCount.classList.toggle('slider__handle-lower-count_hidden');
   }
