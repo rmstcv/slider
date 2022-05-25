@@ -63,17 +63,14 @@ class SliderScale {
     }
   }
 
-  public destroyScale() {
+  private destroyScale() {
     this.scale.remove();
     this.scaleValue.remove();
   }
 
-  public setScale(): void {
-    if (!this.initOptions.scale) {
-      this.destroyScale();
-    } else {
-      this.init();
-    }
+  public update(): void {
+    this.destroyScale();
+    this.init();
   }
 
   public getScaleValues(target: HTMLElement): number | undefined {
@@ -83,6 +80,10 @@ class SliderScale {
       scaleValue = Number(target.getAttribute('data-value'));
     }
     return scaleValue;
+  }
+
+  public getScaleElem() {
+    return this.scaleValue;
   }
 }
 

@@ -32,21 +32,14 @@ class SliderController {
     this.init();
   }
 
-  // checkStep(step: number) {
-  //   let newStep = step;
-  //   if (step <= 0 || step >= Math.abs(this.initController.max - this.initController.min) || !step) {
-  //     newStep = (Math.abs(this.initController.max - this.initController.min)) / 20;
-  //   }
-  //   return newStep;
-  // }
-
   updateSlider([min, max]: number[]) {
-    const [left, right] = this.sliderModel.updateValues([min, max]); 
-    this.sliderView.update([left, right]);
+    this.sliderModel.updateValues([min, max]); 
+    const [left, right] = this.sliderModel.getValues();
+    this.sliderView.updateView([left, right]);
   }
 
   updateSliderFromScale(value: number) {
-    this.sliderView.update([this.initController.min, value]);
+    this.sliderView.updateView([this.initController.min, value]);
     this.sliderModel.setValues([this.initController.min, value]);
   }
 
@@ -60,7 +53,7 @@ class SliderController {
 
   setModelValues([min, max]: number[]) {
     const [left, right] = this.sliderModel.setValues([min, max]); 
-    this.sliderView.update([left, right]);
+    this.sliderView.updateView([left, right]);
   }
 
   setStep(step: number) {
@@ -69,21 +62,17 @@ class SliderController {
 
   setOrientation(orientation: 'vertical' | 'horizontal') {
     this.initController.orientation = orientation;
-    this.sliderView.setOrientation(orientation);
+    this.sliderView.setOrientation();
   }
 
   setType(type: 'range' | 'single') {
     this.setModelValues([this.initController.min, this.getModelValues()[1]]);
     this.initController.sliderType = type;
-    this.sliderView.setType(type);
+    this.sliderView.setType();
   }
 
   setToolTip() {
-    if (this.initController.toolTip) {
-      this.initController.toolTip = false;
-    } else {
-      this.initController.toolTip = true;
-    }
+    this.initController.toolTip = this.initController.toolTip ? false : true;
     this.sliderView.setToolTip();
   }
 
