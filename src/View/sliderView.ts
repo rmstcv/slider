@@ -3,7 +3,7 @@ import sliderCreater from './subViews/sliderCreater';
 import SliderScale from './subViews/sliderScale';
 import SliderToolTip from './subViews/sliderToolTip';
 import SliderHandlers from './subViews/sliderHandlers';
-import searchElem from '../searchElem';
+import sliderProgressBar from './subViews/sliderProgressBar';
 
 interface Observers {
   updateObserver(): void,
@@ -16,17 +16,17 @@ class SliderView {
 
   private slider: HTMLElement;
 
-  private progressBar!: HTMLElement;
-
   private initView: Init;
 
   private sliderScale!: SliderScale;
 
   private sliderToolTip!: SliderToolTip;
 
-  sliderController: SliderController;
+  private sliderController: SliderController;
 
   private sliderHandlers!: SliderHandlers;
+
+  private sliderProgressBar!: sliderProgressBar;
 
   private observers: Observers[];
 
@@ -37,7 +37,6 @@ class SliderView {
     this.sliderController = controller;
     this.init();
   }
-
 
   private subScribe(observer: any) { 
     this.observers.push(observer);
@@ -54,39 +53,12 @@ class SliderView {
     this.sliderHandlers = new SliderHandlers(this.slider, this.initView);
     this.sliderScale = new SliderScale(this.slider, this.initView);
     this.sliderToolTip = new SliderToolTip(this.slider, this.initView);
-    this.searchElems();
-    
+    this.sliderProgressBar = new sliderProgressBar(this.slider, this.initView);
     this.subscriber();
     this.checkSliderOrientation();
     this.updateView();
     this.addListeners();
   }
-
-  private searchElems(): void {
-    this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
-  }
-
-  private progressBarUpdate(): void {
-    const [min, max]: number[] = [this.initView.setMin, this.initView.setMax];
-    const [minPercent, maxPercent] = [this.convertToPercent(min), this.convertToPercent(max)];
-    const progressLength = maxPercent - minPercent; 
-
-    if (this.initView.orientation === 'horizontal') {
-
-      if ( progressLength >= 0 ) {
-        this.progressBar.style.width = progressLength + '%';
-        this.progressBar.style.left = minPercent + '%';
-      }
-    }
-
-    if (this.initView.orientation === 'vertical') {
-
-      if ( progressLength >= 0 ) {
-        this.progressBar.style.height = progressLength + '%';
-        this.progressBar.style.top = 100 - maxPercent + '%';
-      }
-    }
-  } 
 
   private checkSliderOrientation(): void {
     if (this.initView.orientation === 'vertical') {
@@ -108,38 +80,22 @@ class SliderView {
     this.sliderScale.update();
   }
 
-  convertToPercent(customValue: number) {
-    const valuePercent = (100 / Math.abs(this.initView.max - this.initView.min)) * (-this.initView.min + customValue);
-    return valuePercent;
-  }
-
-  updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+  private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
-    
     this.sliderController.updateSlider([min, max]);
   }
   
-  updateView() { 
+  public updateView() { 
     this.updater();
-    this.progressBarUpdate();
   }
 
-  setOrientation() {
-    if (this.initView.orientation === 'vertical') {
-      this.progressBar.style.width = '';
-      this.progressBar.style.left = '';
-    } else {
-      this.progressBar.style.height = '';
-      this.progressBar.style.top = '';
-    }
+  public setOrientation() {
     this.updateView();
     this.checkSliderOrientation();
     this.sliderHandlers.checkOrientation();
-    // this.sliderScale.update();
   }
 
-
-  addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+  private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
     const updateValuesBind = this.updateHandlers.bind(this, elem);
     const actions = [updateValuesBind];
@@ -162,12 +118,12 @@ class SliderView {
     };
   }
 
-  addListeners() {    
+  private addListeners() {    
     this.toSubscribeHandlersOnView();
     this.toSubscribeScaleOnView();
   }
 
-  toSubscribeHandlersOnView() {
+  private toSubscribeHandlersOnView() {
     const [lower, upper] = this.sliderHandlers.getHandlerElems();
     upper.addEventListener('mousedown', (e) => this.addEvents(upper, e));
     lower.addEventListener('mousedown', (e) => this.addEvents(lower, e));
@@ -175,7 +131,7 @@ class SliderView {
     lower.addEventListener('touchstart', (e) => this.addEvents(lower, e));
   }
 
-  toSubscribeScaleOnView() {
+  private toSubscribeScaleOnView() {
     const scaleElem = this.sliderScale.getScaleElem(); 
     scaleElem.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
@@ -184,13 +140,14 @@ class SliderView {
     });
   }
 
-  subscriber() {
+  private subscriber() {
     this.subScribe(this.sliderHandlers);
     this.subScribe(this.sliderToolTip);
     this.subScribe(this.sliderScale);
+    this.subScribe(this.sliderProgressBar);
   }
 
-  updater() {
+  private updater() {
     this.update();
   }
 }
