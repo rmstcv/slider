@@ -68,7 +68,7 @@ class SliderScale {
     this.scaleValue.remove();
   }
 
-  public update(): void {
+  public update(): void {    
     this.destroyScale();
     this.init();
   }
@@ -83,7 +83,11 @@ class SliderScale {
   }
 
   public getScaleElem() {
-    return this.scaleValue;
+    return this.scale;
+  }
+
+  public updateObserver() {
+    this.update();
   }
 }
 

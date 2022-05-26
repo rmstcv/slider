@@ -54,6 +54,10 @@ class ToolTip {
     this.lowerCount.classList.toggle('slider__handle-upper-count_hidden');
     this.upperCount.classList.toggle('slider__handle-lower-count_hidden');
   }
+
+  public updateObserver() {
+    this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
+  }
 }
 
 export default ToolTip;

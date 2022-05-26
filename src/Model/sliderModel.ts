@@ -1,8 +1,8 @@
-interface InitModel {
-  sliderMin: number;
-  sliderMax: number; 
-  step: number
-}
+// interface InitModel {
+//   sliderMin: number;
+//   sliderMax: number; 
+//   step: number
+// }
 
 class SliderModel {
 
@@ -18,12 +18,17 @@ class SliderModel {
 
   newPosition: number = 0;
 
-  constructor(init: InitModel) {
+  optionsInit: Init;
+
+  constructor(init: Init) {
     this.step = init.step;
-    this.sliderMin = init.sliderMin;
-    this.sliderMax = init.sliderMax;
+    // this.sliderMin = init.sliderMin;
+    // this.sliderMax = init.sliderMax;
+    this.sliderMin = init.min;
+    this.sliderMax = init.max;
     this.currentLow = this.sliderMin;
     this.currentUp = this.sliderMax;
+    this.optionsInit = init;
   }
 
   checkExtremumValues(current: number, min: number, max: number) {
@@ -85,6 +90,7 @@ class SliderModel {
     if (max !== undefined) {
       maxNew = this.setNewUpValue(max);
     }
+    this.updateState(minNew, maxNew);
     return [minNew, maxNew];
   }
 
@@ -102,6 +108,7 @@ class SliderModel {
       this.currentUp = this.checkExtremumValues(max, this.currentLow, this.sliderMax);
       maxNew = this.currentUp;
     }
+    this.updateState(minNew, maxNew);
     return [minNew, maxNew];
   }
 
@@ -118,6 +125,11 @@ class SliderModel {
   init([min, max]: number[]) {
     this.setValues([min, max]);
     return [this.currentLow, this.currentUp];
+  }
+
+  updateState(min: number, max: number) {
+    if (min !== undefined) this.optionsInit.setMin = min;
+    if (max !== undefined) this.optionsInit.setMax = max;
   }
 }
 

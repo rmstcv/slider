@@ -59,18 +59,17 @@ class SliderHandlers {
     return valuePercent;
   }
 
-  public handlersUpdate([min, max]: number[]) {
+  public handlersUpdate() {
+    let [min, max]: number[] = [this.initOptions.setMin, this.initOptions.setMax];
     if (min !== undefined) {
       this.toggleHandlersOrder(this.lower);
       min = parseFloat((min).toFixed(this.initOptions.max.toString().length));
       this.shiftLeftHandler(this.convertToPercent(min));
-      this.lower.setAttribute('data-lower', `${min}`);
     }
     if (max !== undefined) {
       this.toggleHandlersOrder(this.upper);
       max = parseFloat((max).toFixed(this.initOptions.max.toString().length));
       this.shiftRightHandler(this.convertToPercent(max));
-      this.upper.setAttribute('data-upper', `${max}`);
     }
   }
 
@@ -87,7 +86,7 @@ class SliderHandlers {
     return Math.round((value * ((Math.abs(this.initOptions.max - this.initOptions.min)) / this.checkSliderOrientation()) + this.initOptions.min) * Math.pow(10, pow)) / Math.pow(10, pow);
   }
 
-  public updateValues(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+  public getHandlersCoords(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     let getCoord = () => {
 
       if (e instanceof MouseEvent) {
@@ -142,16 +141,16 @@ class SliderHandlers {
     }
   }
 
-  public getValues() {
-    return [+this.lower.getAttribute('data-lower')!, +this.upper.getAttribute('data-upper')!];
-  }
-
   public checkType() {
     if (this.initOptions.sliderType === 'single') {
       this.lower.classList.add('slider__handle-lower_hidden');
     } else {
       this.lower.classList.remove('slider__handle-lower_hidden');
     }
+  }
+
+  public updateObserver() {
+    this.handlersUpdate();
   }
 }
 

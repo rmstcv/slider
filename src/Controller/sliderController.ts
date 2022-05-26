@@ -23,24 +23,19 @@ class SliderController {
 
   constructor(slider: HTMLElement, initController: InitController) {
     this.initController = initController;
-    this.sliderModel = new SliderModel({
-      sliderMin: this.initController.min,
-      sliderMax: this.initController.max,
-      step: this.initController.step,
-    });
+    this.sliderModel = new SliderModel(initController);
     this.sliderView = new SliderView(slider, this, initController);
     this.init();
   }
 
   updateSlider([min, max]: number[]) {
     this.sliderModel.updateValues([min, max]); 
-    const [left, right] = this.sliderModel.getValues();
-    this.sliderView.updateView([left, right]);
+    this.sliderView.updateView();
   }
 
   updateSliderFromScale(value: number) {
-    this.sliderView.updateView([this.initController.min, value]);
     this.sliderModel.setValues([this.initController.min, value]);
+    this.sliderView.updateView();
   }
 
   getModelValues() {
@@ -52,8 +47,8 @@ class SliderController {
   }
 
   setModelValues([min, max]: number[]) {
-    const [left, right] = this.sliderModel.setValues([min, max]); 
-    this.sliderView.updateView([left, right]);
+    this.sliderModel.setValues([min, max]); 
+    this.sliderView.updateView();
   }
 
   setStep(step: number) {

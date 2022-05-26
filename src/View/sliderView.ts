@@ -5,6 +5,13 @@ import SliderToolTip from './subViews/sliderToolTip';
 import SliderHandlers from './subViews/sliderHandlers';
 import searchElem from '../searchElem';
 
+interface Observers {
+  updateObserver(): void,
+  sliderHandlers: SliderHandlers,
+  sliderToolTip: SliderToolTip,
+  sliderScale: SliderScale,
+}
+
 class SliderView {
 
   private slider: HTMLElement;
@@ -21,11 +28,25 @@ class SliderView {
 
   private sliderHandlers!: SliderHandlers;
 
+  private observers: Observers[];
+
   constructor(slider: HTMLElement, controller: SliderController, initView: Init) {
+    this.observers = [];
     this.initView = initView;
     this.slider = slider;
     this.sliderController = controller;
     this.init();
+  }
+
+
+  private subScribe(observer: any) { 
+    this.observers.push(observer);
+  }
+
+  private update() {
+    this.observers.forEach((observer: { updateObserver: () => void; }) => {   
+      observer.updateObserver();
+    });
   }
 
   private init(): void {
@@ -34,16 +55,19 @@ class SliderView {
     this.sliderScale = new SliderScale(this.slider, this.initView);
     this.sliderToolTip = new SliderToolTip(this.slider, this.initView);
     this.searchElems();
-    this.addListeners();
-    this.updateView([this.initView.setMin, this.initView.setMax]);
+    
+    this.subscriber();
     this.checkSliderOrientation();
+    this.updateView();
+    this.addListeners();
   }
 
   private searchElems(): void {
     this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
   }
 
-  private progressBarUpdate([min, max]: number[]): void {
+  private progressBarUpdate(): void {
+    const [min, max]: number[] = [this.initView.setMin, this.initView.setMax];
     const [minPercent, maxPercent] = [this.convertToPercent(min), this.convertToPercent(max)];
     const progressLength = maxPercent - minPercent; 
 
@@ -89,20 +113,15 @@ class SliderView {
     return valuePercent;
   }
 
-  updateController([min, max]: number[]) {
+  updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+    const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
+    
     this.sliderController.updateSlider([min, max]);
   }
-
-  updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
-    const [min, max] = this.sliderHandlers.updateValues(elem, e);
-    
-    this.updateController([min, max]);
-  }
   
-  updateView([min, max]: number[]) { 
-    this.sliderHandlers.handlersUpdate([min, max]);
-    this.sliderToolTip.update([min, max]);
-    this.progressBarUpdate([min, max]);
+  updateView() { 
+    this.updater();
+    this.progressBarUpdate();
   }
 
   setOrientation() {
@@ -113,11 +132,10 @@ class SliderView {
       this.progressBar.style.height = '';
       this.progressBar.style.top = '';
     }
-    const [min, max] = this.sliderHandlers.getValues();
-    this.updateView([min, max]);
+    this.updateView();
     this.checkSliderOrientation();
     this.sliderHandlers.checkOrientation();
-    this.sliderScale.update();
+    // this.sliderScale.update();
   }
 
 
@@ -161,9 +179,19 @@ class SliderView {
     const scaleElem = this.sliderScale.getScaleElem(); 
     scaleElem.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
-
+    
       if (value !== undefined) this.sliderController.updateSliderFromScale(value);
     });
+  }
+
+  subscriber() {
+    this.subScribe(this.sliderHandlers);
+    this.subScribe(this.sliderToolTip);
+    this.subScribe(this.sliderScale);
+  }
+
+  updater() {
+    this.update();
   }
 }
 
