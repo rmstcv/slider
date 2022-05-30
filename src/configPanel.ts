@@ -38,7 +38,7 @@ class ConfigPanel {
     this.type = <HTMLInputElement> searchElem('.config-input_type', config);
     this.toolTip = <HTMLInputElement> searchElem('.config-input_tool-tip', config);
     this.scale = <HTMLInputElement> searchElem('.config-input_scale', config);
-    this.sliderInitConfig = sliderInitConfig;
+    this.sliderInitConfig = { ...sliderInitConfig };
     this.step = this.sliderInitConfig.step;
     this.min = this.sliderInitConfig.setMin;
     this.max = this.sliderInitConfig.setMax;
@@ -53,16 +53,16 @@ class ConfigPanel {
     this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
   }
 
-  setMin() {
-    rangeSlider.setValues([this.min, undefined]);
-    this.min = rangeSlider.getValues()[0];
-    this.minInput.value = `${this.min}`;  
+  setMin(setMin: number) {
+    rangeSlider.setSlider('valueFrom', setMin);
+    const newMin = rangeSlider.getState().setMin;
+    this.minInput.value = `${newMin}`;  
   }
 
-  setMax() {
-    rangeSlider.setValues([undefined, this.max]);
-    this.max = rangeSlider.getValues()[1];
-    this.maxInput.value = `${this.max}`;
+  setMax(setMax: number) {
+    rangeSlider.setSlider('valueTo', setMax);
+    const newMax = rangeSlider.getState().setMax;
+    this.maxInput.value = `${newMax}`;
   }
 
   setStepInit() {
@@ -71,9 +71,10 @@ class ConfigPanel {
     this.stepInput.setAttribute('min', `${this.step}`);
   }
 
-  setStep() { 
-    this.step = rangeSlider.setStep(this.step);
-    this.stepInput.value = `${this.step}`; 
+  setStep(step: number) { 
+    rangeSlider.setSlider('step', step);
+    const newStep = rangeSlider.getState().step;
+    this.stepInput.value = `${newStep}`; 
   }
 
   setOrientation(orientation: string) {
@@ -83,65 +84,51 @@ class ConfigPanel {
   changeValues(e: Event) {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
+    let { setMin, setMax, step, sliderType } =  rangeSlider.getState();
     
-    if (elemPar.classList.contains('config__input-min') && this.sliderInitConfig.sliderType !== 'single') {
-      if (elem.classList.contains('config__inc') && this.min < this.max) {
-        this.min += this.step;
-      }
-      if (elem.classList.contains('config__dec') && this.min > this.sliderInitConfig.min) {
-        this.min -= this.step;
-      }
-      this.setMin();
-      
+    if (elemPar.classList.contains('config__input-min') && sliderType !== 'single') {
+      if (elem.classList.contains('config__inc')) setMin += step;
+      if (elem.classList.contains('config__dec')) setMin -= step;
+      this.setMin(setMin);
     }
+
     if (elemPar.classList.contains('config__input-max')) {
-      if (elem.classList.contains('config__inc') && this.max < this.sliderInitConfig.max) {
-        this.max += this.step;
-      }
-      if (elem.classList.contains('config__dec') && this.max > this.min) {
-        this.max -= this.step;
-      }
-      this.setMax();
+      if (elem.classList.contains('config__inc')) setMax += step;
+      if (elem.classList.contains('config__dec')) setMax -= step;
+      this.setMax(setMax);
     }
   }
 
   setValues() {
-    this.minInput.value = rangeSlider.getValues()[0];
-    this.maxInput.value = rangeSlider.getValues()[1];
-    this.min = +this.minInput.value;
-    this.max = +this.maxInput.value;
+    let { setMin, setMax } =  rangeSlider.getState();
+    this.minInput.value = setMin;
+    this.maxInput.value = setMax;
   }
 
-  changeValuesFromScale(target: HTMLElement) {
+  changeValuesFromScale(target: HTMLElement) {    
     if (target.classList.contains('slider__scale-marker-value')) {
-      const value: number = Number(target.getAttribute('data-value'));
-      this.minInput.value = `${this.sliderInitConfig.min}`;
-      this.maxInput.value = `${value}`;
-      this.min = this.sliderInitConfig.min;
-      this.max = value;
+      let { min, setMax } =  rangeSlider.getState();
+      this.minInput.value = `${min}`;
+      this.maxInput.value = `${setMax}`;
     }
   }
 
   changeStep(e: Event) {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
-    const inc = (this.sliderInitConfig.max - this.sliderInitConfig.min) / 100;
+    let { min, max, step } =  rangeSlider.getState();    
+    const inc = (max - min) / 100;
     
     if (elemPar.classList.contains('config__input-step')) {
-      if (elem.classList.contains('config__inc')) {
-        this.step = parseFloat((this.step + inc).toFixed(this.sliderInitConfig.max.toString().length));
-      }
-      if (elem.classList.contains('config__dec')) {
-        this.step = parseFloat((this.step - inc).toFixed(this.sliderInitConfig.max.toString().length));
-      }
+      if (elem.classList.contains('config__inc')) this.setStep(parseFloat(((step + inc)).toFixed(min.toString().length)));
+      if (elem.classList.contains('config__dec')) this.setStep(parseFloat(((step - inc)).toFixed(min.toString().length)));
     }
-    this.setStep();
   }
 
   setType(type: 'range' | 'single') {
-    this.sliderInitConfig.sliderType = type;
-    this.minInput.value = `${this.min}`;
-    rangeSlider.setType(type);
+    let { min } =  rangeSlider.getState();
+    rangeSlider.setSlider('type', type);
+    this.minInput.value = `${min}`;
   }
 
   setToolTip() {
@@ -175,9 +162,10 @@ class ConfigPanel {
     config.addEventListener('click', (e) => this.changeStep(e));
 
     this.minInput?.addEventListener('change', () => {
-      if (this.sliderInitConfig.sliderType !== 'single') {
+      const { sliderType } =  rangeSlider.getState();
+      if (sliderType !== 'single') {
         this.min = +this.minInput.value;
-        this.setMin();
+        this.setMin(this.min);
       } else {
         this.minInput.value = `${this.min}`;
       }
@@ -185,12 +173,12 @@ class ConfigPanel {
 
     this.maxInput?.addEventListener('change', () => {
       this.max = +this.maxInput.value;
-      this.setMax();
+      this.setMax(this.max);
     });
 
     this.stepInput?.addEventListener('change', () => {
-      this.step = +this.stepInput.value;
-      this.setStep();
+      // this.step = +this.stepInput.value;
+      this.setStep(+this.stepInput.value);
     });
 
     this.orientation?.addEventListener('click', () => {
@@ -201,11 +189,11 @@ class ConfigPanel {
       }
     });
 
-    this.type?.addEventListener('click', () => {
-      if (this.sliderInitConfig.sliderType === 'single') {
+    this.type.addEventListener('click', () => {
+      const { sliderType } =  rangeSlider.getState();
+      if (sliderType === 'single') {
         this.setType('range');
       } else {
-        this.min = this.sliderInitConfig.min;
         this.setType('single');
       }
     });

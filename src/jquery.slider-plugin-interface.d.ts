@@ -12,12 +12,14 @@ interface Init {
 
 interface JQuery {
   sliderPlugin(this: JQuery, slider: HTMLElement, options: Init): JQuery;
-  setValues: any;
   getValues: any;
-  getStep: any;
-  setStep: any;
   setOrientation: any;
-  setType: any;
   setToolTip: any;
   setScale: any;
+  setSlider: any;
+  getState: any;
 }
+
+type Params = number | 'valueFrom' | 'valueTo' | 'range' | 'single';
+
+type Actions = 'valueFrom' | 'valueTo' | 'step' | 'type';

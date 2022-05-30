@@ -12,7 +12,7 @@ class ToolTip {
     
   constructor(slider: HTMLElement, initToolTip: Init) {
     this.slider = slider;
-    this.initToolTip = initToolTip;
+    this.initToolTip = { ...initToolTip };
     this.init();
   }
 
@@ -57,6 +57,10 @@ class ToolTip {
 
   public updateObserver() {
     this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
+  }
+
+  updateState(state: Init){
+    this.initToolTip = { ...state };
   }
 }
 

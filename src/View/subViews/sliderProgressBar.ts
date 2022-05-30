@@ -10,7 +10,7 @@ class ProgressBar {
     
   constructor(slider: HTMLElement, initOptions: Init) {
     this.slider = slider;
-    this.initOptions = initOptions;
+    this.initOptions = { ...initOptions };
     this.init();
   }
 
@@ -25,7 +25,7 @@ class ProgressBar {
 
   private progressBarUpdate(): void {
     this.checkOrientation();
-    const [min, max]: number[] = [this.initOptions.setMin, this.initOptions.setMax];
+    const [min, max] = [this.initOptions.setMin, this.initOptions.setMax];
     const [minPercent, maxPercent] = [this.convertToPercent(min), this.convertToPercent(max)];
     const progressLength = maxPercent - minPercent; 
 
@@ -47,7 +47,8 @@ class ProgressBar {
   } 
 
   private convertToPercent(customValue: number) {
-    const valuePercent = (100 / Math.abs(this.initOptions.max - this.initOptions.min)) * (-this.initOptions.min + customValue);
+    const { max, min } = this.initOptions;
+    const valuePercent = (100 / Math.abs(max - min)) * (-min + customValue);
     return valuePercent;
   }
 
@@ -63,6 +64,10 @@ class ProgressBar {
 
   public updateObserver() {
     this.progressBarUpdate();
+  }
+
+  updateState(state: Init){
+    this.initOptions = { ...state };
   }
 }
 

@@ -22,19 +22,52 @@ class SliderController {
   private sliderView: SliderView;
 
   constructor(slider: HTMLElement, initController: InitController) {
-    this.initController = initController;
+    this.initController = { ...initController };
     this.sliderModel = new SliderModel(initController);
     this.sliderView = new SliderView(slider, this, initController);
     this.init();
   }
 
-  updateSlider([min, max]: number[]) {
-    this.sliderModel.updateValues([min, max]); 
+  updateState(state: Init) {
+    this.initController = { ...state };
+  }
+
+  setSlider(action: Actions, params: Params) {
+    if (action === 'valueFrom' ) {
+      this.setValueFrom(<number>params);
+    }
+    if (action === 'valueTo') {
+      this.setValueTo(<number>params);
+    }
+    if (action === 'step') {
+      this.setStep(<number>params);
+    }
+    if (action === 'type') {
+      this.setType(<'range' | 'single'>params);
+    }
+  }
+
+  setValueFrom(params: number) {
+    this.sliderModel.setValueFrom(params);
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.updateView();
   }
 
-  updateSliderFromScale(value: number) {
-    this.sliderModel.setValues([this.initController.min, value]);
+  setValueTo(params: number) {
+    this.sliderModel.setValueTo(params);
+    this.sliderView.updateState(this.sliderModel.getState());
+    this.sliderView.updateView();
+  }
+
+  setStep(step: number) {
+    this.sliderModel.setStep(step);
+    this.sliderView.updateState(this.sliderModel.getState());
+  }
+
+  updateSlider([min, max]: number[]) {
+    this.sliderModel.updateValues([min, max]);
+    this.updateState(this.sliderModel.getState());
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.updateView();
   }
 
@@ -48,11 +81,8 @@ class SliderController {
 
   setModelValues([min, max]: number[]) {
     this.sliderModel.setValues([min, max]); 
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.updateView();
-  }
-
-  setStep(step: number) {
-    return this.sliderModel.setStep(step);
   }
 
   setOrientation(orientation: 'vertical' | 'horizontal') {
@@ -61,8 +91,9 @@ class SliderController {
   }
 
   setType(type: 'range' | 'single') {
+    this.sliderModel.state.sliderType = type;
     this.setModelValues([this.initController.min, this.getModelValues()[1]]);
-    this.initController.sliderType = type;
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.setType();
   }
 
@@ -78,6 +109,10 @@ class SliderController {
 
   private init(): void {
     this.sliderModel.init([this.initController.setMin, this.initController.setMax]);
+  }
+
+  getState(): Init { 
+    return this.sliderModel.getState();
   }
 }
 

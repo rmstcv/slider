@@ -9,7 +9,7 @@ class SliderScale {
 
   constructor(slider: HTMLElement, initOptions: Init) {
     this.slider = slider;
-    this.initOptions = initOptions;
+    this.initOptions = { ...initOptions };
     this.init();
   }
 
@@ -31,7 +31,7 @@ class SliderScale {
 
   private createScale(): void{
     const scaleMultiplier = 4;
-    const { min, max } = this.initOptions;
+    const { min, max, orientation } = this.initOptions;
     const sliderSize = max - min;
     const stepCustom = sliderSize / 10;
     const numOfDigits = max.toString().length;
@@ -48,7 +48,7 @@ class SliderScale {
         elemScaleValue.classList.add('slider__scale-marker-value');
         const percentagOffset = 100 * ((i * stepCustom / scaleMultiplier) / sliderSize);
 
-        if (this.initOptions.orientation === 'vertical') {   
+        if (orientation === 'vertical') {   
           elemScaleValue.style.top = `${percentagOffset}%`;
           elemScaleValue.setAttribute('data-value', `${valueVertical}`);
           elemScaleValue.innerHTML = `${valueVertical}`;  
@@ -82,12 +82,12 @@ class SliderScale {
     return scaleValue;
   }
 
-  public getScaleElem() {
-    return this.scale;
-  }
-
   public updateObserver() {
     this.update();
+  }
+
+  updateState(state: Init){
+    this.initOptions = { ...state };
   }
 }
 

@@ -3,27 +3,24 @@ import SliderController from './Controller/sliderController';
 
 $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init): JQuery {
   const controller = new SliderController(slider, options);
-  const setValues = function ([min, max]: number[]) {
-    controller.setModelValues([min, max]);
-
+  const setSlider = function (action: Actions, params: Params) {
+    controller.setSlider(action, params);
   };
-  this.setValues = setValues;
+  this.setSlider = setSlider;
+
   const getValues = function () {
     return controller.getModelValues();
   };
   this.getValues = getValues;
-  const setStep = function (step: number) {
-    return controller.setStep(step);
+  const getState = function () {
+    return controller.getState();
   };
-  this.setStep = setStep;
+  this.getState = getState;
+
   const setOrientation = function (orientation: 'vertical' | 'horizontal') {
     controller.setOrientation(orientation);
   };
   this.setOrientation = setOrientation;
-  const setType = function (type: 'range' | 'single') {
-    controller.setType(type);
-  };
-  this.setType = setType;
   const setToolTip = function () {
     controller.setToolTip();
   };

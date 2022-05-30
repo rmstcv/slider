@@ -32,7 +32,7 @@ class SliderView {
 
   constructor(slider: HTMLElement, controller: SliderController, initView: Init) {
     this.observers = [];
-    this.initView = initView;
+    this.initView = { ...initView };
     this.slider = slider;
     this.sliderController = controller;
     this.init();
@@ -43,7 +43,7 @@ class SliderView {
   }
 
   private update() {
-    this.observers.forEach((observer: { updateObserver: () => void; }) => {   
+    this.observers.forEach((observer) => {   
       observer.updateObserver();
     });
   }
@@ -132,11 +132,9 @@ class SliderView {
   }
 
   private toSubscribeScaleOnView() {
-    const scaleElem = this.sliderScale.getScaleElem(); 
-    scaleElem.addEventListener('click', (e) => {
+    this.slider.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
-    
-      if (value !== undefined) this.sliderController.updateSliderFromScale(value);
+      if (value !== undefined) this.sliderController.setModelValues([ this.initView.min, value]);
     });
   }
 
@@ -149,6 +147,14 @@ class SliderView {
 
   private updater() {
     this.update();
+  }
+
+  updateState(state: Init) {
+    this.initView = { ...state };
+    this.sliderHandlers.updateState(state);
+    this.sliderToolTip.updateState(state);
+    this.sliderScale.updateState(state);
+    this.sliderProgressBar.updateState(state);
   }
 }
 
