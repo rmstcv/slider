@@ -16,19 +16,6 @@ $.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init):
     return controller.getState();
   };
   this.getState = getState;
-
-  const setOrientation = function (orientation: 'vertical' | 'horizontal') {
-    controller.setOrientation(orientation);
-  };
-  this.setOrientation = setOrientation;
-  const setToolTip = function () {
-    controller.setToolTip();
-  };
-  this.setToolTip = setToolTip;
-  const setScale = function () {
-    controller.setScale();
-  };
-  this.setScale = setScale;
   
   return this;
 };

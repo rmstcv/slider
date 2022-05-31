@@ -45,6 +45,15 @@ class SliderController {
     if (action === 'type') {
       this.setType(<'range' | 'single'>params);
     }
+    if (action === 'orientation') {
+      this.setOrientation(<Init['orientation']>params);
+    }
+    if (action === 'scale') {
+      this.setScale(<boolean>params);
+    }
+    if (action === 'toolTip') {
+      this.setToolTip(<boolean>params);
+    }
   }
 
   setValueFrom(params: number) {
@@ -85,9 +94,10 @@ class SliderController {
     this.sliderView.updateView();
   }
 
-  setOrientation(orientation: 'vertical' | 'horizontal') {
-    this.initController.orientation = orientation;
-    this.sliderView.setOrientation();
+  setOrientation(orientation: Init['orientation']) {
+    this.sliderModel.state.orientation = orientation;
+    this.sliderView.updateState(this.sliderModel.getState());
+    this.sliderView.updateView();
   }
 
   setType(type: 'range' | 'single') {
@@ -97,13 +107,15 @@ class SliderController {
     this.sliderView.setType();
   }
 
-  setToolTip() {
-    this.initController.toolTip = this.initController.toolTip ? false : true;
+  setToolTip(toolTip: boolean) {
+    this.sliderModel.state.toolTip = toolTip;
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.setToolTip();
   }
 
-  setScale() {
-    this.initController.scale = this.initController.scale ? false : true;
+  setScale(scale: boolean) {
+    this.sliderModel.state.scale = scale;
+    this.sliderView.updateState(this.sliderModel.getState());
     this.sliderView.setScale();
   }
 

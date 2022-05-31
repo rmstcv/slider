@@ -16,8 +16,6 @@ class ConfigPanel {
 
   sliderInitConfig: Init;
 
-  step: number;
-
   orientation: HTMLInputElement;
 
   type: HTMLInputElement;
@@ -25,10 +23,6 @@ class ConfigPanel {
   toolTip: HTMLInputElement;
 
   scale: HTMLInputElement;
-
-  min: number;
-
-  max: number;
 
   constructor() {
     this.minInput = <HTMLInputElement> searchElem('.config-input_min', config);
@@ -39,9 +33,6 @@ class ConfigPanel {
     this.toolTip = <HTMLInputElement> searchElem('.config-input_tool-tip', config);
     this.scale = <HTMLInputElement> searchElem('.config-input_scale', config);
     this.sliderInitConfig = { ...sliderInitConfig };
-    this.step = this.sliderInitConfig.step;
-    this.min = this.sliderInitConfig.setMin;
-    this.max = this.sliderInitConfig.setMax;
   }
 
   initValues() {
@@ -66,9 +57,9 @@ class ConfigPanel {
   }
 
   setStepInit() {
-    this.stepInput.value = `${this.step}`;
+    this.stepInput.value = `${this.sliderInitConfig.step}`;
     this.stepInput.setAttribute('max', `${this.sliderInitConfig.max - this.sliderInitConfig.min}`);
-    this.stepInput.setAttribute('min', `${this.step}`);
+    this.stepInput.setAttribute('min', `${this.sliderInitConfig.step}`);
   }
 
   setStep(step: number) { 
@@ -77,8 +68,12 @@ class ConfigPanel {
     this.stepInput.value = `${newStep}`; 
   }
 
-  setOrientation(orientation: string) {
-    rangeSlider.setOrientation(orientation);
+  setOrientation() {
+    if (this.orientation.checked) {
+      rangeSlider.setSlider('orientation', 'horizontal');
+    } else {
+      rangeSlider.setSlider('orientation', 'vertical');
+    }
   }
 
   changeValues(e: Event) {
@@ -132,11 +127,19 @@ class ConfigPanel {
   }
 
   setToolTip() {
-    rangeSlider.setToolTip();
+    if (this.toolTip.checked) {
+      rangeSlider.setSlider('toolTip', false);
+    } else {
+      rangeSlider.setSlider('toolTip', true);
+    }
   }
 
   setScale() {
-    rangeSlider.setScale();
+    if (this.scale.checked) {
+      rangeSlider.setSlider('scale', false);
+    } else {
+      rangeSlider.setSlider('scale', true);
+    }
   }
 
   addListeners() {
@@ -163,31 +166,19 @@ class ConfigPanel {
 
     this.minInput?.addEventListener('change', () => {
       const { sliderType } =  rangeSlider.getState();
-      if (sliderType !== 'single') {
-        this.min = +this.minInput.value;
-        this.setMin(this.min);
-      } else {
-        this.minInput.value = `${this.min}`;
-      }
+      if (sliderType !== 'single') this.setMin(+this.minInput.value);
     });
 
     this.maxInput?.addEventListener('change', () => {
-      this.max = +this.maxInput.value;
-      this.setMax(this.max);
+      this.setMax(+this.maxInput.value);
     });
 
     this.stepInput?.addEventListener('change', () => {
-      // this.step = +this.stepInput.value;
       this.setStep(+this.stepInput.value);
     });
 
-    this.orientation?.addEventListener('click', () => {
-      if (this.orientation.checked) {
-        this.setOrientation('vertical');
-      } else {
-        this.setOrientation('horizontal');
-      }
-    });
+    const bindSetOrientation = this.setOrientation.bind(this);
+    this.orientation.addEventListener('click', bindSetOrientation);
 
     this.type.addEventListener('click', () => {
       const { sliderType } =  rangeSlider.getState();
@@ -198,18 +189,13 @@ class ConfigPanel {
       }
     });
 
-    this.toolTip?.addEventListener('click', () => {
-      if (this.sliderInitConfig.toolTip) {
-        this.sliderInitConfig.toolTip = false;
-      } else {
-        this.sliderInitConfig.toolTip = true;
-      }
-      this.setToolTip();
-    });
+    const bindSetToolTip = this.setToolTip.bind(this);
 
-    this.scale?.addEventListener('click', () => {
-      this.setScale();
-    });
+    this.toolTip.addEventListener('click', bindSetToolTip);
+
+    const bindSetScale = this.setScale.bind(this);
+
+    this.scale?.addEventListener('click', bindSetScale);
   }
 
   init() {

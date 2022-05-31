@@ -42,7 +42,7 @@ class SliderView {
     this.observers.push(observer);
   }
 
-  private update() {
+  private updateObservers() {
     this.observers.forEach((observer) => {   
       observer.updateObserver();
     });
@@ -61,6 +61,7 @@ class SliderView {
   }
 
   private checkSliderOrientation(): void {
+    this.sliderHandlers.checkOrientation();
     if (this.initView.orientation === 'vertical') {
       this.slider.classList.add('slider_vertical'); 
     } else {
@@ -85,14 +86,9 @@ class SliderView {
     this.sliderController.updateSlider([min, max]);
   }
   
-  public updateView() { 
-    this.updater();
-  }
-
-  public setOrientation() {
-    this.updateView();
+  public updateView() {
     this.checkSliderOrientation();
-    this.sliderHandlers.checkOrientation();
+    this.updateObservers();
   }
 
   private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
@@ -143,10 +139,6 @@ class SliderView {
     this.subScribe(this.sliderToolTip);
     this.subScribe(this.sliderScale);
     this.subScribe(this.sliderProgressBar);
-  }
-
-  private updater() {
-    this.update();
   }
 
   updateState(state: Init) {
