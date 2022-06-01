@@ -43,7 +43,7 @@ class SliderController {
       this.setStep(<number>params);
     }
     if (action === 'type') {
-      this.setType(<'range' | 'single'>params);
+      this.setType(<Init['sliderType']>params);
     }
     if (action === 'orientation') {
       this.setOrientation(<Init['orientation']>params);
@@ -80,14 +80,6 @@ class SliderController {
     this.sliderView.updateView();
   }
 
-  getModelValues() {
-    let [min, max] = this.sliderModel.getValues();
-    const pow = this.initController.max.toString().length;
-    min =  Math.round((min) * Math.pow(10, pow)) / Math.pow(10, pow);
-    max =  Math.round((max) * Math.pow(10, pow)) / Math.pow(10, pow);
-    return [min, max];
-  }
-
   setModelValues([min, max]: number[]) {
     this.sliderModel.setValues([min, max]); 
     this.sliderView.updateState(this.sliderModel.getState());
@@ -101,9 +93,9 @@ class SliderController {
   }
 
   setType(type: 'range' | 'single') {
+    const { min } = this.sliderModel.getState();
     this.sliderModel.state.sliderType = type;
-    this.setModelValues([this.initController.min, this.getModelValues()[1]]);
-    this.sliderView.updateState(this.sliderModel.getState());
+    this.setValueFrom(min);
     this.sliderView.setType();
   }
 

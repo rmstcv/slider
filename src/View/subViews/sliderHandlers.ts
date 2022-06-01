@@ -144,11 +144,8 @@ class SliderHandlers {
   }
 
   public checkType() {
-    if (this.state.sliderType === 'single') {
-      this.lower.classList.add('slider__handle-lower_hidden');
-    } else {
-      this.lower.classList.remove('slider__handle-lower_hidden');
-    }
+    if (this.state.sliderType === 'single') this.lower.classList.add('slider__handle-lower_hidden');
+    if (this.state.sliderType === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
   }
 
   public updateObserver() {
