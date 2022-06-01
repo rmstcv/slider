@@ -13,12 +13,13 @@ class SliderHandlers {
     
   constructor(slider: HTMLElement, initOptions: Init) {
     this.slider = slider;
-    this.init();
     this.state = { ...initOptions };
+    this.init();
   }
 
   private init(): void { 
     this.searcElems();
+    this.handlersUpdate();
   }
 
   private searcElems(): void {

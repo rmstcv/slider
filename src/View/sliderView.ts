@@ -1,4 +1,4 @@
-import SliderController from '../Controller/sliderController';
+import SliderPresenter from '../Presenter/sliderPresenter';
 import sliderCreater from './subViews/sliderCreater';
 import SliderScale from './subViews/sliderScale';
 import SliderToolTip from './subViews/sliderToolTip';
@@ -22,7 +22,7 @@ class SliderView {
 
   private sliderToolTip!: SliderToolTip;
 
-  private sliderController: SliderController;
+  private sliderPresenter: SliderPresenter;
 
   private sliderHandlers!: SliderHandlers;
 
@@ -30,11 +30,11 @@ class SliderView {
 
   private observers: Observers[];
 
-  constructor(slider: HTMLElement, controller: SliderController, initView: Init) {
+  constructor(slider: HTMLElement, presenter: SliderPresenter, initView: Init) {
     this.observers = [];
     this.initView = { ...initView };
     this.slider = slider;
-    this.sliderController = controller;
+    this.sliderPresenter = presenter;
     this.init();
   }
 
@@ -56,7 +56,6 @@ class SliderView {
     this.sliderProgressBar = new sliderProgressBar(this.slider, this.initView);
     this.subscriber();
     this.checkSliderOrientation();
-    this.updateView();
     this.addListeners();
   }
 
@@ -83,10 +82,11 @@ class SliderView {
 
   private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
-    this.sliderController.updateSlider([min, max]);
+    this.sliderPresenter.updateSlider([min, max]);
   }
   
-  public updateView() {
+  public updateView(state: Init) {
+    this.updateState(state);
     this.checkSliderOrientation();
     this.updateObservers();
   }
@@ -130,7 +130,7 @@ class SliderView {
   private toSubscribeScaleOnView() {
     this.slider.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
-      if (value !== undefined) this.sliderController.setModelValues([ this.initView.min, value]);
+      if (value !== undefined) this.sliderPresenter.setModelValues([ this.initView.min, value]);
     });
   }
 

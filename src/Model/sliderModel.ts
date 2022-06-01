@@ -119,10 +119,6 @@ class SliderModel {
     return this.state.step;
   }
 
-  init([min, max]: number[]) {
-    this.setValues([min, max]);
-  }
-
   updateState(min: number, max: number) {
     if (min !== undefined) this.state.setMin = min;
     if (max !== undefined) this.state.setMax = max;
