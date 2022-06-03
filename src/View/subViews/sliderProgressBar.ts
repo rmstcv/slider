@@ -14,16 +14,16 @@ class ProgressBar {
     this.init();
   }
 
-  public updateObserver(state: Init) {
+  public updateObserver(state: Init): void {
     this.updateState(state);
     this.progressBarUpdate();
   }
 
-  updateState(state: Init){
+  private updateState(state: Init): void {
     this.initOptions = { ...state };
   }
 
-  init() {
+  private init(): void {
     this.searchElems();
     this.progressBarUpdate();
   }
@@ -55,13 +55,13 @@ class ProgressBar {
     }
   } 
 
-  private convertToPercent(customValue: number) {
+  private convertToPercent(customValue: number): number {
     const { max, min } = this.initOptions;
     const valuePercent = (100 / Math.abs(max - min)) * (-min + customValue);
     return valuePercent;
   }
 
-  private checkOrientation() {
+  private checkOrientation(): void {
     if (this.initOptions.orientation === 'vertical') {
       this.progressBar.style.width = '';
       this.progressBar.style.left = '';

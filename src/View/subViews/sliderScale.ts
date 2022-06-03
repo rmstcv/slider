@@ -13,12 +13,12 @@ class SliderScale {
     this.init();
   }
 
-  public updateObserver(state: Init) {
+  public updateObserver(state: Init): void {
     this.updateState(state);
     this.update();
   }
 
-  public updateState(state: Init){
+  public updateState(state: Init): void {
     this.initOptions = { ...state };
   }
 
@@ -72,7 +72,7 @@ class SliderScale {
     }
   }
 
-  private destroyScale() {
+  private destroyScale(): void {
     this.scale.remove();
     this.scaleValue.remove();
   }
