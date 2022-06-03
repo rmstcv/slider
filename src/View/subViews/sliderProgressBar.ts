@@ -34,7 +34,7 @@ class ProgressBar {
 
   private progressBarUpdate(): void {
     this.checkOrientation();
-    const [min, max] = [this.initOptions.setMin, this.initOptions.setMax];
+    const [min, max] = [this.initOptions.valueFrom, this.initOptions.valueTo];
     const [minPercent, maxPercent] = [this.convertToPercent(min), this.convertToPercent(max)];
     const progressLength = maxPercent - minPercent; 
 

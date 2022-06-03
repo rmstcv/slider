@@ -18,7 +18,7 @@ class ToolTip {
 
   public updateObserver(state: Init): void {
     this.updateState(state);
-    this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
+    this.update([this.initToolTip.valueFrom, this.initToolTip.valueTo]);
     this.toggletoolTip();
   }
 
@@ -28,8 +28,8 @@ class ToolTip {
 
   private init(): void {
     this.searcElems();
-    const { setMin, setMax } = this.initToolTip;
-    this.update([setMin, setMax]); 
+    const { valueFrom, valueTo } = this.initToolTip;
+    this.update([valueFrom, valueTo]); 
     this.toggletoolTip();
   }
 
@@ -50,12 +50,15 @@ class ToolTip {
   }
 
   private update([min, max]: number[]): void { 
+
     if (min !== undefined) {
       this.lowerCount.innerHTML = min.toString();
     }
+
     if (max !== undefined) {
       this.upperCount.innerHTML = max.toString();
     }
+    
     if (this.upperCount.innerHTML === this.lowerCount.innerHTML) {
       this.lowerCount.classList.add('slider__handle-lower-count_hidden');
     } else {

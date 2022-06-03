@@ -29,7 +29,7 @@ class SliderHandlers {
 
   public handlersUpdate(): void{
     
-    let [min, max]: number[] = [this.state.setMin, this.state.setMax];
+    let [min, max]: number[] = [this.state.valueFrom, this.state.valueTo];
 
     if (min !== undefined) {
       this.toggleHandlersOrder(this.lower);
@@ -163,9 +163,9 @@ class SliderHandlers {
   }
 
   private checkType(): void{
-    if (this.state.sliderType === 'single') this.lower.classList.add('slider__handle-lower_hidden');
+    if (this.state.type === 'single') this.lower.classList.add('slider__handle-lower_hidden');
 
-    if (this.state.sliderType === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
+    if (this.state.type === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
   }
 }
 

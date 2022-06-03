@@ -5,13 +5,7 @@ import SliderToolTip from './subViews/sliderToolTip';
 import SliderHandlers from './subViews/sliderHandlers';
 import sliderProgressBar from './subViews/sliderProgressBar';
 
-interface Observers {
-  updateState(state: Init): void;
-  updateObserver(state: Init): void,
-  sliderHandlers: SliderHandlers,
-  sliderToolTip: SliderToolTip,
-  sliderScale: SliderScale,
-}
+type Observers = SliderHandlers | SliderToolTip | SliderScale | sliderProgressBar;
 
 class SliderView {
 
@@ -38,28 +32,28 @@ class SliderView {
     this.init();
   }
 
-  public updateView(state: Init) {
+  public updateView(state: Init): void {
     this.updateState(state);
     this.checkSliderOrientation();
     this.updateObservers(state);
   }
 
-  private subScribe(observer: any) { 
+  private subScribe(observer: Observers): void { 
     this.observers.push(observer);
   }
 
-  private subscriber() {
+  private subscriber(): void {
     this.subScribe(this.sliderHandlers);
     this.subScribe(this.sliderToolTip);
     this.subScribe(this.sliderScale);
     this.subScribe(this.sliderProgressBar);
   }
 
-  private updateState(state: Init) {
+  private updateState(state: Init): void {
     this.initView = { ...state };
   }
 
-  private updateObservers(state: Init) {
+  private updateObservers(state: Init): void {
     this.observers.forEach((observer) => {   
       observer.updateObserver(state);
     });
@@ -85,12 +79,12 @@ class SliderView {
     }
   }
 
-  private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+  private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent): void {
     const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
     this.sliderPresenter.changeValues([min, max]);
   }
 
-  private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
+  private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent): void {
     e.preventDefault();
     const updateValuesBind = this.updateHandlers.bind(this, elem);
     const actions = [updateValuesBind];
@@ -113,7 +107,7 @@ class SliderView {
     };
   }
 
-  private toSubscribeHandlersOnView() {
+  private toSubscribeHandlersOnView(): void {
     const [lower, upper] = this.sliderHandlers.getHandlerElems();
     upper.addEventListener('mousedown', (e) => this.addEvents(upper, e));
     lower.addEventListener('mousedown', (e) => this.addEvents(lower, e));
@@ -121,7 +115,7 @@ class SliderView {
     lower.addEventListener('touchstart', (e) => this.addEvents(lower, e));
   }
 
-  private toSubscribeScaleOnView() {
+  private toSubscribeScaleOnView(): void {
     this.slider.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
 
@@ -132,7 +126,7 @@ class SliderView {
     });
   }
 
-  private addListeners() {    
+  private addListeners(): void {    
     this.toSubscribeHandlersOnView();
     this.toSubscribeScaleOnView();
   }

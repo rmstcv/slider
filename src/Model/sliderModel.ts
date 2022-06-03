@@ -1,6 +1,6 @@
 class SliderModel {
 
-  state: Init;
+  readonly state: Init;
 
   constructor(init: Init) {
     this.state = { ...init };
@@ -9,8 +9,8 @@ class SliderModel {
   public setState(param: Actions, value: Params) {
 
     if (param === 'type') {
-      this.state.sliderType = <Init['sliderType']>value;
-      this.state.setMin = this.state.min;
+      this.state.type = <Init['type']>value;
+      this.state.valueFrom = this.state.min;
     }
 
     if (param === 'orientation') {
@@ -30,11 +30,11 @@ class SliderModel {
     }
 
     if (param === 'valueTo') {
-      this.state.setMax = this.checkValueTo(<number>value);
+      this.state.valueTo = this.checkValueTo(<number>value);
     }
 
     if (param === 'valueFrom' ) {
-      this.state.setMin = this.checkValueFrom(<number>value);
+      this.state.valueFrom = this.checkValueFrom(<number>value);
     }
   }
 
@@ -42,11 +42,11 @@ class SliderModel {
     let [minNew, maxNew] = [min, max];
     
     if (min !== undefined) {
-      minNew = this.findNextValue(this.state.setMin, min);
+      minNew = this.findNextValue(this.state.valueFrom, min);
       this.setState('valueFrom', minNew);
     }
     if (max !== undefined) {
-      maxNew = this.findNextValue(this.state.setMax, max);
+      maxNew = this.findNextValue(this.state.valueTo, max);
       this.setState('valueTo', maxNew);
     }
   }
@@ -76,21 +76,28 @@ class SliderModel {
       stepIncr = Math.ceil((cursorCoord - currentValue) / this.state.step);
     }
     newCurrentValue = currentValue + stepIncr * this.state.step;
+    newCurrentValue = parseFloat((newCurrentValue).toFixed(this.state.max.toString().length));
     return newCurrentValue;
   }
 
   private checkValueFrom(min: number): number {
-    return this.checkExtremumValues(min, this.state.min, this.state.setMax);
+    let newMin = this.checkExtremumValues(min, this.state.min, this.state.valueTo);
+    newMin = parseFloat((newMin).toFixed(this.state.max.toString().length));
+    return newMin;
   }
 
   private checkValueTo(max: number): number {
-    return this.checkExtremumValues(max, this.state.setMin, this.state.max);
+    let newMax = this.checkExtremumValues(max, this.state.valueFrom, this.state.max);
+    newMax = parseFloat((newMax).toFixed(this.state.max.toString().length));
+    return newMax;
   }
 
   private checkStep(step: number): number {
     let newStep = this.state.step;
     
-    if (step > 0 && step <= this.state.max - this.state.min) newStep = step;
+    if (step > 0 && step <= this.state.max - this.state.min) {
+      newStep = parseFloat((step).toFixed(this.state.max.toString().length));
+    }
     return newStep;
   }
 }

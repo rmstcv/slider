@@ -44,10 +44,10 @@ class ConfigPanel {
   }
 
   private initValues() {
-    this.minInput.value = `${this.sliderInitConfig.setMin}`;
+    this.minInput.value = `${this.sliderInitConfig.valueFrom}`;
     this.minInput.setAttribute('max', `${this.sliderInitConfig.max}`);
     this.minInput.setAttribute('min', `${this.sliderInitConfig.min}`);
-    this.maxInput.value = `${this.sliderInitConfig.setMax}`;
+    this.maxInput.value = `${this.sliderInitConfig.valueTo}`;
     this.maxInput.setAttribute('max', `${this.sliderInitConfig.max}`);
     this.maxInput.setAttribute('min', `${this.sliderInitConfig.min}`);
     this.stepInput.value = `${this.sliderInitConfig.step}`;
@@ -55,15 +55,15 @@ class ConfigPanel {
     this.stepInput.setAttribute('min', `${this.sliderInitConfig.step}`);
   }
 
-  private setMin(setMin: number) {
-    rangeSlider.setSlider('valueFrom', setMin);
-    const newMin = rangeSlider.getState().setMin;
+  private valueFrom(valueFrom: number) {
+    rangeSlider.setSlider('valueFrom', valueFrom);
+    const newMin = rangeSlider.getState().valueFrom;
     this.minInput.value = `${newMin}`;  
   }
 
-  private setMax(setMax: number) {
-    rangeSlider.setSlider('valueTo', setMax);
-    const newMax = rangeSlider.getState().setMax;
+  private valueTo(valueTo: number) {
+    rangeSlider.setSlider('valueTo', valueTo);
+    const newMax = rangeSlider.getState().valueTo;
     this.maxInput.value = `${newMax}`;
   }
 
@@ -84,32 +84,32 @@ class ConfigPanel {
   private changeValues(e: Event) {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
-    let { setMin, setMax, step, sliderType } =  rangeSlider.getState();
+    let { valueFrom, valueTo, step, type } =  rangeSlider.getState();
     
-    if (elemPar.classList.contains('config__input-min') && sliderType !== 'single') {
-      if (elem.classList.contains('config__inc')) setMin += step;
-      if (elem.classList.contains('config__dec')) setMin -= step;
-      this.setMin(setMin);
+    if (elemPar.classList.contains('config__input-min') && type !== 'single') {
+      if (elem.classList.contains('config__inc')) valueFrom += step;
+      if (elem.classList.contains('config__dec')) valueFrom -= step;
+      this.valueFrom(valueFrom);
     }
 
     if (elemPar.classList.contains('config__input-max')) {
-      if (elem.classList.contains('config__inc')) setMax += step;
-      if (elem.classList.contains('config__dec')) setMax -= step;
-      this.setMax(setMax);
+      if (elem.classList.contains('config__inc')) valueTo += step;
+      if (elem.classList.contains('config__dec')) valueTo -= step;
+      this.valueTo(valueTo);
     }
   }
 
   private setValues() {
-    let { setMin, setMax } =  rangeSlider.getState();
-    this.minInput.value = setMin;
-    this.maxInput.value = setMax;
+    let { valueFrom, valueTo } =  rangeSlider.getState();
+    this.minInput.value = valueFrom.toString();
+    this.maxInput.value = valueTo.toString();
   }
 
   private changeValuesFromScale(target: HTMLElement) {    
     if (target.classList.contains('slider__scale-marker-value')) {
-      let { min, setMax } =  rangeSlider.getState();
-      this.minInput.value = min;
-      this.maxInput.value = setMax;
+      let { min, valueTo } =  rangeSlider.getState();
+      this.minInput.value = min.toString();
+      this.maxInput.value = valueTo.toString();
     }
   }
 
@@ -176,11 +176,11 @@ class ConfigPanel {
     config.addEventListener('click', (e) => this.changeStep(e));
 
     this.minInput.addEventListener('change', () => {
-      const { sliderType } =  rangeSlider.getState();
-      if (sliderType !== 'single') this.setMin(+this.minInput.value);
+      const { type } =  rangeSlider.getState();
+      if (type !== 'single') this.valueFrom(+this.minInput.value);
     });
 
-    this.maxInput.addEventListener('change', () => this.setMax(+this.maxInput.value));
+    this.maxInput.addEventListener('change', () => this.valueTo(+this.maxInput.value));
     this.stepInput.addEventListener('change', () => this.setStep(+this.stepInput.value));
     this.orientation.addEventListener('click', () => this.setOrientation());
     this.type.addEventListener('click', () => this.setType());

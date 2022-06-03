@@ -1,7 +1,15 @@
 import $ from 'jquery';
 import SliderController from './Presenter/sliderPresenter';
 
-$.fn.sliderPlugin = function (this: JQuery, slider: HTMLElement, options: Init): JQuery {
+declare global {
+  interface JQuery {
+    sliderPlugin(this: JQuery<HTMLElement>, slider: HTMLElement, options: Init): JQuery;
+    setSlider(action: Actions, params: Params): void;
+    getState(): Init;
+  }
+}
+
+$.fn.sliderPlugin = function (this: JQuery<HTMLElement>, slider: HTMLElement, options: Init): JQuery {
   const controller = new SliderController(slider, options);
   
   const setSlider = function (action: Actions, params: Params) {
