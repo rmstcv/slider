@@ -1,131 +1,97 @@
 class SliderModel {
 
-  currentLow: number;
-
-  currentUp: number;
-
-  newPosition: number = 0;
-
   state: Init;
 
-  initState: Init;
-
   constructor(init: Init) {
-    this.currentLow = init.min;
-    this.currentUp = init.max;
-    this.initState = init;
     this.state = { ...init };
   }
 
-  checkExtremumValues(current: number, min: number, max: number) {
-    let currentChecked = current;
-    
-    if (current < min) {
-      currentChecked = min;
-      
+  public setState(param: Actions, value: Params) {
+
+    if (param === 'type') {
+      this.state.sliderType = <Init['sliderType']>value;
+      this.state.setMin = this.state.min;
     }
-    if (current > max) {
-      currentChecked = max;
-    }    
-    return currentChecked;
+
+    if (param === 'orientation') {
+      this.state.orientation = <Init['orientation']>value;
+    }
+
+    if (param === 'scale') {
+      this.state.scale = <boolean>value;
+    }
+
+    if (param === 'toolTip') {
+      this.state.toolTip = <boolean>value;
+    }
+
+    if (param === 'step') {
+      this.state.step = this.checkStep(<number>value);
+    }
+
+    if (param === 'valueTo') {
+      this.state.setMax = this.checkValueTo(<number>value);
+    }
+
+    if (param === 'valueFrom' ) {
+      this.state.setMin = this.checkValueFrom(<number>value);
+    }
   }
 
-  findNextValue(currentValue: number, min: number, max: number) {    
-    let newCurrentValue = currentValue;
-    let stepsIncr = Math.floor((this.newPosition - currentValue) / this.state.step);
-    if (currentValue > this.newPosition) {
-      stepsIncr = Math.ceil((this.newPosition - currentValue) / this.state.step);
+  public changeValues([min, max]: number[]): void {
+    let [minNew, maxNew] = [min, max];
+    
+    if (min !== undefined) {
+      minNew = this.findNextValue(this.state.setMin, min);
+      this.setState('valueFrom', minNew);
     }
-    newCurrentValue = currentValue + stepsIncr * this.state.step;
-    newCurrentValue = this.checkExtremumValues(newCurrentValue, min, max);
+    if (max !== undefined) {
+      maxNew = this.findNextValue(this.state.setMax, max);
+      this.setState('valueTo', maxNew);
+    }
+  }
+
+  public getState(): Init{
+    return this.state;
+  }
+
+  private checkExtremumValues(current: number, min: number, max: number): number {
+    let currentValue = current;
+    
+    if (current < min) {
+      currentValue = min;
+    }
+
+    if (current > max) {
+      currentValue = max;
+    }    
+    return currentValue;
+  }
+
+  private findNextValue(currentValue: number, cursorCoord: number): number {    
+    let newCurrentValue = currentValue;
+    let stepIncr = Math.floor((cursorCoord - currentValue) / this.state.step);
+
+    if (currentValue > cursorCoord) {
+      stepIncr = Math.ceil((cursorCoord - currentValue) / this.state.step);
+    }
+    newCurrentValue = currentValue + stepIncr * this.state.step;
     return newCurrentValue;
   }
 
-  setNewLowValue(cursorCoord: number) {
-    this.newPosition = cursorCoord;
-    const nextValue = this.findNextValue(this.currentLow, this.state.min, this.currentUp);
-    this.currentLow = nextValue;
-    if (cursorCoord < this.state.min) {
-      this.currentLow = this.state.min;
-    }
-    if (cursorCoord > this.currentUp) {
-      this.currentLow = this.currentUp;
-    }
-    return this.currentLow;
+  private checkValueFrom(min: number): number {
+    return this.checkExtremumValues(min, this.state.min, this.state.setMax);
   }
 
-  setNewUpValue(cursorCoord: number) {
-    this.newPosition = cursorCoord;
-    const nextValue = this.findNextValue(this.currentUp, this.currentLow, this.state.max);
-    this.currentUp = nextValue;
-    if (cursorCoord > this.state.max) {
-      this.currentUp = this.state.max;
-    }
-    if (cursorCoord < this.currentLow) {
-      this.currentUp = this.currentLow;
-    }
-    return this.currentUp;
+  private checkValueTo(max: number): number {
+    return this.checkExtremumValues(max, this.state.setMin, this.state.max);
   }
 
-  updateValues([min, max]: number[]) {
+  private checkStep(step: number): number {
+    let newStep = this.state.step;
     
-    let [minNew, maxNew] = [min, max];
-    
-    if (min !== undefined) {
-      minNew = this.setNewLowValue(min);
-    }
-    if (max !== undefined) {
-      maxNew = this.setNewUpValue(max);
-    }
-    this.updateState(minNew, maxNew);
-    return [minNew, maxNew];
-  }
-
-  getValues() {
-    return [this.state.setMin, this.state.setMax];
-  }
-
-  setValues([min, max]: number[]) {
-    let [minNew, maxNew] = [min, max];
-    if (min !== undefined) {
-      this.currentLow = this.checkExtremumValues(min, this.state.min, this.currentUp);  
-      minNew = this.currentLow;
-    }
-    if (max !== undefined) {
-      this.currentUp = this.checkExtremumValues(max, this.currentLow, this.state.max);
-      maxNew = this.currentUp;
-    }
-    this.updateState(minNew, maxNew);
-    return [minNew, maxNew];
-  }
-
-  setValueFrom(min: number) {
-    this.currentLow = this.checkExtremumValues(min, this.state.min, this.currentUp);
-    this.state.setMin = this.currentLow;
-  }
-
-  setValueTo(max: number) {
-    this.currentUp = this.checkExtremumValues(max, this.currentLow, this.state.max);
-    this.state.setMax = this.currentUp;
-  }
-
-  setStep(step: number) {
-    const prevStep = this.state.step;
-    if (step <= 0 || step > this.state.max - this.state.min) {
-      this.state.step = prevStep;
-    } else {
-      this.state.step = step;
-    }
-    return this.state.step;
-  }
-
-  updateState(min: number, max: number) {
-    if (min !== undefined) this.state.setMin = min;
-    if (max !== undefined) this.state.setMax = max;
-  }
-
-  getState(): Init{
-    return this.state;
+    if (step > 0 && step <= this.state.max - this.state.min) newStep = step;
+    return newStep;
   }
 }
 

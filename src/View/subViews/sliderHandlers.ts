@@ -131,7 +131,7 @@ class SliderHandlers {
     return [this.lower, this.upper];
   }
 
-  public checkOrientation() {
+  private checkOrientation() {
     
     if (this.state.orientation === 'vertical') {
       this.upper.style.left = '';
@@ -144,13 +144,15 @@ class SliderHandlers {
     }
   }
 
-  public checkType() {
+  private checkType() {
     if (this.state.sliderType === 'single') this.lower.classList.add('slider__handle-lower_hidden');
     if (this.state.sliderType === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
   }
 
   public updateObserver() {
     this.handlersUpdate();
+    this.checkType();
+    this.checkOrientation();
   }
 
   updateState(state: Init) {

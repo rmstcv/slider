@@ -16,6 +16,15 @@ class ToolTip {
     this.init();
   }
 
+  public updateObserver(): void {
+    this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
+    this.toggletoolTip();
+  }
+
+  public updateState(state: Init): void {
+    this.initToolTip = { ...state };
+  }
+
   private init(): void {
     this.searcElems();
     const { setMin, setMax } = this.initToolTip;
@@ -33,10 +42,13 @@ class ToolTip {
     if (!toolTip) {
       this.lowerCount.classList.add('slider__handle-upper-count_hidden');
       this.upperCount.classList.add('slider__handle-upper-count_hidden');
+    } else {
+      this.lowerCount.classList.remove('slider__handle-upper-count_hidden');
+      this.upperCount.classList.remove('slider__handle-upper-count_hidden');
     }
   }
 
-  public update([min, max]: number[]): void { 
+  private update([min, max]: number[]): void { 
     if (min !== undefined) {
       this.lowerCount.innerHTML = min.toString();
     }
@@ -48,19 +60,6 @@ class ToolTip {
     } else {
       this.lowerCount.classList.remove('slider__handle-lower-count_hidden');
     }
-  }
-
-  public setToolTip(): void {
-    this.lowerCount.classList.toggle('slider__handle-upper-count_hidden');
-    this.upperCount.classList.toggle('slider__handle-lower-count_hidden');
-  }
-
-  public updateObserver() {
-    this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
-  }
-
-  updateState(state: Init){
-    this.initToolTip = { ...state };
   }
 }
 

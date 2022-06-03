@@ -6,6 +6,7 @@ import SliderHandlers from './subViews/sliderHandlers';
 import sliderProgressBar from './subViews/sliderProgressBar';
 
 interface Observers {
+  updateState(state: Init): void;
   updateObserver(): void,
   sliderHandlers: SliderHandlers,
   sliderToolTip: SliderToolTip,
@@ -28,10 +29,9 @@ class SliderView {
 
   private sliderProgressBar!: sliderProgressBar;
 
-  private observers: Observers[];
+  private observers: Observers[] = [];
 
   constructor(slider: HTMLElement, presenter: SliderPresenter, initView: Init) {
-    this.observers = [];
     this.initView = { ...initView };
     this.slider = slider;
     this.sliderPresenter = presenter;
@@ -60,7 +60,7 @@ class SliderView {
   }
 
   private checkSliderOrientation(): void {
-    this.sliderHandlers.checkOrientation();
+
     if (this.initView.orientation === 'vertical') {
       this.slider.classList.add('slider_vertical'); 
     } else {
@@ -68,21 +68,9 @@ class SliderView {
     }
   }
 
-  public setToolTip(): void {
-    this.sliderToolTip.setToolTip();
-  }
-
-  public setType(): void {
-    this.sliderHandlers.checkType();
-  }
-
-  public setScale(): void {
-    this.sliderScale.update();
-  }
-
   private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
-    this.sliderPresenter.updateSlider([min, max]);
+    this.sliderPresenter.changeValues([min, max]);
   }
   
   public updateView(state: Init) {
@@ -130,7 +118,11 @@ class SliderView {
   private toSubscribeScaleOnView() {
     this.slider.addEventListener('click', (e) => {
       const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
-      if (value !== undefined) this.sliderPresenter.setModelValues([ this.initView.min, value]);
+
+      if (value || value === 0) {
+        this.sliderPresenter.setSlider('valueTo', value);
+        this.sliderPresenter.setSlider('valueFrom', this.initView.min);
+      }
     });
   }
 
@@ -141,12 +133,9 @@ class SliderView {
     this.subScribe(this.sliderProgressBar);
   }
 
-  updateState(state: Init) {
+  public updateState(state: Init) {
     this.initView = { ...state };
-    this.sliderHandlers.updateState(state);
-    this.sliderToolTip.updateState(state);
-    this.sliderScale.updateState(state);
-    this.sliderProgressBar.updateState(state);
+    this.observers.forEach((observer) => observer.updateState(state));
   }
 }
 
