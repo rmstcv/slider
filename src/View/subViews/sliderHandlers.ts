@@ -17,6 +17,17 @@ class SliderHandlers {
     this.init();
   }
 
+  public updateObserver(state: Init) {
+    this.updateState(state);
+    this.handlersUpdate();
+    this.checkType();
+    this.checkOrientation();
+  }
+
+  updateState(state: Init) {
+    this.state = { ...state };
+  }
+
   private init(): void { 
     this.searcElems();
     this.handlersUpdate();
@@ -147,16 +158,6 @@ class SliderHandlers {
   private checkType() {
     if (this.state.sliderType === 'single') this.lower.classList.add('slider__handle-lower_hidden');
     if (this.state.sliderType === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
-  }
-
-  public updateObserver() {
-    this.handlersUpdate();
-    this.checkType();
-    this.checkOrientation();
-  }
-
-  updateState(state: Init) {
-    this.state = { ...state };
   }
 }
 

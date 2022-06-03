@@ -16,7 +16,8 @@ class ToolTip {
     this.init();
   }
 
-  public updateObserver(): void {
+  public updateObserver(state: Init): void {
+    this.updateState(state);
     this.update([this.initToolTip.setMin, this.initToolTip.setMax]);
     this.toggletoolTip();
   }

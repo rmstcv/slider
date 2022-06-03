@@ -14,6 +14,15 @@ class ProgressBar {
     this.init();
   }
 
+  public updateObserver(state: Init) {
+    this.updateState(state);
+    this.progressBarUpdate();
+  }
+
+  updateState(state: Init){
+    this.initOptions = { ...state };
+  }
+
   init() {
     this.searchElems();
     this.progressBarUpdate();
@@ -60,14 +69,6 @@ class ProgressBar {
       this.progressBar.style.height = '';
       this.progressBar.style.top = '';
     }
-  }
-
-  public updateObserver() {
-    this.progressBarUpdate();
-  }
-
-  updateState(state: Init){
-    this.initOptions = { ...state };
   }
 }
 

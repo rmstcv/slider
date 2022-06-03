@@ -13,6 +13,15 @@ class SliderScale {
     this.init();
   }
 
+  public updateObserver(state: Init) {
+    this.updateState(state);
+    this.update();
+  }
+
+  public updateState(state: Init){
+    this.initOptions = { ...state };
+  }
+
   private init(): void {
     if (this.initOptions.scale) {
       this.createScaleElemets();
@@ -80,14 +89,6 @@ class SliderScale {
       scaleValue = Number(target.getAttribute('data-value'));
     }
     return scaleValue;
-  }
-
-  public updateObserver() {
-    this.update();
-  }
-
-  updateState(state: Init){
-    this.initOptions = { ...state };
   }
 }
 

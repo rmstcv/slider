@@ -7,7 +7,7 @@ import sliderProgressBar from './subViews/sliderProgressBar';
 
 interface Observers {
   updateState(state: Init): void;
-  updateObserver(): void,
+  updateObserver(state: Init): void,
   sliderHandlers: SliderHandlers,
   sliderToolTip: SliderToolTip,
   sliderScale: SliderScale,
@@ -38,13 +38,30 @@ class SliderView {
     this.init();
   }
 
+  public updateView(state: Init) {
+    this.updateState(state);
+    this.checkSliderOrientation();
+    this.updateObservers(state);
+  }
+
   private subScribe(observer: any) { 
     this.observers.push(observer);
   }
 
-  private updateObservers() {
+  private subscriber() {
+    this.subScribe(this.sliderHandlers);
+    this.subScribe(this.sliderToolTip);
+    this.subScribe(this.sliderScale);
+    this.subScribe(this.sliderProgressBar);
+  }
+
+  private updateState(state: Init) {
+    this.initView = { ...state };
+  }
+
+  private updateObservers(state: Init) {
     this.observers.forEach((observer) => {   
-      observer.updateObserver();
+      observer.updateObserver(state);
     });
   }
 
@@ -72,12 +89,6 @@ class SliderView {
     const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
     this.sliderPresenter.changeValues([min, max]);
   }
-  
-  public updateView(state: Init) {
-    this.updateState(state);
-    this.checkSliderOrientation();
-    this.updateObservers();
-  }
 
   private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent) {
     e.preventDefault();
@@ -102,11 +113,6 @@ class SliderView {
     };
   }
 
-  private addListeners() {    
-    this.toSubscribeHandlersOnView();
-    this.toSubscribeScaleOnView();
-  }
-
   private toSubscribeHandlersOnView() {
     const [lower, upper] = this.sliderHandlers.getHandlerElems();
     upper.addEventListener('mousedown', (e) => this.addEvents(upper, e));
@@ -126,16 +132,9 @@ class SliderView {
     });
   }
 
-  private subscriber() {
-    this.subScribe(this.sliderHandlers);
-    this.subScribe(this.sliderToolTip);
-    this.subScribe(this.sliderScale);
-    this.subScribe(this.sliderProgressBar);
-  }
-
-  public updateState(state: Init) {
-    this.initView = { ...state };
-    this.observers.forEach((observer) => observer.updateState(state));
+  private addListeners() {    
+    this.toSubscribeHandlersOnView();
+    this.toSubscribeScaleOnView();
   }
 }
 
