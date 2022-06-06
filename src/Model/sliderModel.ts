@@ -33,8 +33,17 @@ class SliderModel {
       this.state.valueTo = this.checkValueTo(<number>value);
     }
 
-    if (param === 'valueFrom' ) {
+    if (param === 'valueFrom') {
       this.state.valueFrom = this.checkValueFrom(<number>value);
+    }
+
+    if (param === 'min') {
+      this.state.min = this.checkMin(<number>value);
+      if (this.state.type === 'single') this.state.valueFrom = this.state.min;
+    }
+
+    if (param === 'max') {
+      this.state.max = this.checkMax(<number>value);
     }
   }
 
@@ -89,6 +98,19 @@ class SliderModel {
   private checkValueTo(max: number): number {
     let newMax = this.checkExtremumValues(max, this.state.valueFrom, this.state.max);
     newMax = parseFloat((newMax).toFixed(this.state.max.toString().length));
+    return newMax;
+  }
+
+  private checkMin(min: number): number {
+    let newMin = this.checkExtremumValues(min, -1e10, this.state.valueFrom);
+    if (this.state.type === 'single')  newMin = this.checkExtremumValues(min, -1e10, this.state.valueTo);
+    newMin = +newMin.toFixed(5);
+    return newMin;
+  }
+
+  private checkMax(max: number): number {
+    let newMax = this.checkExtremumValues(max, this.state.valueTo, 1e10);
+    newMax = +newMax.toFixed(5);
     return newMax;
   }
 
