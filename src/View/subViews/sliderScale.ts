@@ -73,8 +73,10 @@ class SliderScale {
   }
 
   private destroyScale(): void {
-    this.scale.remove();
-    this.scaleValue.remove();
+    if (this.scale && this.scaleValue) {
+      this.scale.remove();
+      this.scaleValue.remove();
+    }
   }
 
   public update(): void {    

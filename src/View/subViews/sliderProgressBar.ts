@@ -32,7 +32,7 @@ class ProgressBar {
     this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
   }
 
-  private progressBarUpdate(): void {
+  private progressBarUpdate(): void {    
     this.checkOrientation();
     const [min, max] = [this.initOptions.valueFrom, this.initOptions.valueTo];
     const [minPercent, maxPercent] = [this.convertToPercent(min), this.convertToPercent(max)];

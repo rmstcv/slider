@@ -7,9 +7,9 @@ class SliderPresenter {
 
   private sliderView: SliderView;
 
-  constructor(slider: HTMLElement, initPresenter: Init) {
-    this.sliderModel = new SliderModel(initPresenter);
-    this.sliderView = new SliderView(slider, this, initPresenter);
+  constructor(slider: HTMLElement, stateInit: Init) {
+    this.sliderModel = new SliderModel(stateInit);
+    this.sliderView = new SliderView(slider, this, this.getState());
   }
 
   public changeValues([min, max]: number[]): void {

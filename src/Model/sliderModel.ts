@@ -4,6 +4,7 @@ class SliderModel {
 
   constructor(init: Init) {
     this.state = { ...init };
+    this.checkType();
   }
 
   public setState(param: Actions, value: Params) {
@@ -39,7 +40,7 @@ class SliderModel {
 
     if (param === 'min') {
       this.state.min = this.checkMin(<number>value);
-      if (this.state.type === 'single') this.state.valueFrom = this.state.min;
+      this.checkType();
     }
 
     if (param === 'max') {
@@ -62,6 +63,12 @@ class SliderModel {
 
   public getState(): Init{
     return this.state;
+  }
+
+  private checkType() {
+    if (this.state.type === 'single') {
+      this.setState('valueFrom', this.state.min);
+    }
   }
 
   private checkExtremumValues(current: number, min: number, max: number): number {

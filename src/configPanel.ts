@@ -73,6 +73,35 @@ class ConfigPanel {
     this.maxInput.value = `${max}`;
     this.stepInput.value = `${step}`;
     this.addAttributes();
+    this.isBtnActive();
+  }
+
+  private isBtnActive(): void {
+    let { orientation, type, scale, toolTip } =  rangeSlider.getState();
+
+    if (orientation === 'horizontal') {
+      this.orientation.checked = true;
+    } else {
+      this.orientation.checked = false;
+    }
+
+    if (toolTip === true) {
+      this.toolTip.checked = true;
+    } else {
+      this.toolTip.checked = false;
+    }
+
+    if (type === 'range') {
+      this.type.checked = true;
+    } else {
+      this.type.checked = false;
+    }
+    
+    if (scale === true) {
+      this.scale.checked = true;
+    } else {
+      this.scale.checked = false;
+    }
   }
 
   private setValue(valueName: Actions, value: Params): void {
@@ -167,26 +196,26 @@ class ConfigPanel {
     const { min } =  rangeSlider.getState();
 
     if (this.type.checked) {
-      rangeSlider.setSlider('type', 'single');
-    } else {
       rangeSlider.setSlider('type', 'range');
+    } else {
+      rangeSlider.setSlider('type', 'single');
+      this.valueFromInput.value = `${min}`;
     }
-    this.valueFromInput.value = `${min}`;
   }
 
   private setToolTip(): void {
     if (this.toolTip.checked) {
-      rangeSlider.setSlider('toolTip', false);
-    } else {
       rangeSlider.setSlider('toolTip', true);
+    } else {
+      rangeSlider.setSlider('toolTip', false);
     }
   }
 
   private setScale(): void {
     if (this.scale.checked) {
-      rangeSlider.setSlider('scale', false);
-    } else {
       rangeSlider.setSlider('scale', true);
+    } else {
+      rangeSlider.setSlider('scale', false);
     }
   }
 

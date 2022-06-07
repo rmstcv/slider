@@ -185,6 +185,13 @@ body {
   &__input {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    &_btn {
+      flex-direction: row;
+      align-items: center;
+      column-gap: 10px;
+      margin-top: 10px;
+    }
   }
   .config-input {
     background-color: #100d0d;
@@ -206,11 +213,12 @@ body {
       width: 50%;
       height: 100%;
       display: flex;
+      transform: translateX(100%);
     }
     &_orientation, &_type, &_tool-tip, &_scale {
       opacity: 0;
       &:checked~.config-input__button {
-        transform: translateX(100%);
+        transform: translateX(0);
       }
     }
   }

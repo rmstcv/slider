@@ -5,7 +5,7 @@ const sliderInitConfig: Init = {
   valueFrom: -0.0010,
   valueTo: 0.0010,
   type: 'range',
-  orientation: 'vertical',
+  orientation: 'horizontal',
   scale: true,
   toolTip: true,
 };

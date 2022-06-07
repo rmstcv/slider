@@ -18,9 +18,9 @@ class SliderHandlers {
 
   public updateObserver(state: Init): void {
     this.updateState(state);
+    this.checkOrientation();
     this.handlersUpdate();
     this.checkType();
-    this.checkOrientation();
   }
 
   public getHandlerElems(): HTMLElement[] {
@@ -93,6 +93,7 @@ class SliderHandlers {
   private init(): void { 
     this.searcElems();
     this.handlersUpdate();
+    this.checkType();
   }
 
   private searcElems(): void {
