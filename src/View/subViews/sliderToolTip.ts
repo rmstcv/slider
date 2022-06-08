@@ -1,45 +1,51 @@
-import searchElem from '../../searchElem';
-
 class ToolTip {
 
-  private slider: HTMLElement;
+  private lower: HTMLElement;
+
+  private upper: HTMLElement;
 
   private lowerCount!: HTMLElement;
 
   private upperCount!: HTMLElement;
 
-  private initToolTip: Init;
+  private initOptions: Init;
     
-  constructor(slider: HTMLElement, initToolTip: Init) {
-    this.slider = slider;
-    this.initToolTip = { ...initToolTip };
+  constructor([lower, upper]: HTMLElement[], initOptions: Init) {
+    [this.lower, this.upper] = [lower, upper];
+    this.initOptions = { ...initOptions };
     this.init();
   }
 
   public updateObserver(state: Init): void {
     this.updateState(state);
-    this.update([this.initToolTip.valueFrom, this.initToolTip.valueTo]);
+    this.update([this.initOptions.valueFrom, this.initOptions.valueTo]);
     this.toggletoolTip();
   }
 
   public updateState(state: Init): void {
-    this.initToolTip = { ...state };
+    this.initOptions = { ...state };
   }
 
   private init(): void {
-    this.searcElems();
-    const { valueFrom, valueTo } = this.initToolTip;
+    this.createElements();
+    const { valueFrom, valueTo } = this.initOptions;
     this.update([valueFrom, valueTo]); 
     this.toggletoolTip();
   }
 
-  private searcElems(): void {
-    this.lowerCount = searchElem('.slider__handle-lower-count', this.slider) as HTMLElement;
-    this.upperCount = searchElem('.slider__handle-upper-count', this.slider) as HTMLElement;
+  private createElements(): void {
+    const lowerCount = document.createElement('div');
+    lowerCount.classList.add('slider__handle-lower-count');
+    this.lower.appendChild(lowerCount);
+    this.lowerCount = lowerCount;
+    const upperCount = document.createElement('div');
+    upperCount.classList.add('slider__handle-lower-count');
+    this.upper.appendChild(upperCount);
+    this.upperCount = upperCount;
   }
 
   private toggletoolTip(): void {
-    const { toolTip } = this.initToolTip;
+    const { toolTip } = this.initOptions;
     if (!toolTip) {
       this.lowerCount.classList.add('slider__handle-upper-count_hidden');
       this.upperCount.classList.add('slider__handle-upper-count_hidden');

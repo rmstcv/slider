@@ -1,5 +1,3 @@
-import searchElem from '../../searchElem';
-
 class SliderHandlers {
 
   private slider: HTMLElement;
@@ -8,11 +6,11 @@ class SliderHandlers {
 
   private upper!: HTMLElement;
 
-  private state: Init;
+  private initOptions: Init;
     
   constructor(slider: HTMLElement, initOptions: Init) {
     this.slider = slider;
-    this.state = { ...initOptions };
+    this.initOptions = { ...initOptions };
     this.init();
   }
 
@@ -29,17 +27,15 @@ class SliderHandlers {
 
   public handlersUpdate(): void{
     
-    let [min, max]: number[] = [this.state.valueFrom, this.state.valueTo];
+    let [min, max]: number[] = [this.initOptions.valueFrom, this.initOptions.valueTo];
 
     if (min !== undefined) {
       this.toggleHandlersOrder(this.lower);
-      min = parseFloat((min).toFixed(this.state.max.toString().length));
       this.shiftLeftHandler(this.convertToPercent(min));
     }
 
     if (max !== undefined) {
       this.toggleHandlersOrder(this.upper);
-      max = parseFloat((max).toFixed(this.state.max.toString().length));
       this.shiftRightHandler(this.convertToPercent(max));
     }
   }
@@ -48,7 +44,7 @@ class SliderHandlers {
     let getCoord = () => {
       if (e instanceof MouseEvent) {
 
-        if (this.state.orientation === 'vertical') {
+        if (this.initOptions.orientation === 'vertical') {
           return e.clientY;
         } else {     
           return e.pageX;
@@ -57,7 +53,7 @@ class SliderHandlers {
 
       if (window.TouchEvent && e instanceof TouchEvent) {
 
-        if (this.state.orientation === 'vertical') {
+        if (this.initOptions.orientation === 'vertical') {
           return e.touches[0].pageY;
         } else {
           return e.touches[0].pageX;
@@ -71,7 +67,7 @@ class SliderHandlers {
     
     let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
 
-    if (this.state.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       clientCoord = this.slider.getBoundingClientRect().height! - currentCoord + this.slider.getBoundingClientRect().top;
     }
 
@@ -87,18 +83,24 @@ class SliderHandlers {
   }
 
   private updateState(state: Init): void {
-    this.state = { ...state };
+    this.initOptions = { ...state };
   }
 
   private init(): void { 
-    this.searcElems();
+    this.createElements();
     this.handlersUpdate();
     this.checkType();
   }
 
-  private searcElems(): void {
-    this.lower = searchElem('.slider__handle-lower', this.slider) as HTMLElement;
-    this.upper = searchElem('.slider__handle-upper', this.slider) as HTMLElement;
+  private createElements(): void {
+    const lower = document.createElement('div');
+    lower.classList.add('slider__handle-lower');
+    this.slider.appendChild(lower);
+    this.lower = lower;
+    const upper = document.createElement('div');
+    upper.classList.add('slider__handle-upper');
+    this.slider.appendChild(upper);
+    this.upper = upper;
   }
 
   private toggleHandlersOrder(handle: HTMLElement): void {
@@ -114,32 +116,32 @@ class SliderHandlers {
   }
 
   private shiftLeftHandler(value: number): void {
-    if (this.state.orientation === 'horizontal') {
+    if (this.initOptions.orientation === 'horizontal') {
       this.lower.style.left = value + '%';
     }
 
-    if (this.state.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       this.lower.style.top = 100 - value + '%';
     }
   }
 
   private shiftRightHandler(value: number): void {
-    if (this.state.orientation === 'horizontal') {
+    if (this.initOptions.orientation === 'horizontal') {
       this.upper.style.left = value + '%';
     }
 
-    if (this.state.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       this.upper.style.top = 100 - value + '%';
     }
   }
 
   private convertToPercent(customValue: number): number {
-    const valuePercent = (100 / Math.abs(this.state.max - this.state.min)) * (-this.state.min + customValue);
+    const valuePercent = (100 / Math.abs(this.initOptions.max - this.initOptions.min)) * (-this.initOptions.min + customValue);
     return valuePercent;
   }
 
   private checkSliderOrientation(): number {
-    if (this.state.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       return this.slider.getBoundingClientRect().height;
     } else {
       return this.slider.getBoundingClientRect().width;
@@ -147,26 +149,26 @@ class SliderHandlers {
   }
 
   private convertToCustom(value: number): number {
-    const pow = this.state.max.toString().length;
-    return Math.round((value * ((Math.abs(this.state.max - this.state.min)) / this.checkSliderOrientation()) + this.state.min) * Math.pow(10, pow)) / Math.pow(10, pow);
+    const pow = this.initOptions.max.toString().length;
+    return Math.round((value * ((Math.abs(this.initOptions.max - this.initOptions.min)) / this.checkSliderOrientation()) + this.initOptions.min) * Math.pow(10, pow)) / Math.pow(10, pow);
   }
 
   private checkOrientation(): void {
-    if (this.state.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       this.upper.style.left = '';
       this.lower.style.left = '';
     }
 
-    if (this.state.orientation === 'horizontal') {
+    if (this.initOptions.orientation === 'horizontal') {
       this.upper.style.top = '';
       this.lower.style.top = '';
     }
   }
 
   private checkType(): void{
-    if (this.state.type === 'single') this.lower.classList.add('slider__handle-lower_hidden');
+    if (this.initOptions.type === 'single') this.lower.classList.add('slider__handle-lower_hidden');
 
-    if (this.state.type === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
+    if (this.initOptions.type === 'range') this.lower.classList.remove('slider__handle-lower_hidden');
   }
 }
 

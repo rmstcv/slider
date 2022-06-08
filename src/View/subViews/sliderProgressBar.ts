@@ -1,5 +1,3 @@
-import searchElem from '../../searchElem';
-
 class ProgressBar {
 
   private slider: HTMLElement;
@@ -24,12 +22,15 @@ class ProgressBar {
   }
 
   private init(): void {
-    this.searchElems();
+    this.createElements();
     this.progressBarUpdate();
   }
 
-  private searchElems(): void {
-    this.progressBar = searchElem('.slider__highlight', this.slider) as HTMLElement;
+  private createElements(): void{
+    const progressBar = document.createElement('div');
+    progressBar.classList.add('slider__highlight');
+    this.slider.appendChild(progressBar);
+    this.progressBar = progressBar;
   }
 
   private progressBarUpdate(): void {    

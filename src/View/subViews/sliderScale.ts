@@ -24,12 +24,12 @@ class SliderScale {
 
   private init(): void {
     if (this.initOptions.scale) {
-      this.createScaleElemets();
+      this.createElemets();
       this.createScale();
     }
   }
 
-  private createScaleElemets(): void {
+  private createElemets(): void {
     this.scale = document.createElement('div');
     this.scale.classList.add('slider__scale');
     this.slider.appendChild(this.scale);
@@ -43,13 +43,13 @@ class SliderScale {
     const { min, max, orientation } = this.initOptions;
     const sliderSize = max - min;
     const stepCustom = sliderSize / 10;
-    const numOfDigits = max.toString().length;
+    const numOfDigits = max.toString().length - 1;
 
     for (let i = 0; i <= (sliderSize / stepCustom) * scaleMultiplier; i += 1) {
       const elemScale: HTMLElement = document.createElement('div');
       elemScale.classList.add('slider__scale-marker');
-      const valueHorizontal = parseFloat((i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits));
-      const valueVertical = parseFloat((sliderSize - i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits));
+      const valueHorizontal = +(i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits);
+      const valueVertical = +(sliderSize - i * stepCustom / scaleMultiplier + min).toFixed(numOfDigits);
       
       if (i % scaleMultiplier === 0) {   
         elemScale.classList.add('slider__scale-marker_large');

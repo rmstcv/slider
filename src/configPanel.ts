@@ -187,9 +187,9 @@ class ConfigPanel {
     
     if (elemPar.classList.contains('config__input-step')) {
 
-      if (elem.classList.contains('config__inc')) this.setValue('step', parseFloat(((step + inc)).toFixed(min.toString().length)));
+      if (elem.classList.contains('config__inc')) this.setValue('step', (step + inc));
 
-      if (elem.classList.contains('config__dec')) this.setValue('step', parseFloat(((step - inc)).toFixed(min.toString().length)));
+      if (elem.classList.contains('config__dec')) this.setValue('step', (step - inc));
     }
   }
 

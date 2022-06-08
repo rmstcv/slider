@@ -1,5 +1,4 @@
 import SliderPresenter from '../Presenter/sliderPresenter';
-import sliderCreater from './subViews/sliderCreater';
 import SliderScale from './subViews/sliderScale';
 import SliderToolTip from './subViews/sliderToolTip';
 import SliderHandlers from './subViews/sliderHandlers';
@@ -11,7 +10,7 @@ class SliderView {
 
   private slider: HTMLElement;
 
-  private initView: Init;
+  private initOptions: Init;
 
   private sliderScale!: SliderScale;
 
@@ -25,8 +24,8 @@ class SliderView {
 
   private observers: Observers[] = [];
 
-  constructor(slider: HTMLElement, presenter: SliderPresenter, initView: Init) {
-    this.initView = { ...initView };
+  constructor(slider: HTMLElement, presenter: SliderPresenter, initOptions: Init) {
+    this.initOptions = { ...initOptions };
     this.slider = slider;
     this.sliderPresenter = presenter;
     this.init();
@@ -50,7 +49,7 @@ class SliderView {
   }
 
   private updateState(state: Init): void {
-    this.initView = { ...state };
+    this.initOptions = { ...state };
   }
 
   private updateObservers(state: Init): void {
@@ -59,12 +58,20 @@ class SliderView {
     });
   }
 
+  private createTracker(): HTMLDivElement {
+    const sliderTracker = document.createElement('div');
+    sliderTracker.classList.add('slider__tracker');
+    this.slider.appendChild(sliderTracker);
+    return sliderTracker;
+  }
+
   private init(): void {
-    sliderCreater(this.slider);
-    this.sliderHandlers = new SliderHandlers(this.slider, this.initView);
-    this.sliderScale = new SliderScale(this.slider, this.initView);
-    this.sliderToolTip = new SliderToolTip(this.slider, this.initView);
-    this.sliderProgressBar = new sliderProgressBar(this.slider, this.initView);
+    const sliderTracker = this.createTracker();
+    this.sliderHandlers = new SliderHandlers(sliderTracker, this.initOptions);
+    this.sliderScale = new SliderScale(this.slider, this.initOptions);
+    const [lower, upper] = this.sliderHandlers.getHandlerElems();
+    this.sliderToolTip = new SliderToolTip([lower, upper], this.initOptions);
+    this.sliderProgressBar = new sliderProgressBar(sliderTracker, this.initOptions);
     this.subscriber();
     this.checkSliderOrientation();
     this.addListeners();
@@ -72,7 +79,7 @@ class SliderView {
 
   private checkSliderOrientation(): void {
 
-    if (this.initView.orientation === 'vertical') {
+    if (this.initOptions.orientation === 'vertical') {
       this.slider.classList.add('slider_vertical'); 
     } else {
       this.slider.classList.remove('slider_vertical'); 
@@ -121,7 +128,7 @@ class SliderView {
 
       if (value || value === 0) {
         this.sliderPresenter.setSlider('valueTo', value);
-        this.sliderPresenter.setSlider('valueFrom', this.initView.min);
+        this.sliderPresenter.setSlider('valueFrom', this.initOptions.min);
       }
     });
   }

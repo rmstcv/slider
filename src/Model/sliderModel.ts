@@ -65,7 +65,8 @@ class SliderModel {
     return this.state;
   }
 
-  private checkType() {
+  private checkType(): void {
+    
     if (this.state.type === 'single') {
       this.setState('valueFrom', this.state.min);
     }
@@ -92,19 +93,18 @@ class SliderModel {
       stepIncr = Math.ceil((cursorCoord - currentValue) / this.state.step);
     }
     newCurrentValue = currentValue + stepIncr * this.state.step;
-    newCurrentValue = parseFloat((newCurrentValue).toFixed(this.state.max.toString().length));
     return newCurrentValue;
   }
 
   private checkValueFrom(min: number): number {
     let newMin = this.checkExtremumValues(min, this.state.min, this.state.valueTo);
-    newMin = parseFloat((newMin).toFixed(this.state.max.toString().length));
+    newMin = +newMin.toFixed(5);
     return newMin;
   }
 
   private checkValueTo(max: number): number {
     let newMax = this.checkExtremumValues(max, this.state.valueFrom, this.state.max);
-    newMax = parseFloat((newMax).toFixed(this.state.max.toString().length));
+    newMax = +newMax.toFixed(5);
     return newMax;
   }
 
@@ -125,7 +125,7 @@ class SliderModel {
     let newStep = this.state.step;
     
     if (step > 0 && step <= this.state.max - this.state.min) {
-      newStep = parseFloat((step).toFixed(this.state.max.toString().length));
+      newStep = +step.toFixed(5);
     }
     return newStep;
   }
