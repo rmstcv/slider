@@ -14,8 +14,15 @@ class SliderScale {
   }
 
   public updateObserver(state: Init): void {
+    const { min, max, orientation, scale } = this.initOptions;
     this.updateState(state);
-    this.update();
+
+    if (
+      min !== this.initOptions.min ||
+      max !== this.initOptions.max ||
+      orientation !== this.initOptions.orientation ||
+      scale !== this.initOptions.scale
+    ) this.update();
   }
 
   public updateState(state: Init): void {
@@ -38,7 +45,7 @@ class SliderScale {
     this.slider.appendChild(this.scaleValue);
   }
 
-  private createScale(): void{
+  private createScale(): void {
     const scaleMultiplier = 4;
     const { min, max, orientation } = this.initOptions;
     const sliderSize = max - min;

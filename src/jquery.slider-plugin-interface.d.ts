@@ -10,6 +10,10 @@ interface Init {
   toolTip: boolean
 }
 
+type UserInit = {
+  [key in keyof Init]?: Init[key]
+};
+
 type Params = Init[keyof Init];
 
 type Actions = keyof Init;

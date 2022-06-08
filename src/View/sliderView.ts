@@ -7,7 +7,6 @@ import sliderProgressBar from './subViews/sliderProgressBar';
 type Observers = SliderHandlers | SliderToolTip | SliderScale | sliderProgressBar;
 
 class SliderView {
-
   private slider: HTMLElement;
 
   private initOptions: Init;
