@@ -1,13 +1,9 @@
 class ProgressBar {
-
-  private slider: HTMLElement;
-
   private progressBar!: HTMLElement;
 
   private initOptions: Init;
     
-  constructor(slider: HTMLElement, initOptions: Init) {
-    this.slider = slider;
+  constructor(initOptions: Init) {
     this.initOptions = { ...initOptions };
     this.init();
   }
@@ -15,6 +11,10 @@ class ProgressBar {
   public updateObserver(state: Init): void {
     this.updateState(state);
     this.progressBarUpdate();
+  }
+
+  public getElems(): HTMLElement {
+    return this.progressBar;
   }
 
   private updateState(state: Init): void {
@@ -29,7 +29,6 @@ class ProgressBar {
   private createElements(): void{
     const progressBar = document.createElement('div');
     progressBar.classList.add('slider__highlight');
-    this.slider.appendChild(progressBar);
     this.progressBar = progressBar;
   }
 

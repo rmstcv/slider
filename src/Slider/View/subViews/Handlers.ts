@@ -95,11 +95,9 @@ class SliderHandlers {
   private createElements(): void {
     const lower = document.createElement('div');
     lower.classList.add('slider__handle-lower');
-    this.slider.appendChild(lower);
     this.lower = lower;
     const upper = document.createElement('div');
     upper.classList.add('slider__handle-upper');
-    this.slider.appendChild(upper);
     this.upper = upper;
   }
 

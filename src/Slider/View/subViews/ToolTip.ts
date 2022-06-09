@@ -1,17 +1,11 @@
 class ToolTip {
-
-  private lower: HTMLElement;
-
-  private upper: HTMLElement;
-
   private lowerCount!: HTMLElement;
 
   private upperCount!: HTMLElement;
 
   private initOptions: Init;
     
-  constructor([lower, upper]: HTMLElement[], initOptions: Init) {
-    [this.lower, this.upper] = [lower, upper];
+  constructor(initOptions: Init) {
     this.initOptions = { ...initOptions };
     this.init();
   }
@@ -26,6 +20,10 @@ class ToolTip {
     this.initOptions = { ...state };
   }
 
+  public getElems(): HTMLElement[] {
+    return [this.lowerCount, this.upperCount];
+  }
+
   private init(): void {
     this.createElements();
     const { valueFrom, valueTo } = this.initOptions;
@@ -36,11 +34,9 @@ class ToolTip {
   private createElements(): void {
     const lowerCount = document.createElement('div');
     lowerCount.classList.add('slider__handle-lower-count');
-    this.lower.appendChild(lowerCount);
     this.lowerCount = lowerCount;
     const upperCount = document.createElement('div');
     upperCount.classList.add('slider__handle-lower-count');
-    this.upper.appendChild(upperCount);
     this.upperCount = upperCount;
   }
 

@@ -7,7 +7,9 @@ import ProgressBar from './subViews/ProgressBar';
 type Observers = Handlers | ToolTip | Scale | ProgressBar;
 
 class SliderView {
-  private slider: HTMLElement;
+  private rootElem: HTMLElement;
+
+  private slider!: HTMLElement;
 
   private initOptions: Init;
 
@@ -23,9 +25,11 @@ class SliderView {
 
   private observers: Observers[] = [];
 
-  constructor(slider: HTMLElement, presenter: Presenter, initOptions: Init) {
+  private tracker!: HTMLDivElement;
+
+  constructor(rootElem: HTMLElement, presenter: Presenter, initOptions: Init) {
     this.initOptions = { ...initOptions };
-    this.slider = slider;
+    this.rootElem = rootElem;
     this.presenter = presenter;
     this.init();
   }
@@ -57,20 +61,44 @@ class SliderView {
     });
   }
 
-  private createTracker(): HTMLDivElement {
+  private createSlider(): void {
+    const slider = document.createElement('div');
+    slider.classList.add('slider');
+    this.slider = slider;
+    this.rootElem.appendChild(this.slider);
     const sliderTracker = document.createElement('div');
     sliderTracker.classList.add('slider__tracker');
-    this.slider.appendChild(sliderTracker);
-    return sliderTracker;
+    this.tracker = sliderTracker;
+  }
+
+  private createElements(): void {
+    this.handlers = new Handlers(this.tracker, this.initOptions);
+    this.toolTip = new ToolTip(this.initOptions);
+    this.progressBar = new ProgressBar(this.initOptions);
+  }
+
+  private createScale(): void {
+    const sliderScale = document.createElement('div');
+    sliderScale.classList.add('slider__scale-wrapper');
+    this.scale = new Scale(sliderScale, this.initOptions);
+    this.slider.appendChild(sliderScale);
+  }
+
+  private appendElements(): void {
+    const [lowerCountElem, upperCountElem] = this.toolTip.getElems();
+    const [lowerElem, upperElem] = this.handlers.getHandlerElems();
+    const progressBarElem = this.progressBar.getElems();
+    this.slider.appendChild(this.tracker);
+    lowerElem.appendChild(lowerCountElem);
+    upperElem.appendChild(upperCountElem);
+    [lowerElem, upperElem, progressBarElem].forEach((elem) => this.tracker.appendChild(elem));
   }
 
   private init(): void {
-    const sliderTracker = this.createTracker();
-    this.handlers = new Handlers(sliderTracker, this.initOptions);
-    this.scale = new Scale(this.slider, this.initOptions);
-    const [lower, upper] = this.handlers.getHandlerElems();
-    this.toolTip = new ToolTip([lower, upper], this.initOptions);
-    this.progressBar = new ProgressBar(sliderTracker, this.initOptions);
+    this.createSlider();
+    this.createElements();
+    this.appendElements();
+    this.createScale();
     this.subscriber();
     this.checkSliderOrientation();
     this.addListeners();
