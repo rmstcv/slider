@@ -1,32 +1,32 @@
-import SliderPresenter from '../Presenter/Presenter';
-import SliderScale from './subViews/Scale';
-import SliderToolTip from './subViews/ToolTip';
-import SliderHandlers from './subViews/Handlers';
-import sliderProgressBar from './subViews/ProgressBar';
+import Presenter from '../Presenter/Presenter';
+import Scale from './subViews/Scale';
+import ToolTip from './subViews/ToolTip';
+import Handlers from './subViews/Handlers';
+import ProgressBar from './subViews/ProgressBar';
 
-type Observers = SliderHandlers | SliderToolTip | SliderScale | sliderProgressBar;
+type Observers = Handlers | ToolTip | Scale | ProgressBar;
 
 class SliderView {
   private slider: HTMLElement;
 
   private initOptions: Init;
 
-  private sliderScale!: SliderScale;
+  private scale!: Scale;
 
-  private sliderToolTip!: SliderToolTip;
+  private toolTip!: ToolTip;
 
-  private sliderPresenter: SliderPresenter;
+  private presenter: Presenter;
 
-  private sliderHandlers!: SliderHandlers;
+  private handlers!: Handlers;
 
-  private sliderProgressBar!: sliderProgressBar;
+  private progressBar!: ProgressBar;
 
   private observers: Observers[] = [];
 
-  constructor(slider: HTMLElement, presenter: SliderPresenter, initOptions: Init) {
+  constructor(slider: HTMLElement, presenter: Presenter, initOptions: Init) {
     this.initOptions = { ...initOptions };
     this.slider = slider;
-    this.sliderPresenter = presenter;
+    this.presenter = presenter;
     this.init();
   }
 
@@ -41,10 +41,10 @@ class SliderView {
   }
 
   private subscriber(): void {
-    this.subScribe(this.sliderHandlers);
-    this.subScribe(this.sliderToolTip);
-    this.subScribe(this.sliderScale);
-    this.subScribe(this.sliderProgressBar);
+    this.subScribe(this.handlers);
+    this.subScribe(this.toolTip);
+    this.subScribe(this.scale);
+    this.subScribe(this.progressBar);
   }
 
   private updateState(state: Init): void {
@@ -66,11 +66,11 @@ class SliderView {
 
   private init(): void {
     const sliderTracker = this.createTracker();
-    this.sliderHandlers = new SliderHandlers(sliderTracker, this.initOptions);
-    this.sliderScale = new SliderScale(this.slider, this.initOptions);
-    const [lower, upper] = this.sliderHandlers.getHandlerElems();
-    this.sliderToolTip = new SliderToolTip([lower, upper], this.initOptions);
-    this.sliderProgressBar = new sliderProgressBar(sliderTracker, this.initOptions);
+    this.handlers = new Handlers(sliderTracker, this.initOptions);
+    this.scale = new Scale(this.slider, this.initOptions);
+    const [lower, upper] = this.handlers.getHandlerElems();
+    this.toolTip = new ToolTip([lower, upper], this.initOptions);
+    this.progressBar = new ProgressBar(sliderTracker, this.initOptions);
     this.subscriber();
     this.checkSliderOrientation();
     this.addListeners();
@@ -86,8 +86,8 @@ class SliderView {
   }
 
   private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent): void {
-    const [min, max] = this.sliderHandlers.getHandlersCoords(elem, e);
-    this.sliderPresenter.changeValues([min, max]);
+    const [min, max] = this.handlers.getHandlersCoords(elem, e);
+    this.presenter.changeValues([min, max]);
   }
 
   private addEvents(elem: HTMLElement, e: MouseEvent | TouchEvent): void {
@@ -114,7 +114,7 @@ class SliderView {
   }
 
   private toSubscribeHandlersOnView(): void {
-    const [lower, upper] = this.sliderHandlers.getHandlerElems();
+    const [lower, upper] = this.handlers.getHandlerElems();
     upper.addEventListener('mousedown', (e) => this.addEvents(upper, e));
     lower.addEventListener('mousedown', (e) => this.addEvents(lower, e));
     upper.addEventListener('touchstart', (e) => this.addEvents(upper, e));
@@ -123,11 +123,11 @@ class SliderView {
 
   private toSubscribeScaleOnView(): void {
     this.slider.addEventListener('click', (e) => {
-      const value = this.sliderScale.getScaleValues(e.target as HTMLElement);
+      const value = this.scale.getScaleValues(e.target as HTMLElement);
 
       if (value || value === 0) {
-        this.sliderPresenter.setSlider('valueTo', value);
-        this.sliderPresenter.setSlider('valueFrom', this.initOptions.min);
+        this.presenter.setSlider('valueTo', value);
+        this.presenter.setSlider('valueFrom', this.initOptions.min);
       }
     });
   }
