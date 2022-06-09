@@ -1,4 +1,4 @@
-import searchElem from './searchElem';
+import searchElem from '../libs/searchElem';
 
 class ConfigPanel {
   private valueFromInput!: HTMLInputElement;

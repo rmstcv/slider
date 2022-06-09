@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import sliderPresenter from './Presenter/sliderPresenter';
+import sliderPresenter from './Presenter/Presenter';
 import sliderInitConfig from './sliderInitConfig';
 
 declare global {

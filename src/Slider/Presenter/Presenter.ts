@@ -1,5 +1,5 @@
-import SliderModel from '../Model/sliderModel';
-import SliderView from '../View/sliderView';
+import SliderModel from '../Model/Model';
+import SliderView from '../View/View';
 
 class SliderPresenter {
 

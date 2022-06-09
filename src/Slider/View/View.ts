@@ -1,8 +1,8 @@
-import SliderPresenter from '../Presenter/sliderPresenter';
-import SliderScale from './subViews/sliderScale';
-import SliderToolTip from './subViews/sliderToolTip';
-import SliderHandlers from './subViews/sliderHandlers';
-import sliderProgressBar from './subViews/sliderProgressBar';
+import SliderPresenter from '../Presenter/Presenter';
+import SliderScale from './subViews/Scale';
+import SliderToolTip from './subViews/ToolTip';
+import SliderHandlers from './subViews/Handlers';
+import sliderProgressBar from './subViews/ProgressBar';
 
 type Observers = SliderHandlers | SliderToolTip | SliderScale | sliderProgressBar;
 
