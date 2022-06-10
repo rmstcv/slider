@@ -1,5 +1,3 @@
-import searchElem from '../libs/searchElem';
-
 class ConfigPanel {
   private valueFromInput!: HTMLInputElement;
 
@@ -21,33 +19,152 @@ class ConfigPanel {
 
   private rangeSlider: JQuery<HTMLElement>;
 
-  private configPaneElement: HTMLElement;
+  private configPaneElement!: HTMLElement;
 
   private sliderElement: HTMLElement;
 
-  constructor(rangeSlider: JQuery<HTMLElement>, configPaneElement: HTMLElement, sliderElement: HTMLElement) {
+  private rootElement: HTMLElement;
+
+  constructor(rangeSlider: JQuery<HTMLElement>, rootElement: HTMLElement, sliderElement: HTMLElement) {
     this.rangeSlider = rangeSlider;
-    this.configPaneElement = configPaneElement;
+    this.rootElement = rootElement;
     this.sliderElement = sliderElement;
     this.init();
   }
 
   public init(): void {
+    this.createConfigPanel();
+    this.createInputsElems();
+    this.createBtnElems();
     this.initElems();
     this.initValues();
     this.addListeners();
   }
 
-  private initElems(): void {
-    this.valueFromInput = <HTMLInputElement> searchElem('.config-input_value-from', this.configPaneElement);
-    this.valueToInput = <HTMLInputElement> searchElem('.config-input_value-to', this.configPaneElement);
-    this.minInput = <HTMLInputElement> searchElem('.config-input_min', this.configPaneElement);
-    this.maxInput = <HTMLInputElement> searchElem('.config-input_max', this.configPaneElement);
-    this.stepInput = <HTMLInputElement> searchElem('.config-input_step', this.configPaneElement);
-    this.orientation = <HTMLInputElement> searchElem('.config-input_orientation', this.configPaneElement);
-    this.type = <HTMLInputElement> searchElem('.config-input_type', this.configPaneElement);
-    this.toolTip = <HTMLInputElement> searchElem('.config-input_tool-tip', this.configPaneElement);
-    this.scale = <HTMLInputElement> searchElem('.config-input_scale', this.configPaneElement);
+  private createConfigPanel(): void {
+    const configPanel = document.createElement('div');
+    configPanel.classList.add('config');
+    this.configPaneElement = configPanel;
+    this.rootElement.appendChild(this.configPaneElement);
+  }
+
+  private getElemsClass() {
+    const elemsClass = {
+      valueFrom: 'value-from',
+      valueTo: 'value-to',
+      min: 'min',
+      max: 'max',
+      step: 'step',
+      orientation: 'orientation',
+      type: 'type',
+      toolTip: 'tool-tip',
+      scale: 'scale',
+    };
+    return elemsClass;
+  }
+
+  private initElems() {
+    const elems = this.configPaneElement.getElementsByTagName('input');
+    const classes = this.getElemsClass();
+
+    for (let elem of elems) {
+      
+      if (elem.matches(`.config-input_${classes.valueFrom}`)) {
+        this.valueFromInput = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.valueTo}`)) {
+        this.valueToInput = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.min}`)) {
+        this.minInput = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.max}`)) {
+        this.maxInput = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.step}`)) {
+        this.stepInput = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.orientation}`)) {
+        this.orientation = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.type}`)) {
+        this.type = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.toolTip}`)) {
+        this.toolTip = elem;
+      }
+
+      if (elem.matches(`.config-input_${classes.scale}`)) {
+        this.scale = elem;
+      }
+    }
+  }
+
+  private createInputsElems(): void {
+    const configInputGroup = document.createElement('div');
+    configInputGroup.classList.add('config-group');
+    const { valueFrom, valueTo, min, max, step } = this.getElemsClass();
+    const valueElems = [
+      { name: 'value from', class: valueFrom },
+      { name: 'value to', class: valueTo },
+      { name: 'min', class: min },
+      { name: 'max', class: max },
+      { name: 'step', class: step },
+    ];
+
+    for (let i = 0; i < valueElems.length; i += 1) {
+      let inputElem = document.createElement('div');
+      inputElem.classList.add('config__input');
+      inputElem.innerHTML = `
+        <div class="config__input-name">
+          ${valueElems[i].name}:
+        </div>
+        <div class="config__input-${valueElems[i].class}">
+          <div class="config__dec"></div>
+          <label>
+            <input type="number" class="config-input config-input_${valueElems[i].class}">
+          </label>
+          <div class="config__inc"></div>
+        </div>
+      `;
+      configInputGroup.appendChild(inputElem);
+    } 
+    this.configPaneElement.appendChild(configInputGroup);
+  }
+
+  private createBtnElems(): void {
+    const configBtnGroup = document.createElement('div');
+    configBtnGroup.classList.add('config-group');
+    const { orientation, type, toolTip, scale } = this.getElemsClass();
+    const btnElems = [
+      { name: 'horizontal', class: orientation },
+      { name: 'range', class: type },
+      { name: 'tool', class: toolTip },
+      { name: 'scale', class: scale },
+    ];
+    
+    for (let i = 0; i < btnElems.length; i += 1) {
+      let btnElem = document.createElement('div');
+      btnElem.classList.add('config__input', 'config__input_btn');
+      btnElem.innerHTML = `
+        <div class="config__input-name">
+          ${btnElems[i].name}
+        </div>
+        <label class="config-input config-input__${btnElems[i].class}">
+          <input type="checkbox" class="config-input config-input_${btnElems[i].class}">
+          <div class="config-input__button"></div>
+        </label>
+      `;
+      configBtnGroup.appendChild(btnElem);
+    }
+    this.configPaneElement.appendChild(configBtnGroup);
   }
 
   private addAttributes(): void {
@@ -238,8 +355,9 @@ class ConfigPanel {
     });
     
     document.addEventListener('mousedown', (e) => {
-      if (e.target === searchElem('.slider__handle-lower', this.sliderElement) || 
-      e.target === searchElem('.slider__handle-upper', this.sliderElement)) {
+
+      if (e.target === this.sliderElement.querySelector('.slider__handle-lower') || 
+      e.target === this.sliderElement.querySelector('.slider__handle-upper')) {
         document.addEventListener('mousemove', setValuesBind);
       }
     });
@@ -249,6 +367,7 @@ class ConfigPanel {
     this.configPaneElement.addEventListener('click', (e) => this.changeStep(e));
 
     this.valueFromInput.addEventListener('change', () => {
+
       if (this.checkIsRange()) {
         this.setValue('valueFrom', +this.valueFromInput.value);
       } else {

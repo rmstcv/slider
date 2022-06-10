@@ -2,11 +2,20 @@ import './style.scss';
 import ConfigPanel from './configPanel/configPanel';
 import sliderCreate from './Slider/jquery.slider-plugin';
 
-const sliderFirst = document.querySelector('.slider-first') as HTMLElement;
-const configFirst = document.querySelector('.config') as HTMLElement;
-const initOptions = {
+const sliderFirstElem = document.querySelector('.slider-first') as HTMLElement;
+const configFirst = document.querySelector('.config-first') as HTMLElement;
+const initOptionsFirst = {
   max: 10,
   step: 1,
 };
-const rangeSlider = sliderCreate(sliderFirst, initOptions);
-(() => new ConfigPanel(rangeSlider, configFirst, sliderFirst))();
+const sliderFirst = sliderCreate(sliderFirstElem, initOptionsFirst);
+(() => new ConfigPanel(sliderFirst, configFirst, sliderFirstElem))();
+
+const sliderSecondElem = document.querySelector('.slider-second') as HTMLElement;
+const configSecond = document.querySelector('.config-second') as HTMLElement;
+const initOptionsSecond = {
+  max: 10,
+  step: 1,
+};
+const sliderSecond = sliderCreate(sliderSecondElem, initOptionsSecond);
+(() => new ConfigPanel(sliderSecond, configSecond, sliderSecondElem))();
