@@ -9,7 +9,7 @@ const initOptionsFirst = {
   step: 1,
 };
 const sliderFirst = sliderCreate(sliderFirstElem, initOptionsFirst);
-(() => new ConfigPanel(sliderFirst, configFirst, sliderFirstElem))();
+(() => new ConfigPanel(sliderFirst, configFirst))();
 
 const sliderSecondElem = document.querySelector('.slider-second') as HTMLElement;
 const configSecond = document.querySelector('.config-second') as HTMLElement;
@@ -18,4 +18,4 @@ const initOptionsSecond = {
   step: 1,
 };
 const sliderSecond = sliderCreate(sliderSecondElem, initOptionsSecond);
-(() => new ConfigPanel(sliderSecond, configSecond, sliderSecondElem))();
+(() => new ConfigPanel(sliderSecond, configSecond))();

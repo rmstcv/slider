@@ -2,6 +2,8 @@ class SliderModel {
 
   readonly state: Init;
 
+  private customFunction: () => void = () => {};
+
   constructor(init: Init) {
     this.state = { ...init };
     this.checkType();
@@ -31,11 +33,17 @@ class SliderModel {
     }
 
     if (param === 'valueTo') {
+      const prevValueTo = this.state.valueTo;
       this.state.valueTo = this.checkValueTo(<number>value);
+
+      if (this.state.valueTo !== prevValueTo) this.customFunction();
     }
 
-    if (param === 'valueFrom') {
+    if (param === 'valueFrom' && this.state.type !== 'single') {
+      const prevValueFrom = this.state.valueFrom;
       this.state.valueFrom = this.checkValueFrom(<number>value);
+
+      if (this.state.valueFrom !== prevValueFrom) this.customFunction();
     }
 
     if (param === 'min') {
@@ -61,8 +69,12 @@ class SliderModel {
     }
   }
 
-  public getState(): Init{
+  public getState(): Init {
     return this.state;
+  }
+
+  public setCustomFunction(customFunction: () => void): void {
+    this.customFunction = customFunction;
   }
 
   private checkType(): void {
@@ -110,6 +122,7 @@ class SliderModel {
 
   private checkMin(min: number): number {
     let newMin = this.checkExtremumValues(min, -1e10, this.state.valueFrom);
+
     if (this.state.type === 'single')  newMin = this.checkExtremumValues(min, -1e10, this.state.valueTo);
     newMin = +newMin.toFixed(5);
     return newMin;

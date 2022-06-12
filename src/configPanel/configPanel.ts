@@ -21,14 +21,11 @@ class ConfigPanel {
 
   private configPaneElement!: HTMLElement;
 
-  private sliderElement: HTMLElement;
-
   private rootElement: HTMLElement;
 
-  constructor(rangeSlider: JQuery<HTMLElement>, rootElement: HTMLElement, sliderElement: HTMLElement) {
+  constructor(rangeSlider: JQuery<HTMLElement>, rootElement: HTMLElement) {
     this.rangeSlider = rangeSlider;
     this.rootElement = rootElement;
-    this.sliderElement = sliderElement;
     this.init();
   }
 
@@ -288,14 +285,6 @@ class ConfigPanel {
     this.valueToInput.value = valueTo.toString();
   }
 
-  private changeValuesFromScale(target: HTMLElement): void {    
-    if (target.classList.contains('slider__scale-marker-value')) {
-      let { min, valueTo } =  this.rangeSlider.getState();
-      this.valueFromInput.value = min.toString();
-      this.valueToInput.value = valueTo.toString();
-    }
-  }
-
   private changeStep(e: Event): void {
     const elem = e.target as HTMLElement;
     const elemPar = elem.parentNode as HTMLElement;
@@ -337,44 +326,12 @@ class ConfigPanel {
     }
   }
 
-  private checkIsRange(): boolean {
-    const { type } =  this.rangeSlider.getState();
-
-    if (type === 'single') {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   private addListeners(): void {
     const setValuesBind = this.setValues.bind(this);
-
-    document.addEventListener('mouseup', () => {
-      document.removeEventListener('mousemove', setValuesBind);
-    });
-    
-    document.addEventListener('mousedown', (e) => {
-
-      if (e.target === this.sliderElement.querySelector('.slider__handle-lower') || 
-      e.target === this.sliderElement.querySelector('.slider__handle-upper')) {
-        document.addEventListener('mousemove', setValuesBind);
-      }
-    });
-
+    this.rangeSlider.sliderOnChange(() => setValuesBind());
     this.configPaneElement.addEventListener('click', (e) => this.changeValues(e));
-    this.sliderElement.addEventListener('click', (e) => this.changeValuesFromScale(e.target as HTMLElement));
     this.configPaneElement.addEventListener('click', (e) => this.changeStep(e));
-
-    this.valueFromInput.addEventListener('change', () => {
-
-      if (this.checkIsRange()) {
-        this.setValue('valueFrom', +this.valueFromInput.value);
-      } else {
-        this.valueFromInput.value = this.rangeSlider.getState().min.toString();
-      }
-    });
-
+    this.valueFromInput.addEventListener('change', () => this.setValue('valueFrom', +this.valueFromInput.value));
     this.valueToInput.addEventListener('change', () => this.setValue('valueTo', +this.valueToInput.value));
     this.minInput.addEventListener('change', () => this.setValue('min', +this.minInput.value));
     this.maxInput.addEventListener('change', () => this.setValue('max', +this.maxInput.value));

@@ -2,7 +2,6 @@ import Model from '../Model/Model';
 import View from '../View/View';
 
 class SliderPresenter {
-
   private model: Model;
 
   private view: View;
@@ -29,6 +28,10 @@ class SliderPresenter {
 
   public getState(): Init { 
     return this.model.getState();
+  }
+
+  public onChange(customFunction: () => void): void {
+    this.model.setCustomFunction(customFunction);
   }
 }
 
