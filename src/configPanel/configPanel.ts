@@ -40,7 +40,7 @@ class ConfigPanel {
 
   private createConfigPanel(): void {
     const configPanel = document.createElement('div');
-    configPanel.classList.add('config');
+    configPanel.classList.add('config', 'js-config');
     this.configPaneElement = configPanel;
     this.rootElement.appendChild(this.configPaneElement);
   }
@@ -66,39 +66,39 @@ class ConfigPanel {
 
     for (let elem of elems) {
       
-      if (elem.matches(`.config-input_${classes.valueFrom}`)) {
+      if (elem.matches(`.js-config-${classes.valueFrom}`)) {
         this.valueFromInput = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.valueTo}`)) {
+      if (elem.matches(`.js-config-${classes.valueTo}`)) {
         this.valueToInput = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.min}`)) {
+      if (elem.matches(`.js-config-${classes.min}`)) {
         this.minInput = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.max}`)) {
+      if (elem.matches(`.js-config-${classes.max}`)) {
         this.maxInput = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.step}`)) {
+      if (elem.matches(`.js-config-${classes.step}`)) {
         this.stepInput = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.orientation}`)) {
+      if (elem.matches(`.js-config-${classes.orientation}`)) {
         this.orientation = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.type}`)) {
+      if (elem.matches(`.js-config-${classes.type}`)) {
         this.type = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.toolTip}`)) {
+      if (elem.matches(`.js-config-${classes.toolTip}`)) {
         this.toolTip = elem;
       }
 
-      if (elem.matches(`.config-input_${classes.scale}`)) {
+      if (elem.matches(`.js-config-${classes.scale}`)) {
         this.scale = elem;
       }
     }
@@ -123,11 +123,9 @@ class ConfigPanel {
         <div class="config__input-name">
           ${valueElems[i].name}:
         </div>
-        <div class="config__input-${valueElems[i].class}">
+        <div class="config_inputs">
           <div class="config__dec"></div>
-          <label>
-            <input type="number" class="config-input config-input_${valueElems[i].class}">
-          </label>
+            <input type="number" class="config-input js-config-${valueElems[i].class}">
           <div class="config__inc"></div>
         </div>
       `;
@@ -154,9 +152,9 @@ class ConfigPanel {
         <div class="config__input-name">
           ${btnElems[i].name}
         </div>
-        <label class="config-input config-input__${btnElems[i].class}">
-          <input type="checkbox" class="config-input config-input_${btnElems[i].class}">
-          <div class="config-input__button"></div>
+        <label class="config-input__button">
+          <input type="checkbox" class="js-config-${btnElems[i].class}">
+          <div class="config-input__button-on"></div>
         </label>
       `;
       configBtnGroup.appendChild(btnElem);
@@ -237,45 +235,41 @@ class ConfigPanel {
     }
   }
 
-  private setOrientation(): void {
-    if (this.orientation.checked) {
-      this.rangeSlider.setSlider('orientation', 'horizontal');
-    } else {
-      this.rangeSlider.setSlider('orientation', 'vertical');
-    }
-  }
-
   private changeValues(e: Event): void {
     const elem = e.target as HTMLElement;
-    const elemPar = elem.parentNode as HTMLElement;
     let { min, max, valueFrom, valueTo, step, type } =  this.rangeSlider.getState();
-    const checkIncOrDec = (value: number) => {
-      let newValue = value;
 
-      if (elem.classList.contains('config__inc')) newValue += step;
+    if (elem.classList.contains('config__inc') || elem.classList.contains('config__dec')) {
+      const inputElem = elem.parentNode!.querySelector('input') as HTMLElement;
+      let inc = elem.classList.contains('config__inc') ? step : -step;
 
-      if (elem.classList.contains('config__dec')) newValue -= step;
-      return newValue;
-    };
-    
-    if (elemPar.classList.contains('config__input-value-from') && type !== 'single') {
-      this.setValue('valueFrom', checkIncOrDec(valueFrom));
-    }
-
-    if (elemPar.classList.contains('config__input-value-to')) {
-      this.setValue('valueTo', checkIncOrDec(valueTo));
-    }
-
-    if (elemPar.classList.contains('config__input-min')) {   
-      this.setValue('min', checkIncOrDec(min));
-      if (type === 'single') {
-        ({ min } = this.rangeSlider.getState());
-        this.valueFromInput.value = `${min}`;
+      if (inputElem === this.valueFromInput && type !== 'single') {
+        this.setValue('valueFrom', valueFrom + inc);
       }
-    }
 
-    if (elemPar.classList.contains('config__input-max')) {
-      this.setValue('max', checkIncOrDec(max));
+      if (inputElem === this.valueToInput) {
+        this.setValue('valueTo', valueTo + inc);
+      }
+
+      if (inputElem === this.minInput) {   
+        this.setValue('min', min + inc);
+        if (type === 'single') {
+          ({ min } = this.rangeSlider.getState());
+          this.valueFromInput.value = `${min}`;
+        }
+      }
+
+      if (inputElem === this.maxInput) {
+        this.setValue('max', max + inc);
+      }
+
+      if (inputElem === this.stepInput) {
+        const incStep = (max - min) / 100;
+
+        if (elem.classList.contains('config__inc')) this.setValue('step', (step + incStep));
+
+        if (elem.classList.contains('config__dec')) this.setValue('step', (step - incStep));
+      }
     }
   }
 
@@ -283,20 +277,6 @@ class ConfigPanel {
     let { valueFrom, valueTo } =  this.rangeSlider.getState();
     this.valueFromInput.value = valueFrom.toString();
     this.valueToInput.value = valueTo.toString();
-  }
-
-  private changeStep(e: Event): void {
-    const elem = e.target as HTMLElement;
-    const elemPar = elem.parentNode as HTMLElement;
-    let { min, max, step } =  this.rangeSlider.getState();    
-    const inc = (max - min) / 100;
-    
-    if (elemPar.classList.contains('config__input-step')) {
-
-      if (elem.classList.contains('config__inc')) this.setValue('step', (step + inc));
-
-      if (elem.classList.contains('config__dec')) this.setValue('step', (step - inc));
-    }
   }
 
   private setType(): void {
@@ -326,20 +306,48 @@ class ConfigPanel {
     }
   }
 
+  private setOrientation(): void {
+    if (this.orientation.checked) {
+      this.rangeSlider.setSlider('orientation', 'horizontal');
+    } else {
+      this.rangeSlider.setSlider('orientation', 'vertical');
+    }
+  }
+
+  private setSlider(e: Event): void {
+    switch (e.target) {
+      case this.orientation: this.setOrientation();
+        break;
+      case this.scale: this.setScale();
+        break;
+      case this.toolTip: this.setToolTip();
+        break;
+      case this.type: this.setType();
+        break;
+    }
+  }
+
+  private setSliderValues(e: Event): void {
+    switch (e.target) {
+      case this.valueFromInput: this.setValue('valueFrom', +this.valueFromInput.value);
+        break;
+      case this.valueToInput: this.setValue('valueTo', +this.valueToInput.value);
+        break;
+      case this.minInput: this.setValue('min', +this.minInput.value);
+        break;
+      case this.maxInput: this.setValue('max', +this.maxInput.value);
+        break;
+      case this.stepInput: this.setValue('step', +this.stepInput.value);
+        break;
+    }
+  }
+
   private addListeners(): void {
     const setValuesBind = this.setValues.bind(this);
     this.rangeSlider.sliderOnChange(() => setValuesBind());
     this.configPaneElement.addEventListener('click', (e) => this.changeValues(e));
-    this.configPaneElement.addEventListener('click', (e) => this.changeStep(e));
-    this.valueFromInput.addEventListener('change', () => this.setValue('valueFrom', +this.valueFromInput.value));
-    this.valueToInput.addEventListener('change', () => this.setValue('valueTo', +this.valueToInput.value));
-    this.minInput.addEventListener('change', () => this.setValue('min', +this.minInput.value));
-    this.maxInput.addEventListener('change', () => this.setValue('max', +this.maxInput.value));
-    this.stepInput.addEventListener('change', () => this.setValue('step', +this.stepInput.value));
-    this.orientation.addEventListener('click', () => this.setOrientation());
-    this.type.addEventListener('click', () => this.setType());
-    this.toolTip.addEventListener('click', () => this.setToolTip());
-    this.scale.addEventListener('click', () => this.setScale());
+    this.configPaneElement.addEventListener('click', (e) => this.setSlider(e));
+    this.configPaneElement.addEventListener('change', (e) => this.setSliderValues(e));
   }
 }
 
