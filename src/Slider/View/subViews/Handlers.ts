@@ -19,56 +19,68 @@ class SliderHandlers {
     this.checkOrientation();
     this.handlersUpdate();
     this.checkType();
+    this.toggleHandlersOrder();
   }
 
   public getHandlerElems(): HTMLElement[] {
     return [this.lower, this.upper];
   }
 
-  public handlersUpdate(): void{
-    
+  private handlersUpdate(): void{
     let [min, max]: number[] = [this.initOptions.valueFrom, this.initOptions.valueTo];
-
-    if (min !== undefined) {
-      this.toggleHandlersOrder(this.lower);
-      this.shiftLeftHandler(this.convertToPercent(min));
-    }
-
-    if (max !== undefined) {
-      this.toggleHandlersOrder(this.upper);
-      this.shiftRightHandler(this.convertToPercent(max));
-    }
+    this.shiftLeftHandler(this.convertToPercent(min));
+    this.shiftRightHandler(this.convertToPercent(max));
   }
 
-  public getHandlersCoords(elem: HTMLElement, e: MouseEvent | TouchEvent): number[] {
-    let getCoord = () => {
-      if (e instanceof MouseEvent) {
+  public getHandlersCoords(elem: HTMLElement, e: MouseEvent | TouchEvent | KeyboardEvent): number[] {
+    let currentCoord: number = 0;
+      
+    if (e instanceof MouseEvent) {
 
-        if (this.initOptions.orientation === 'vertical') {
-          return e.clientY;
-        } else {     
-          return e.pageX;
-        }
+      if (this.initOptions.orientation === 'vertical') {
+        currentCoord = e.clientY;
+      } else {     
+        currentCoord = e.pageX;
       }
+    }
 
-      if (window.TouchEvent && e instanceof TouchEvent) {
+    if (window.TouchEvent && e instanceof TouchEvent) {
+
+      if (this.initOptions.orientation === 'vertical') {
+        currentCoord = e.touches[0].pageY;
+      } else {
+        currentCoord = e.touches[0].pageX;
+      }
+    }
+
+    if (e instanceof KeyboardEvent) {
+      const elemBounding =  (elem.getBoundingClientRect().height / 2);
+      const stepInCoords = this.convertFromCustom(this.initOptions.step);
+
+      if (e.key === 'ArrowLeft') {   
 
         if (this.initOptions.orientation === 'vertical') {
-          return e.touches[0].pageY;
+          currentCoord = elem.getBoundingClientRect().top + elemBounding + stepInCoords;
         } else {
-          return e.touches[0].pageX;
+          currentCoord = elem.getBoundingClientRect().left - stepInCoords;
         }
       }
-      return process.exit();
-    };
-    let [min, max]: number[] = [];
 
-    let currentCoord: number = getCoord();
-    
-    let clientCoord: number = currentCoord - this.slider.getBoundingClientRect().left;
+      if (e.key === 'ArrowRight') {
+
+        if (this.initOptions.orientation === 'vertical') {
+          currentCoord = elem.getBoundingClientRect().top + elemBounding - stepInCoords;
+        } else {
+          currentCoord = elem.getBoundingClientRect().right + stepInCoords;
+        }
+      }
+    }
+    const sliderBounding = this.slider.getBoundingClientRect();
+    let [min, max]: number[] = [];
+    let clientCoord: number = currentCoord - sliderBounding.left;
 
     if (this.initOptions.orientation === 'vertical') {
-      clientCoord = this.slider.getBoundingClientRect().height! - currentCoord + this.slider.getBoundingClientRect().top;
+      clientCoord = sliderBounding.height - currentCoord + sliderBounding.top;
     }
 
     if (elem === this.lower) {  
@@ -88,26 +100,29 @@ class SliderHandlers {
 
   private init(): void { 
     this.createElements();
-    this.handlersUpdate();
+    this.shiftLeftHandler(this.convertToPercent(this.initOptions.valueFrom));
+    this.shiftRightHandler(this.convertToPercent(this.initOptions.valueTo));
     this.checkType();
   }
 
   private createElements(): void {
     const lower = document.createElement('div');
     lower.classList.add('slider__handle-lower');
+    lower.setAttribute('tabindex', '-1');
     this.lower = lower;
     const upper = document.createElement('div');
     upper.classList.add('slider__handle-upper');
+    upper.setAttribute('tabindex', '-1');
     this.upper = upper;
   }
-
-  private toggleHandlersOrder(handle: HTMLElement): void {
-    if (handle === this.lower && !this.lower.classList.contains('slider__handle-lower_z-index-up')) {
+  
+  private toggleHandlersOrder(): void {
+    if (document.activeElement === this.lower && !this.lower.classList.contains('slider__handle-lower_z-index-up')) {
       this.lower.classList.add('slider__handle-lower_z-index-up');
       this.upper.classList.remove('slider__handle-upper_z-index-up');
     }
 
-    if (handle === this.upper && !this.upper.classList.contains('slider__handle-upper_z-index-up')) {
+    if (document.activeElement === this.upper && !this.upper.classList.contains('slider__handle-upper_z-index-up')) {
       this.upper.classList.add('slider__handle-upper_z-index-up');
       this.lower.classList.remove('slider__handle-lower_z-index-up');
     }
@@ -147,8 +162,11 @@ class SliderHandlers {
   }
 
   private convertToCustom(value: number): number {
-    const pow = this.initOptions.max.toString().length;
-    return Math.round((value * ((Math.abs(this.initOptions.max - this.initOptions.min)) / this.checkSliderOrientation()) + this.initOptions.min) * Math.pow(10, pow)) / Math.pow(10, pow);
+    return value * ((Math.abs(this.initOptions.max - this.initOptions.min)) / this.checkSliderOrientation()) + this.initOptions.min;
+  }
+
+  private convertFromCustom(value: number): number {
+    return (this.checkSliderOrientation() / ((Math.abs(this.initOptions.max - this.initOptions.min)))) * (value);
   }
 
   private checkOrientation(): void {
@@ -163,7 +181,7 @@ class SliderHandlers {
     }
   }
 
-  private checkType(): void{
+  private checkType(): void {
     if (this.initOptions.type === 'single') this.lower.classList.add('slider__handle-lower_hidden');
 
     if (this.initOptions.type === 'range') this.lower.classList.remove('slider__handle-lower_hidden');

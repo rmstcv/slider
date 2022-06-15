@@ -10,7 +10,6 @@ class SliderModel {
   }
 
   public setState(param: Actions, value: Params) {
-
     if (param === 'type') {
       this.state.type = <Init['type']>value;
       this.state.valueFrom = this.state.min;
@@ -35,7 +34,7 @@ class SliderModel {
     if (param === 'valueTo') {
       const prevValueTo = this.state.valueTo;
       this.state.valueTo = this.checkValueTo(<number>value);
-
+      
       if (this.state.valueTo !== prevValueTo) this.customFunction();
     }
 
@@ -77,8 +76,7 @@ class SliderModel {
     this.customFunction = customFunction;
   }
 
-  private checkType(): void {
-    
+  private checkType(): void {  
     if (this.state.type === 'single') {
       this.setState('valueFrom', this.state.min);
     }
@@ -97,7 +95,7 @@ class SliderModel {
     return currentValue;
   }
 
-  private findNextValue(currentValue: number, cursorCoord: number): number {    
+  private findNextValue(currentValue: number, cursorCoord: number): number {   
     let newCurrentValue = currentValue;
     let stepIncr = Math.floor((cursorCoord - currentValue) / this.state.step);
 

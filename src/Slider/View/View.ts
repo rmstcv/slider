@@ -113,7 +113,7 @@ class SliderView {
     }
   }
 
-  private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent): void {
+  private updateHandlers(elem: HTMLElement, e: MouseEvent | TouchEvent | KeyboardEvent): void {
     const [min, max] = this.handlers.getHandlersCoords(elem, e);
     this.presenter.changeValues([min, max]);
   }
@@ -142,11 +142,20 @@ class SliderView {
   }
 
   private toSubscribeHandlersOnView(): void {
-    const [lower, upper] = this.handlers.getHandlerElems();
-    upper.addEventListener('mousedown', (e) => this.addEvents(upper, e));
-    lower.addEventListener('mousedown', (e) => this.addEvents(lower, e));
-    upper.addEventListener('touchstart', (e) => this.addEvents(upper, e));
-    lower.addEventListener('touchstart', (e) => this.addEvents(lower, e));
+    const elems = this.handlers.getHandlerElems();
+    elems.forEach((elem) => {
+      elem.addEventListener('mousedown', (e) => this.addEvents(elem, e));
+      elem.addEventListener('touchstart', (e) => this.addEvents(elem, e));
+      elem.addEventListener('mousedown', () => elem.focus());
+      elem.addEventListener('touchstart', () => elem.focus());
+      elem.addEventListener('keydown', (e) => {
+        if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) {
+          e.preventDefault();
+        } else {
+          this.updateHandlers(elem, e);
+        }
+      });
+    });
   }
 
   private toSubscribeScaleOnView(): void {
@@ -154,8 +163,8 @@ class SliderView {
       const value = this.scale.getScaleValues(e.target as HTMLElement);
 
       if (value || value === 0) {
-        this.presenter.setSlider('valueTo', value);
         this.presenter.setSlider('valueFrom', this.initOptions.min);
+        this.presenter.setSlider('valueTo', value);
       }
     });
   }

@@ -23,7 +23,6 @@
   &__values-upper:focus {
     outline: none;
   }
-
   &__handle-lower,
   &__handle-upper {
     position: absolute;
@@ -34,6 +33,10 @@
     transform: translate(-50%, -50%);
     z-index: 1;
     border-radius: 5px;
+    outline: none;
+    &_z-index-up {
+      z-index: 10;
+    }
   }
   &__handle-lower {
     left: 0;
@@ -49,11 +52,6 @@
   &__handle-upper {
     &_vertical {
       left: 50%;
-    }
-  }
-  &__handle-lower, &__handle-upper {
-    &_z-index-up {
-      z-index: 10;
     }
   }
   &__highlight {
@@ -124,18 +122,15 @@
     flex-direction: column;
     transform: none;
   }
-
   .slider__scale-value {
     position: absolute;
     height: 100%;
     left: 150px;
     margin-top: 0;
   }
-
   .slider__scale-value-container {
     margin-top: 0;
   }
-  
   .slider__scale-marker {
     width: 10px;
     height: 2px;   
@@ -144,25 +139,22 @@
       height: 3px;
     }
   }
-  
   .slider__scale-marker-value {
     transform: translateY(-50%);
     cursor: pointer;
   }
-
   .slider__handle-lower {
-      top: 0;
-      left: 50%;
+    top: 0;
+    left: 50%;
   }
-  
   .slider__handle-upper {
-      left: 50%;
+    left: 50%;
   }
   .slider__handle-lower-count,
   .slider__handle-upper-count {
-      width: 100%;
-      top: 50%;
-      left: 50%;
-      transform: translate(100%, -50%);
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(100%, -50%);
   }
 }
