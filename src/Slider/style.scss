@@ -5,8 +5,8 @@
   padding: 10px;
   &__tracker {
     background-color: #100d0d;
-    height: 20px;
-    width: 100%;
+    height: 1vw;
+    min-height: 10px;
     position: relative;
     border-radius: 5px;
   }
@@ -26,8 +26,10 @@
   &__handle-lower,
   &__handle-upper {
     position: absolute;
-    width: 36px;
-    height: 32px;
+    width: 1.8vw;
+    min-width: 20px;
+    height: 1.6vw;
+    min-height: 18px;
     background-color: black;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -84,16 +86,16 @@
 }
   &__scale-marker {
     width: 2px;
-    height: 10px;
+    height: 8px;
     background-color: black;
     &_large {
-      width: 3px;
-      height: 20px;
+      width: 2px;
+      height: 15px;
     }
   }
   &__scale-value {
     position: relative;
-    margin-top: 50px;
+    margin-top: 20px;
     height: 1rem;
   }
   &__scale-marker-value {
@@ -101,7 +103,7 @@
     transform: translateX(-50%);
     cursor: pointer;
     height: 1rem;
-    font-size: 1.3vw;
+    font-size: 0.9vw;
   }
 }
 
@@ -110,13 +112,14 @@
   height: 100%;
   .slider__tracker {
     height: 100%;
-    width: 20px;
+    width: 1vw;
+    min-width: 10px;
     position: absolute;
   }
   .slider__scale {
     height: 100%;
     transform: none;
-    left: 110px;
+    left: 60px;
     position: absolute;
     width: 30px;
     flex-direction: column;
@@ -125,7 +128,7 @@
   .slider__scale-value {
     position: absolute;
     height: 100%;
-    left: 150px;
+    left: 90px;
     margin-top: 0;
   }
   .slider__scale-value-container {
@@ -152,9 +155,9 @@
   }
   .slider__handle-lower-count,
   .slider__handle-upper-count {
-    width: 100%;
     top: 50%;
-    left: 50%;
-    transform: translate(100%, -50%);
+    left: -50%;
+    transform: translate(-100%, -50%);
+    text-align: end;
   }
 }

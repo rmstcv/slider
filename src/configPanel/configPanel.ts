@@ -106,7 +106,7 @@ class ConfigPanel {
 
   private createInputsElems(): void {
     const configInputGroup = document.createElement('div');
-    configInputGroup.classList.add('config-group');
+    configInputGroup.classList.add('config__group');
     const { valueFrom, valueTo, min, max, step } = this.getElemsClass();
     const valueElems = [
       { name: 'value from', class: valueFrom },
@@ -123,9 +123,9 @@ class ConfigPanel {
         <div class="config__input-name">
           ${valueElems[i].name}:
         </div>
-        <div class="config_inputs">
+        <div class="config__inputs">
           <div class="config__dec"></div>
-            <input type="number" class="config-input js-config-${valueElems[i].class}">
+            <input type="number" class="config__input-value js-config-${valueElems[i].class}">
           <div class="config__inc"></div>
         </div>
       `;
@@ -136,7 +136,7 @@ class ConfigPanel {
 
   private createBtnElems(): void {
     const configBtnGroup = document.createElement('div');
-    configBtnGroup.classList.add('config-group');
+    configBtnGroup.classList.add('config__group');
     const { orientation, type, toolTip, scale } = this.getElemsClass();
     const btnElems = [
       { name: 'horizontal', class: orientation },
@@ -152,9 +152,9 @@ class ConfigPanel {
         <div class="config__input-name">
           ${btnElems[i].name}
         </div>
-        <label class="config-input__button">
+        <label class="config__button">
           <input type="checkbox" class="js-config-${btnElems[i].class}">
-          <div class="config-input__button-on"></div>
+          <div class="config__button-on"></div>
         </label>
       `;
       configBtnGroup.appendChild(btnElem);

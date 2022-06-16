@@ -10,8 +10,11 @@ body {
   position: relative;
   margin: 0 auto;
   max-width: 50vw;
-}
-
-.slider-container {
   margin-top: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: (auto auto);
+  grid-column-gap: 8vw;
+  grid-row-gap: 3vw;
+  align-items: start;
 }
