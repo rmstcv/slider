@@ -47,7 +47,7 @@ class SliderHandlers {
     if (window.TouchEvent && e instanceof TouchEvent) {
 
       if (this.initOptions.orientation === 'vertical') {
-        currentCoord = e.touches[0].pageY;
+        currentCoord = e.touches[0].clientY;
       } else {
         currentCoord = e.touches[0].pageX;
       }

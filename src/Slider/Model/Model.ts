@@ -38,11 +38,16 @@ class SliderModel {
       if (this.state.valueTo !== prevValueTo) this.customFunction();
     }
 
-    if (param === 'valueFrom' && this.state.type !== 'single') {
-      const prevValueFrom = this.state.valueFrom;
-      this.state.valueFrom = this.checkValueFrom(<number>value);
-
-      if (this.state.valueFrom !== prevValueFrom) this.customFunction();
+    if (param === 'valueFrom') {
+      
+      if (this.state.type !== 'single') {
+        const prevValueFrom = this.state.valueFrom;
+        this.state.valueFrom = this.checkValueFrom(<number>value);
+        
+        if (this.state.valueFrom !== prevValueFrom) this.customFunction();
+      } else {
+        this.state.valueFrom = this.state.min;
+      }
     }
 
     if (param === 'min') {
