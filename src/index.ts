@@ -12,21 +12,19 @@ const sliderFirst = sliderCreate(sliderFirstElem, initOptionsFirst);
 (() => new ConfigPanel(sliderFirst, configFirst))();
 
 const sliderSecondElem = document.querySelector('.slider-second') as HTMLElement;
-const configSecond = document.querySelector('.config-second') as HTMLElement;
 const initOptionsSecond: UserInit = {
   min: -0.1,
   max: 0.1,
   step: 0.0005,
   valueFrom: -0.05,
   valueTo: 0.05,
-  type: 'single',
+  type: 'range',
   scale: false,
 };
-const sliderSecond = sliderCreate(sliderSecondElem, initOptionsSecond);
-(() => new ConfigPanel(sliderSecond, configSecond))();
+
+(() => sliderCreate(sliderSecondElem, initOptionsSecond))();
 
 const sliderThirdElem = document.querySelector('.slider-third') as HTMLElement;
-const configThird = document.querySelector('.config-third') as HTMLElement;
 const initOptionsThird: UserInit = {
   min: -10,
   max: 10,
@@ -38,11 +36,10 @@ const initOptionsThird: UserInit = {
   scale: true,
   toolTip: true,
 };
-const sliderThird = sliderCreate(sliderThirdElem, initOptionsThird);
-(() => new ConfigPanel(sliderThird, configThird))();
+
+(() => sliderCreate(sliderThirdElem, initOptionsThird))();
 
 const sliderFourthElem = document.querySelector('.slider-fourth') as HTMLElement;
-const configFourth = document.querySelector('.config-fourth') as HTMLElement;
 const initOptionsFourth: UserInit = {
   min: -0.1,
   max: 0.1,
@@ -51,7 +48,6 @@ const initOptionsFourth: UserInit = {
   valueTo: 0.05,
   type: 'single',
   orientation: 'vertical',
-  scale: false,
+  toolTip: false,
 };
-const sliderFourth = sliderCreate(sliderFourthElem, initOptionsFourth);
-(() => new ConfigPanel(sliderFourth, configFourth))();
+(() => sliderCreate(sliderFourthElem, initOptionsFourth))();

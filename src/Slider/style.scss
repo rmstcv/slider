@@ -1,10 +1,14 @@
+$main-color: #423939;;
+$second-color: #aeaeae;
+
 .slider {
   width: 100%;
   max-width: 50vw;
   position: relative;
   padding: 10px;
+  color: $main-color;
   &__tracker {
-    background-color: #100d0d;
+    background-color: $second-color;
     height: 1vw;
     min-height: 10px;
     position: relative;
@@ -16,7 +20,6 @@
     width: 40px;
     height: 20px;
     margin-bottom: 32px;
-    background-color: rgb(27, 25, 25);
     border: none;
   }
   &__values-lower:focus,
@@ -30,7 +33,7 @@
     min-width: 20px;
     height: 1.6vw;
     min-height: 18px;
-    background-color: black;
+    background-color: $main-color;
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
@@ -58,7 +61,7 @@
   }
   &__highlight {
     width: 100%;
-    background-color: black;
+    background-color: $main-color;
     height: 100%;
     left: 0;
     position: relative;
@@ -87,7 +90,7 @@
   &__scale-marker {
     width: 2px;
     height: 8px;
-    background-color: black;
+    background-color: $main-color;
     &_large {
       width: 2px;
       height: 15px;

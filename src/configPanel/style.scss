@@ -1,11 +1,14 @@
+$main-color: #423939;
+$second-color: #ededed;
+
 .config {
   position: relative;
-  margin-top: 20px;
+  margin-top: 25px;
   &__input {
     width: 120px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     &_btn {
       flex-direction: row;
       align-items: center;
@@ -19,31 +22,35 @@
     flex-wrap: wrap;
   }
   &__input-value {
-    background-color: #100d0d;
-    color: darkslategray;
+    background-color: $second-color;
+    color: $main-color;
     border: none;
-    font-size: 0.8rem;
     text-align: center;
   }
   &__button-on {
     position: absolute;
     left: 0;
-    background-color: #1b1919;
+    background-color: $main-color;
     top: 0;
     width: 50%;
     height: 100%;
     display: flex;
-    transform: translateX(100%);
+    transform: translateX(0);
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
   }
   &__button {
-    background-color: #100d0d;
-    border: 1px solid black;
+    background-color: $second-color;
     position: relative;
     width: 30px;
+    border-radius: 3px;
     input {
       opacity: 0;
       &:checked~.config__button-on {
-        transform: translateX(0);
+        transform: translateX(100%);
+        border-radius: 0;
+        border-bottom-right-radius: 3px;
+        border-top-right-radius: 3px;
       }
     }
   }
@@ -51,23 +58,26 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #100d0d;
+    background-color: $second-color;
     padding: 5px;
     position: relative;
+    border-radius: 5px;
   }
   &__inc,
   &__dec {
-    color: darkslategray;
     position: relative;
-    width: 0.9rem;
-    height: 0.9rem;
+    width: 0.7rem;
+    height: 0.7rem;
     cursor: pointer;
-    &::after {
+    &::after, &::before {
       content: '';
-      width: 100%;
-      height: 3px;
-      background-color: darkslategray;
+      border-radius: 5px;
       position: absolute;
+      background-color: $main-color;
+    }
+    &::after {
+      height: 2px;
+      width: 100%;
       top: 50%;
       transform: translate(0, -50%);
     }
@@ -79,11 +89,8 @@
     left: 0;
   }
   &__inc::before {
-    content: '';
-    width: 3px;
+    width: 2px;
     height: 100%;
-    background-color: darkslategray;
-    position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
   }

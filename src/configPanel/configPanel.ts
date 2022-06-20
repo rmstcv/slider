@@ -141,7 +141,7 @@ class ConfigPanel {
     const btnElems = [
       { name: 'horizontal', class: orientation },
       { name: 'range', class: type },
-      { name: 'tool', class: toolTip },
+      { name: 'tool-tip', class: toolTip },
       { name: 'scale', class: scale },
     ];
     
