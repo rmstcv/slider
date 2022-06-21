@@ -101,13 +101,18 @@ class SliderModel {
   }
 
   private findNextValue(currentValue: number, cursorCoord: number): number {   
+    
     let newCurrentValue = currentValue;
     let stepIncr = Math.floor((cursorCoord - currentValue) / this.state.step);
 
     if (currentValue > cursorCoord) {
       stepIncr = Math.ceil((cursorCoord - currentValue) / this.state.step);
     }
-    newCurrentValue = currentValue + stepIncr * this.state.step;
+    newCurrentValue = cursorCoord < this.state.min 
+      ? this.state.min 
+      : cursorCoord > this.state.max 
+        ? this.state.max
+        : currentValue + stepIncr * this.state.step;
     return newCurrentValue;
   }
 
