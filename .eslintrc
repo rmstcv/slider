@@ -38,10 +38,6 @@
       "warn",
       "single"
     ],
-    // "indent": [
-    //   "warn",
-    //   2
-    // ],
     "linebreak-style": 0,
     "indent": "off",
     "@typescript-eslint/indent": [

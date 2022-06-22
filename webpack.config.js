@@ -75,9 +75,5 @@ module.exports = {
       filename: '[name].[contenthash].css',
     }),
     new ESLintPlugin(),
-    // new webpack.ProvidePlugin({
-    //   $: 'jquery',
-    //   jQuery: 'jquery'
-    // }),
   ],
 };
