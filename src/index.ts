@@ -1,6 +1,6 @@
 import './style.scss';
 import ConfigPanel from './configPanel/configPanel';
-import sliderCreate from './Slider/jquery.slider-plugin';
+import './Slider/jquery.slider-plugin';
 
 const sliderFirstElem = document.querySelector('.slider-first') as HTMLElement;
 const configFirst = document.querySelector('.config-first') as HTMLElement;
@@ -8,7 +8,8 @@ const initOptionsFirst: UserInit = {
   max: 10,
   step: 1,
 };
-const sliderFirst = sliderCreate(sliderFirstElem, initOptionsFirst);
+
+const sliderFirst = $(sliderFirstElem).sliderPlugin(initOptionsFirst);
 (() => new ConfigPanel(sliderFirst, configFirst))();
 
 const sliderSecondElem = document.querySelector('.slider-second') as HTMLElement;
@@ -21,8 +22,7 @@ const initOptionsSecond: UserInit = {
   type: 'range',
   scale: false,
 };
-
-(() => sliderCreate(sliderSecondElem, initOptionsSecond))();
+(() => $(sliderSecondElem).sliderPlugin(initOptionsSecond))();
 
 const sliderThirdElem = document.querySelector('.slider-third') as HTMLElement;
 const initOptionsThird: UserInit = {
@@ -36,8 +36,7 @@ const initOptionsThird: UserInit = {
   scale: true,
   toolTip: true,
 };
-
-(() => sliderCreate(sliderThirdElem, initOptionsThird))();
+(() => $(sliderThirdElem).sliderPlugin(initOptionsThird))();
 
 const sliderFourthElem = document.querySelector('.slider-fourth') as HTMLElement;
 const initOptionsFourth: UserInit = {
@@ -50,4 +49,4 @@ const initOptionsFourth: UserInit = {
   orientation: 'vertical',
   toolTip: false,
 };
-(() => sliderCreate(sliderFourthElem, initOptionsFourth))();
+(() => $(sliderFourthElem).sliderPlugin(initOptionsFourth))();

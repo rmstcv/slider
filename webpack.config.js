@@ -6,7 +6,10 @@ const webpack = require('webpack');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: './index.ts',
+  entry: {
+  configPanel: './index.ts', 
+  slider: './Slider/jquery.slider-plugin.ts',
+  },
   devtool: 'inline-source-map',
   mode: 'development',
   module: {
@@ -48,7 +51,10 @@ module.exports = {
           {
             loader: "expose-loader",
             options: {
-              exposes: ["$", "jQuery"]
+              exposes: {
+                globalName: "$",
+                override: true,
+              },
             }
           }
         ]
@@ -59,8 +65,9 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, './dist'),
+    filename: '[name].js',
+    chunkFilename: '[name].chunk.js',
   },
   devServer: {
     port: 4200,
@@ -72,7 +79,7 @@ module.exports = {
       template: './index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
+      filename: '[name].css',
     }),
     new ESLintPlugin(),
   ],
