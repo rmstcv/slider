@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "lib": ["DOM", "DOM.Iterable"],
   },
-  "include": ["src/**/*", "src/Slider/test/**/*"],
+  "include": ["src/**/*", "test/**/*", "test"],
   "exclude": ["node_modules"],
   "typeRoots": ["node_modules/@types"],
   "types": [

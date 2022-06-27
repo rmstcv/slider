@@ -1,4 +1,4 @@
-import SliderModel from '../Model/Model';
+import SliderModel from '../src/Slider/Model/Model';
 
 const init: Init = {
   min: -10,
