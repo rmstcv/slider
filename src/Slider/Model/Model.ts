@@ -60,13 +60,14 @@ class SliderModel {
     }
   }
 
-  public changeValues([min, max]: number[]): void {
+  public changeValues([min, max]: (number | undefined)[]): void {
     let [minNew, maxNew] = [min, max];
     
     if (min !== undefined) {
       minNew = this.findNextValue(this.state.valueFrom, min);
       this.setState('valueFrom', minNew);
     }
+    
     if (max !== undefined) {
       maxNew = this.findNextValue(this.state.valueTo, max);
       this.setState('valueTo', maxNew);
