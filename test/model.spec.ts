@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import SliderModel from '../src/Slider/Model/Model';
 
 const init: Init = {
@@ -78,7 +79,6 @@ describe('check set custom function', () => {
   const func = () => {return init;};
   it('set custom function', () => {
     sliderModel.setCustomFunction(func);
-    // eslint-disable-next-line @typescript-eslint/dot-notation
     expect(sliderModel['customFunction']).toEqual(func);
   });
 });
@@ -86,7 +86,6 @@ describe('check set custom function', () => {
 describe('check type and set valueFrom', () => {
   it('check type', () => {
     sliderModel.state.type = 'single';
-    // eslint-disable-next-line @typescript-eslint/dot-notation
     sliderModel['checkType']();
     expect(sliderModel.state.valueFrom).toEqual(sliderModel.state.min);
   });  
@@ -94,10 +93,17 @@ describe('check type and set valueFrom', () => {
 
 describe('find next value', () => {
   const currentValue = sliderModel.state.valueFrom;
-  const receivedValue = currentValue + (3 * sliderModel.state.step / 2) ;
   it('next value', () => {
-    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const receivedValue = currentValue + (3 * sliderModel.state.step / 2) ;
     expect(sliderModel['findNextValue'](currentValue, receivedValue)).toEqual(currentValue + sliderModel.state.step);
+  });
+  it('next value under min', () => {
+    const receivedValue = sliderModel.state.min - sliderModel.state.step;
+    expect(sliderModel['findNextValue'](currentValue, receivedValue)).toEqual(sliderModel.state.min);
+  });
+  it('next value over max', () => {
+    const receivedValue = sliderModel.state.max + sliderModel.state.step;
+    expect(sliderModel['findNextValue'](currentValue, receivedValue)).toEqual(sliderModel.state.max);
   });
 });
 
@@ -106,7 +112,40 @@ describe('check extremum values', () => {
     const min = sliderModel.state.min;
     const max = sliderModel.state.max;
     const step = sliderModel.state.step;
-    // eslint-disable-next-line @typescript-eslint/dot-notation
     expect(sliderModel['checkExtremumValues'](max - step, min, max)).toEqual(max - step);
+  });
+});
+
+describe('check values', () => {
+  it('check value from', () => {
+    const newValueFromNormal = sliderModel.state.valueTo - sliderModel.state.step;
+    const newValueFromOver = sliderModel.state.valueTo + sliderModel.state.step;
+    const newValueFromUnder = sliderModel.state.min - sliderModel.state.step;
+    expect(sliderModel['checkValueFrom'](newValueFromNormal)).toEqual(newValueFromNormal);
+    expect(sliderModel['checkValueFrom'](newValueFromOver)).toEqual(sliderModel.state.valueTo);
+    expect(sliderModel['checkValueFrom'](newValueFromUnder)).toEqual(sliderModel.state.min);
+  });
+  it('check value to', () => {
+    const newValueToNormal = sliderModel.state.valueFrom + sliderModel.state.step;
+    const newValueToOver = sliderModel.state.max + sliderModel.state.step;
+    const newValueToUnder = sliderModel.state.valueFrom - sliderModel.state.step;
+    expect(sliderModel['checkValueTo'](newValueToNormal)).toEqual(newValueToNormal);
+    expect(sliderModel['checkValueTo'](newValueToOver)).toEqual(sliderModel.state.max);
+    expect(sliderModel['checkValueTo'](newValueToUnder)).toEqual(sliderModel.state.valueFrom);
+  });
+  it('check min', () => {
+    const newMin = sliderModel.state.min - sliderModel.state.step;
+    expect(sliderModel['checkMin'](newMin)).toEqual(newMin);
+    const newMinSingle = sliderModel.state.valueTo + sliderModel.state.step;
+    sliderModel.state.type = 'single';
+    expect(sliderModel['checkMin'](newMinSingle)).toEqual(sliderModel.state.valueTo);
+  });
+  it('check max', () => {
+    const newMax = sliderModel.state.max + sliderModel.state.step;
+    expect(sliderModel['checkMax'](newMax)).toEqual(newMax);
+  });
+  it('check step', () => {
+    const newStep = (sliderModel.state.max - sliderModel.state.min) / 2;
+    expect(sliderModel['checkStep'](newStep)).toEqual(newStep);
   });
 });
