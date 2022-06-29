@@ -26,21 +26,15 @@ class SliderHandlers {
     return [this.lower, this.upper];
   }
 
-  private handlersUpdate(): void{
-    let [min, max]: number[] = [this.initOptions.valueFrom, this.initOptions.valueTo];
-    this.shiftLeftHandler(this.convertToPercent(min));
-    this.shiftRightHandler(this.convertToPercent(max));
-  }
-
   public getHandlersCoords(elem: HTMLElement, e: MouseEvent | TouchEvent | KeyboardEvent): number[] {
     let currentCoord: number = 0;
-      
+    
     if (e instanceof MouseEvent) {
 
       if (this.initOptions.orientation === 'vertical') {
         currentCoord = e.clientY;
       } else {     
-        currentCoord = e.pageX;
+        currentCoord = e.clientX;
       }
     }
 
@@ -49,7 +43,7 @@ class SliderHandlers {
       if (this.initOptions.orientation === 'vertical') {
         currentCoord = e.touches[0].clientY;
       } else {
-        currentCoord = e.touches[0].pageX;
+        currentCoord = e.touches[0].clientX;
       }
     }
 
@@ -92,6 +86,12 @@ class SliderHandlers {
     }
     
     return [min, max];
+  }
+
+  private handlersUpdate(): void{
+    let [min, max]: number[] = [this.initOptions.valueFrom, this.initOptions.valueTo];
+    this.shiftLeftHandler(this.convertToPercent(min));
+    this.shiftRightHandler(this.convertToPercent(max));
   }
 
   private updateState(state: Init): void {
