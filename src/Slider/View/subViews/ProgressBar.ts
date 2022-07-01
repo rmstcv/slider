@@ -26,7 +26,7 @@ class ProgressBar {
     this.progressBarUpdate();
   }
 
-  private createElements(): void{
+  private createElements(): void {
     const progressBar = document.createElement('div');
     progressBar.classList.add('slider__highlight');
     this.progressBar = progressBar;
