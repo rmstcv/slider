@@ -29,6 +29,15 @@ class SliderScale {
     this.initOptions = { ...state };
   }
 
+  public getScaleValues(target: HTMLElement): number | undefined {
+    let scaleValue: number | undefined = undefined;
+
+    if (target.classList.contains('slider__scale-marker-value')) {
+      scaleValue = Number(target.getAttribute('data-value'));
+    }
+    return scaleValue;
+  }
+
   private init(): void {
     if (this.initOptions.scale) {
       this.createElemets();
@@ -86,18 +95,9 @@ class SliderScale {
     }
   }
 
-  public update(): void {    
+  private update(): void {    
     this.destroyScale();
     this.init();
-  }
-
-  public getScaleValues(target: HTMLElement): number | undefined {
-    let scaleValue: number | undefined = undefined;
-
-    if (target.classList.contains('slider__scale-marker-value')) {
-      scaleValue = Number(target.getAttribute('data-value'));
-    }
-    return scaleValue;
   }
 }
 
