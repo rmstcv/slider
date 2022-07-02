@@ -6,7 +6,7 @@ Range Slider - [jQuery](https://jquery.com/) plugin for setting the range of num
 
 ---
 
-## [Demo page](https://rmstcv.github.io/slider/)
+### [Demo page](https://rmstcv.github.io/slider/)
 
 ---
 
