@@ -1,6 +1,6 @@
 # Range Slider
 
-Range Slider - jQuery plugin for setting the range of numeric values via web interface with keyboard and touch control support.
+Range Slider - [jQuery](https://jquery.com/) plugin for setting the range of numeric values via web interface with keyboard and touch control support.
 
 <a href="https://rmstcv.github.io/slider/"><img src="doc/slider.png" width="400"></a>
 
@@ -8,8 +8,20 @@ Range Slider - jQuery plugin for setting the range of numeric values via web int
 
 ## [Demo page](https://rmstcv.github.io/slider/)
 
+---
+
+Installation:
+
 [download](https://github.com/rmstcv/slider/blob/gh-pages/slider.js) slider.js <br>
-[download](https://github.com/rmstcv/slider/blob/gh-pages/slider.css) slider.css
+[download](https://github.com/rmstcv/slider/blob/gh-pages/slider.css) slider.css <br>
+
+```js
+// jQuery
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+// slider files
+<link href="slider.css" rel="stylesheet">
+<script src="slider.js"></script>
+```
 
 ---
 
