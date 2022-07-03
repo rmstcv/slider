@@ -1,7 +1,14 @@
 UML diagram
-![](https://github.com/rmstcv/slider/raw/main/doc/uml.jpg)
+
+![uml diagram](https://github.com/rmstcv/slider/raw/main/doc/uml.jpg)
 
 ---
+
+Cloning
+
+```
+git clone https://github.com/rmstcv/slider.git
+```
 
 Installing dependencies
 

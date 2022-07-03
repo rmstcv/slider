@@ -6,6 +6,18 @@ Range Slider - [jQuery](https://jquery.com/) plugin for setting the range of num
 
 ---
 
+Application features:
+
+- Single or range type
+- Vertical or horizontal view
+- Signatures above the sliders
+- Scale of values
+- Set slider values
+- Keyboard control
+- Support for touch devices
+
+---
+
 ### [Demo page](https://rmstcv.github.io/slider/)
 
 ---
@@ -95,3 +107,7 @@ slider.setSlider('orientation', 'vertical');
 slider.setSlider('toolTip', false);
 slider.getState().max;
 ```
+
+---
+
+[docs](https://github.com/rmstcv/slider/blob/main/doc/doc.md)
